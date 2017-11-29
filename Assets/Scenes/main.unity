@@ -146,6 +146,8 @@ MonoBehaviour:
   archerPos: {x: 0, y: -3}
   arrowArcherOffset: {x: 0, y: -1}
   targetMinY: 0
+  minForce: 0
+  maxForce: 0
 --- !u!4 &145310317
 Transform:
   m_ObjectHideFlags: 0

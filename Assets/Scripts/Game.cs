@@ -28,29 +28,33 @@ public class Game : MonoBehaviour
             Touch touch = Input.GetTouch(0);
             if (touch.phase == TouchPhase.Began)
             {
-                startTouchPos = touch.position;
+                startTouchPos = Camera.main.ScreenToWorldPoint(touch.position);
+            }
+            swipe = startTouchPos - (Vector2)Camera.main.ScreenToWorldPoint(touch.position);
+            if (touch.phase == TouchPhase.Moved)
+            {
+                arrow.transform.rotation = Quaternion.FromToRotation(new Vector2(0, 1), swipe);
             }
             if (touch.phase == TouchPhase.Ended)
             {
-                endTouchPos = touch.position;
 #else
-        { 
+        {
             if (Input.GetMouseButtonDown(0))
             {
-                Debug.Log(arrow.transform.position);
                 startTouchPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            }
+            swipe = startTouchPos - (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            if (Input.GetMouseButton(0))
+            {
+                arrow.transform.rotation = Quaternion.FromToRotation(new Vector2(0, 1), swipe);
             }
             if (Input.GetMouseButtonUp(0))
             {
-                endTouchPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 #endif
-
-                swipe = endTouchPos - startTouchPos;
-
-                if (swipe.y < 0)
+                if (swipe.y > 0)
                 {
                     var rigidBody = arrow.GetComponent<Rigidbody2D>();
-                    rigidBody.AddForce(-swipe * 300);
+                    rigidBody.AddForce(swipe * 300);
                     rigidBody.simulated = true;
                 }
             }
@@ -67,11 +71,13 @@ public class Game : MonoBehaviour
 
     public void SpawnTarget()
     {
+        Destroy(target);
+
         int x = UnityEngine.Random.Range(-2, 2);
         int y = UnityEngine.Random.Range(-2, 2);
         Vector2 targetPos = new Vector2(x, Math.Max(y, targetMinY));
-        Destroy(target);
         target = Instantiate(targetPrefab, targetPos, transform.rotation);
+        target.transform.up = target.transform.position - (Vector3)archerPos; // rotate towards archer
     }
 
     public IEnumerator DelayedAction(Action action, float seconds)
