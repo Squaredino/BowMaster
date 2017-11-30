@@ -63,20 +63,27 @@ public class Game : MonoBehaviour
 
     public void SpawnArrow()
     {
-        Destroy(arrow);
-
-        arrow = Instantiate(arrowPrefab, archerPos, transform.rotation);
-        arrow.transform.position += (Vector3)arrowArcherOffset;
+        if (arrow != null)
+        {
+            arrow.SetActive(false);
+        }
+        
+        arrow = Pool.Get(arrowPrefab);
+        arrow.transform.position = archerPos + arrowArcherOffset;
     }
 
     public void SpawnTarget()
     {
-        Destroy(target);
+        if (target != null)
+        {
+            target.SetActive(false);
+        }
+        
+        target = Pool.Get(targetPrefab);
 
         int x = UnityEngine.Random.Range(-2, 2);
         int y = UnityEngine.Random.Range(-2, 2);
-        Vector2 targetPos = new Vector2(x, Math.Max(y, targetMinY));
-        target = Instantiate(targetPrefab, targetPos, transform.rotation);
+        target.transform.position = new Vector2(x, Math.Max(y, targetMinY));
         target.transform.up = target.transform.position - (Vector3)archerPos; // rotate towards archer
     }
 

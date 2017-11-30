@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Arrow : MonoBehaviour
+public class Target : MonoBehaviour
 {
     Game game;
 
@@ -18,6 +18,7 @@ public class Arrow : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        StartCoroutine(game.DelayedAction(game.SpawnArrow, 1));
+        collision.rigidbody.simulated = false;
+        StartCoroutine(game.DelayedAction(game.SpawnTarget, 1));
     }
 }
