@@ -4,13 +4,10 @@ using UnityEngine;
 
 public class Pool : MonoBehaviour
 {
-    private const int DEFAULT_INITIAL_SIZE = 10;
-    private const int DEFAULT_GROW_SIZE = 5;
+    private const int INITIAL_SIZE = 10;
+    private const int GROW_SIZE = 5;
 
     private static Dictionary<GameObject, Pool> pools = new Dictionary<GameObject, Pool>();
-
-    public int initialPoolSize = DEFAULT_INITIAL_SIZE;
-    public int growSize = DEFAULT_GROW_SIZE;
 
     private GameObject prefab;
     private List<GameObject> objects = new List<GameObject>();
@@ -21,10 +18,11 @@ public class Pool : MonoBehaviour
         if (!pools.ContainsKey(prefab))
         {
             var newPool = new GameObject(prefab.name + "Pool").AddComponent<Pool>();
-            newPool.Setup(prefab);
+            newPool.Initialize(prefab);
             pools.Add(prefab, newPool);
         }
-        if (pools[prefab].availableObjects.Count == 0)
+
+        while (pools[prefab].availableObjects.Count == 0)
         {
             foreach (var obj in pools[prefab].objects)
             {
@@ -35,7 +33,7 @@ public class Pool : MonoBehaviour
             }
             if (pools[prefab].availableObjects.Count == 0)
             {
-                pools[prefab].GrowPool();
+                pools[prefab].Grow();
             }
         }
 
@@ -44,20 +42,13 @@ public class Pool : MonoBehaviour
         return returnedObj;
     }
 
-    private void Setup(GameObject prefab)
+    private void Initialize(GameObject prefab)
     {
         this.prefab = prefab;
-
-        for (int i = 0; i < initialPoolSize; i++)
-        {
-            var obj = Instantiate(this.prefab);
-            obj.transform.parent = transform;
-            obj.SetActive(false);
-            objects.Add(obj);
-        }
+        Grow(INITIAL_SIZE);
     }
 
-    private void GrowPool()
+    private void Grow(int growSize = GROW_SIZE)
     {
         for (int i = 0; i < growSize; i++)
         {

@@ -4,20 +4,39 @@ using UnityEngine;
 
 public class Arrow : MonoBehaviour
 {
-    Game game;
+    public float despawnTimer = 0.5f;
+
+    private Rigidbody2D rigidBody;
 
     void Start()
     {
-        game = GameObject.Find("Game").GetComponent<Game>();
+        rigidBody = gameObject.GetComponent<Rigidbody2D>();
     }
 
     void Update()
     {
+        if (rigidBody.simulated && rigidBody.velocity.y < 0)
+        {
+            rigidBody.simulated = false;
+            StartCoroutine(Utils.DelayedAction(Despawn, despawnTimer));
+        }
+    }
 
+    private void OnBecameInvisible()
+    {
+        gameObject.SetActive(false);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        StartCoroutine(game.DelayedAction(game.SpawnArrow, 1));
+        if (collision.gameObject.name.Contains("Target"))
+        {
+            StartCoroutine(Utils.DelayedAction(Despawn, despawnTimer));
+        }
+    }
+
+    private void Despawn()
+    {
+        gameObject.SetActive(false);
     }
 }
