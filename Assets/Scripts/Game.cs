@@ -22,6 +22,7 @@ public class Game : MonoBehaviour
         Spawner targetSpawner = new GameObject("TargetSpawner").AddComponent<Spawner>();
         targetSpawner.prefab = targetPrefab;
         targetSpawner.spawnInterval = 2f;
+        targetSpawner.spawnStrategy = SpawnerStrategy.Simple;
         targetSpawner.bounds = new Rect(-cameraWidth + .5f, -cameraHeight + .5f + targetMinY, cameraWidth * 2 - 1, cameraHeight * 2 - 1 - targetMinY); //
 
         RespawnArrow();

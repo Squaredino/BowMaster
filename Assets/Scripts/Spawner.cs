@@ -8,6 +8,7 @@ public class Spawner : MonoBehaviour
     public GameObject prefab;
     public Rect bounds;
     public float spawnInterval;
+    public SpawnerStrategy.SpawnStrategy spawnStrategy;
 
     private Game game;
     private float elapsedTime;
@@ -30,11 +31,20 @@ public class Spawner : MonoBehaviour
 
     private void Spawn()
     {
-        var newObj = Pool.Get(prefab);
-        float x = Random.Range(bounds.xMin, bounds.xMax);
-        float y = Random.Range(bounds.yMin, bounds.yMax);
+        var objList = spawnStrategy(GetObject);
 
-        newObj.transform.position = new Vector2(x, y);
-        newObj.transform.up = newObj.transform.position - (Vector3)game.archerPos; // rotate towards archer
+        foreach (var obj in objList) // [0; 1] -> [xMin; xMax]
+        {
+            Vector2 pos = obj.transform.position;
+            pos.x = pos.x * bounds.width + bounds.xMin;
+            pos.y = pos.y * bounds.height + bounds.yMin;
+            obj.transform.position = pos;
+            obj.transform.up = obj.transform.position - (Vector3)game.archerPos; // rotate towards archer
+        }
+    }
+
+    public GameObject GetObject()
+    {
+        return Pool.Get(prefab);
     }
 }
