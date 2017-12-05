@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Target : MonoBehaviour
 {
+    public float despawnTimer = 5f;
+
     void Start()
     {
 
@@ -25,7 +27,7 @@ public class Target : MonoBehaviour
 
     private void OnEnable()
     {
-        StartCoroutine(Utils.DelayedAction(Despawn, 5f));
+        StartCoroutine(Utils.DelayedAction(Despawn, despawnTimer));
     }
 
     private void Despawn()

@@ -28,6 +28,9 @@ public class Pool : MonoBehaviour
             {
                 if (!obj.activeSelf)
                 {
+                    obj.transform.position = Vector3.zero;
+                    obj.transform.rotation = Quaternion.identity;
+                    obj.transform.localScale = Vector3.one;
                     pools[prefab].availableObjects.Enqueue(obj);
                 }
             }

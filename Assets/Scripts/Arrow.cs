@@ -24,7 +24,7 @@ public class Arrow : MonoBehaviour
 
     private void OnBecameInvisible()
     {
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

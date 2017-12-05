@@ -5,14 +5,16 @@ using UnityEngine;
 
 public class Game : MonoBehaviour
 {
-    public GameObject arrowPrefab, targetPrefab;
+    public GameObject arrowPrefab, targetPrefab, aimAssistPrefab;
     public Vector2 archerPos, arrowArcherOffset;
     public float targetMinY;
     public float minForce, maxForce, forceMultiplier;
     public float arrowRespawnInterval;
+    public GameObject arrow;
+    public Vector2 swipe;
 
-    private GameObject arrow, target;
-    private Vector2 endTouchPos, swipe;
+    private AimAssist aimAssist;
+    private Vector2 endTouchPos;
 
     void Start()
     {
@@ -24,6 +26,8 @@ public class Game : MonoBehaviour
         targetSpawner.spawnInterval = 2f;
         targetSpawner.spawnStrategy = SpawnerStrategy.Simple;
         targetSpawner.bounds = new Rect(-cameraWidth + .5f, -cameraHeight + .5f + targetMinY, cameraWidth * 2 - 1, cameraHeight * 2 - 1 - targetMinY); //
+
+        aimAssist = Instantiate(aimAssistPrefab).GetComponent<AimAssist>();
 
         RespawnArrow();
     }
@@ -42,18 +46,18 @@ public class Game : MonoBehaviour
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
-            swipe = arrow.transform.position - Camera.main.ScreenToWorldPoint(touch.position);
             if (touch.phase == TouchPhase.Moved)
             {
+                swipe = arrow.transform.position - Camera.main.ScreenToWorldPoint(touch.position);
                 arrow.transform.rotation = Quaternion.FromToRotation(new Vector2(0, 1), swipe);
             }
             if (touch.phase == TouchPhase.Ended)
             {
 #else
         {
-            swipe = arrow.transform.position - Camera.main.ScreenToWorldPoint(Input.mousePosition);
             if (Input.GetMouseButton(0))
             {
+                swipe = arrow.transform.position - Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 arrow.transform.rotation = Quaternion.FromToRotation(new Vector2(0, 1), swipe);
             }
             if (Input.GetMouseButtonUp(0))
@@ -62,6 +66,7 @@ public class Game : MonoBehaviour
                 if (swipe.y > 0)
                 {
                     ShootArrow(swipe);
+                    swipe = Vector2.zero;
                 }
             }
         }
@@ -69,7 +74,7 @@ public class Game : MonoBehaviour
 
     private void ShootArrow(Vector2 direction)
     {
-        var force = swipe * forceMultiplier;
+        var force = direction * forceMultiplier;
         var rigidBody = arrow.GetComponent<Rigidbody2D>();
         rigidBody.simulated = true;
         rigidBody.AddForce(force);

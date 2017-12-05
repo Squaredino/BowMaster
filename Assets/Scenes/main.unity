@@ -143,6 +143,8 @@ MonoBehaviour:
     type: 2}
   targetPrefab: {fileID: 1746746088200582, guid: 29e4076cfc5b56341948bb5a451233cd,
     type: 2}
+  aimAssistPrefab: {fileID: 1131058645665400, guid: d982b2e690ab80b4db94dfc332d917c6,
+    type: 2}
   archerPos: {x: 0, y: -3}
   arrowArcherOffset: {x: 0, y: 0.5}
   targetMinY: 4
