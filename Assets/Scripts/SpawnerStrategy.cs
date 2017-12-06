@@ -46,4 +46,27 @@ public static class SpawnerStrategy
 
         return objects;
     }
+
+    public static List<GameObject> SimpleMoving(GetObject getMethod)
+    {
+        List<GameObject> objects = new List<GameObject>();
+        GameObject obj = getMethod();
+        Movement movement = obj.GetComponent<Movement>();
+
+        List<Vector2> waypoints = new List<Vector2>();
+        float yOffset = Random.value;
+        waypoints.Add(new Vector2(Random.value, yOffset));
+        waypoints.Add(new Vector2(Random.value, yOffset));
+        if (movement != null)
+        {
+            movement.waypoints = waypoints;
+        }
+        else
+        {
+            obj.transform.position = waypoints[0];
+        }
+        objects.Add(obj);
+
+        return objects;
+    }
 }

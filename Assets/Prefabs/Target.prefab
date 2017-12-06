@@ -22,6 +22,8 @@ GameObject:
   - component: {fileID: 212883798458762744}
   - component: {fileID: 61863487285361948}
   - component: {fileID: 114281123542172342}
+  - component: {fileID: 114844896307161336}
+  - component: {fileID: 50031560247568312}
   m_Layer: 0
   m_Name: Target
   m_TagString: Untagged
@@ -42,6 +44,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!50 &50031560247568312
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1746746088200582}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 6200000, guid: 0b3efa6ac4a358446aa84c09705b9341, type: 2}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!61 &61863487285361948
 BoxCollider2D:
   m_ObjectHideFlags: 1
@@ -78,6 +100,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cf1de8d0f626f64d844c40c662be64b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  despawnTimer: 5
+  faceArcher: 1
+--- !u!114 &114844896307161336
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1746746088200582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86c974afed539204eae95f7c5cb9dae1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  waypoints: []
+  speed: 3
 --- !u!212 &212883798458762744
 SpriteRenderer:
   m_ObjectHideFlags: 1

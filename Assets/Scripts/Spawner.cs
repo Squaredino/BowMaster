@@ -10,12 +10,11 @@ public class Spawner : MonoBehaviour
     public float spawnInterval;
     public SpawnerStrategy.SpawnStrategy spawnStrategy;
 
-    private Game game;
     private float elapsedTime;
+    Movement movement;
 
     private void Start()
     {
-        game = GameObject.Find("Game").GetComponent<Game>();
         elapsedTime = spawnInterval;
     }
 
@@ -33,13 +32,26 @@ public class Spawner : MonoBehaviour
     {
         var objList = spawnStrategy(GetObject);
 
-        foreach (var obj in objList) // [0; 1] -> [xMin; xMax]
+        if (objList != null)
         {
-            Vector2 pos = obj.transform.position;
-            pos.x = pos.x * bounds.width + bounds.xMin;
-            pos.y = pos.y * bounds.height + bounds.yMin;
-            obj.transform.position = pos;
-            obj.transform.up = obj.transform.position - (Vector3)game.archerPos; // rotate towards archer
+            foreach (var obj in objList) // [0; 1] -> [xMin; xMax]
+            {
+                Vector2 pos = obj.transform.position;
+                pos.x = pos.x * bounds.width + bounds.xMin;
+                pos.y = pos.y * bounds.height + bounds.yMin;
+                obj.transform.position = pos;
+                movement = obj.GetComponent<Movement>();
+                if (movement != null)
+                {
+                    for (int i = 0; i < movement.waypoints.Count; i++)
+                    {
+                        Vector2 point = movement.waypoints[i];
+                        point.x = point.x * bounds.width + bounds.xMin;
+                        point.y = point.y * bounds.height + bounds.yMin;
+                        movement.waypoints[i] = point;
+                    }
+                }
+            }
         }
     }
 

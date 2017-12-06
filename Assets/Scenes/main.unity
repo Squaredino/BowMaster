@@ -150,8 +150,10 @@ MonoBehaviour:
   targetMinY: 4
   minForce: 0
   maxForce: 0
-  forceMultiplier: 200
+  forceMultiplier: 150
   arrowRespawnInterval: 0.3
+  arrow: {fileID: 0}
+  swipe: {x: 0, y: 0}
 --- !u!4 &145310317
 Transform:
   m_ObjectHideFlags: 0
