@@ -102,6 +102,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   despawnTimer: 5
   faceArcher: 1
+  centerRadius: 0.15
 --- !u!114 &114844896307161336
 MonoBehaviour:
   m_ObjectHideFlags: 1

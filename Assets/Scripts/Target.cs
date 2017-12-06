@@ -7,6 +7,7 @@ public class Target : MonoBehaviour
 {
     public float despawnTimer;
     public bool faceArcher;
+    public float centerRadius;
 
     private Game game;
     private Rigidbody2D rigidBody;
@@ -29,6 +30,25 @@ public class Target : MonoBehaviour
     {
         if (collision.gameObject.name.Contains("Arrow"))
         {
+            if (collision.contacts.Any())
+            {
+                Vector2 point = Vector2.zero;
+                foreach (var col in collision.contacts)
+                {
+                    point.x += col.point.x;
+                    point.y += col.point.y;
+                }
+                point.x /= collision.contacts.Count();
+                point.y /= collision.contacts.Count();
+
+                Bounds bounds = gameObject.GetComponent<Renderer>().bounds;
+
+                if (Mathf.Abs(point.x - bounds.center.x) < centerRadius * transform.localScale.x * (1 - (Mathf.Abs(transform.rotation.z) / 90)))
+                {
+                    game.BullsEye();
+                }
+            }
+
             collision.rigidbody.simulated = false;
             collision.otherRigidbody.simulated = false;
             StartCoroutine(Utils.DelayedAction(Despawn, 0.5f));

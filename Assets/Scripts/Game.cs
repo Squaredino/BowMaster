@@ -92,4 +92,9 @@ public class Game : MonoBehaviour
         arrow = Pool.Get(arrowPrefab);
         arrow.transform.position = archerPos + arrowArcherOffset;
     }
+
+    public void BullsEye()
+    {
+        Debug.Log("Bullseye");
+    }
 }
