@@ -4,21 +4,42 @@ using UnityEngine;
 
 public class Arrow : MonoBehaviour
 {
-    public float despawnTimer = 0.5f;
+    public float despawnTimer;
+    public int maxParticleLevel;
+    public int particleLevel;
 
     private Rigidbody2D rigidBody;
+    private ParticleSystem particles;
+    private ParticleSystem.MainModule main;
 
     void Start()
     {
         rigidBody = gameObject.GetComponent<Rigidbody2D>();
+        particles = gameObject.GetComponent<ParticleSystem>();
+        main = particles.main;
     }
 
     void Update()
     {
-        if (rigidBody.simulated && rigidBody.velocity.y < 0)
+        if (rigidBody.simulated && rigidBody.velocity.y > 0 && particleLevel > 0)
         {
-            rigidBody.simulated = false;
-            StartCoroutine(Utils.DelayedAction(Despawn, despawnTimer));
+            if (!particles.isEmitting)
+            {
+                particleLevel = Mathf.Min(particleLevel, maxParticleLevel);
+
+                var startSize = main.startSize;
+                startSize.constant = particleLevel / 10f;
+                main.simulationSpeed = 1 + particleLevel / 10f;
+
+                particles.Play();
+            }
+        }
+        else
+        {
+            if (particles.isEmitting)
+            {
+                particles.Stop();
+            }
         }
     }
 

@@ -15,6 +15,7 @@ public class Game : MonoBehaviour
 
     private AimAssist aimAssist;
     private Vector2 endTouchPos;
+    private int bullseyeStreak;
 
     void Start()
     {
@@ -91,10 +92,11 @@ public class Game : MonoBehaviour
 
         arrow = Pool.Get(arrowPrefab);
         arrow.transform.position = archerPos + arrowArcherOffset;
+        arrow.GetComponent<Arrow>().particleLevel = bullseyeStreak;
     }
 
-    public void BullsEye()
+    public void TargetHit(bool isBullseye = false)
     {
-        Debug.Log("Bullseye");
+        bullseyeStreak = isBullseye ? bullseyeStreak + 1 : 0;
     }
 }

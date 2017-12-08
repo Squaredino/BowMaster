@@ -28,30 +28,31 @@ public class Target : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.name.Contains("Arrow"))
+        if (collision.gameObject.name.Contains("Arrow") && collision.contacts.Any())
         {
-            if (collision.contacts.Any())
+            bool isBullseye = false;
+            Vector2 point = Vector2.zero;
+
+            foreach (var col in collision.contacts)
             {
-                Vector2 point = Vector2.zero;
-                foreach (var col in collision.contacts)
-                {
-                    point.x += col.point.x;
-                    point.y += col.point.y;
-                }
-                point.x /= collision.contacts.Count();
-                point.y /= collision.contacts.Count();
+                point.x += col.point.x;
+                point.y += col.point.y;
+            }
+            point.x /= collision.contacts.Count();
+            point.y /= collision.contacts.Count();
 
-                Bounds bounds = gameObject.GetComponent<Renderer>().bounds;
+            Bounds bounds = gameObject.GetComponent<Renderer>().bounds;
 
-                if (Mathf.Abs(point.x - bounds.center.x) < centerRadius * transform.localScale.x * (1 - (Mathf.Abs(transform.rotation.z) / 90)))
-                {
-                    game.BullsEye();
-                }
+            if (Mathf.Abs(point.x - bounds.center.x) < centerRadius * transform.localScale.x * (1 - (Mathf.Abs(transform.rotation.z) / 90)))
+            {
+                isBullseye = true;
             }
 
             collision.rigidbody.simulated = false;
             collision.otherRigidbody.simulated = false;
             StartCoroutine(Utils.DelayedAction(Despawn, 0.5f));
+
+            game.TargetHit(isBullseye);
         }
     }
 
