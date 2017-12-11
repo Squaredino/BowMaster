@@ -12,21 +12,24 @@ public class Game : MonoBehaviour
     public float arrowRespawnInterval;
     public GameObject arrow;
     public Vector2 swipe;
+    public Rect gameBounds;
 
     private AimAssist aimAssist;
-    private Vector2 endTouchPos;
+    private Vector2 startTouchPos;
+    private float swipeMagnitude;
     private int bullseyeStreak;
 
     void Start()
     {
         float cameraHeight = Camera.main.orthographicSize;
         float cameraWidth = cameraHeight * Camera.main.aspect;
+        gameBounds = new Rect(-cameraWidth, -cameraHeight, cameraWidth * 2, cameraHeight * 2);
 
         Spawner targetSpawner = new GameObject("TargetSpawner").AddComponent<Spawner>();
         targetSpawner.prefab = targetPrefab;
         targetSpawner.spawnInterval = 2f;
         targetSpawner.spawnStrategy = SpawnerStrategy.SimpleMoving;
-        targetSpawner.bounds = new Rect(-cameraWidth + .5f, -cameraHeight + .5f + targetMinY, cameraWidth * 2 - 1, cameraHeight * 2 - 1 - targetMinY); //
+        targetSpawner.bounds = new Rect(gameBounds.x + .5f, gameBounds.y + .5f + targetMinY, gameBounds.width - 1, gameBounds.height - 1 - targetMinY); //
 
         aimAssist = Instantiate(aimAssistPrefab).GetComponent<AimAssist>();
 
@@ -47,19 +50,29 @@ public class Game : MonoBehaviour
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
+            if (touch.phase == TouchPhase.Began)
+            {
+                startTouchPos = Camera.main.ScreenToWorldPoint(touch.position);
+            }
             if (touch.phase == TouchPhase.Moved)
             {
-                swipe = arrow.transform.position - Camera.main.ScreenToWorldPoint(touch.position);
+                swipe = startTouchPos - (Vector2)Camera.main.ScreenToWorldPoint(touch.position);
+                swipe = Utils.RestrictVector(swipe, minForce, maxForce);
                 arrow.transform.rotation = Quaternion.FromToRotation(new Vector2(0, 1), swipe);
             }
             if (touch.phase == TouchPhase.Ended)
             {
 #else
         {
+            if (Input.GetMouseButtonDown(0))
+            {
+                startTouchPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            }
             if (Input.GetMouseButton(0))
             {
-                swipe = arrow.transform.position - Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                arrow.transform.rotation = Quaternion.FromToRotation(new Vector2(0, 1), swipe);
+                swipe = startTouchPos - (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                swipe = Utils.RestrictVector(swipe, minForce, maxForce);
+                arrow.transform.rotation = Quaternion.FromToRotation(Vector2.up, swipe);
             }
             if (Input.GetMouseButtonUp(0))
             {
@@ -95,8 +108,8 @@ public class Game : MonoBehaviour
         arrow.GetComponent<Arrow>().particleLevel = bullseyeStreak;
     }
 
-    public void TargetHit(bool isBullseye = false)
+    public void TargetHit(bool isHit, bool isBullseye = false)
     {
-        bullseyeStreak = isBullseye ? bullseyeStreak + 1 : 0;
+        bullseyeStreak = isHit && isBullseye ? bullseyeStreak + 1 : 0;
     }
 }

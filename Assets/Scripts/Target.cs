@@ -52,7 +52,7 @@ public class Target : MonoBehaviour
             collision.otherRigidbody.simulated = false;
             StartCoroutine(Utils.DelayedAction(Despawn, 0.5f));
 
-            game.TargetHit(isBullseye);
+            game.TargetHit(true, isBullseye);
         }
     }
 

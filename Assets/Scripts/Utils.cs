@@ -10,4 +10,21 @@ public static class Utils
         yield return new WaitForSeconds(seconds);
         action();
     }
+
+    public static Vector3 RestrictVector(Vector3 vector, float minMagnitude, float maxMagnitude)
+    {
+        float magnitude = vector.magnitude;
+        if (magnitude > 0)
+        {
+            if (magnitude < minMagnitude)
+            {
+                vector *= minMagnitude / magnitude;
+            }
+            if (magnitude > maxMagnitude)
+            {
+                vector *= maxMagnitude / magnitude;
+            }
+        }
+        return vector;
+    }
 }

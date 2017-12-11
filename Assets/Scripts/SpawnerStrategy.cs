@@ -52,11 +52,12 @@ public static class SpawnerStrategy
         List<GameObject> objects = new List<GameObject>();
         GameObject obj = getMethod();
         Movement movement = obj.GetComponent<Movement>();
+        float minDist = 0.4f;
 
         List<Vector2> waypoints = new List<Vector2>();
         float yOffset = Random.value;
-        waypoints.Add(new Vector2(Random.value, yOffset));
-        waypoints.Add(new Vector2(Random.value, yOffset));
+        waypoints.Add(new Vector2(Random.Range(0, minDist), yOffset));
+        waypoints.Add(new Vector2(Random.Range(waypoints[0].x + minDist, 1), yOffset));
         if (movement != null)
         {
             movement.waypoints = waypoints;

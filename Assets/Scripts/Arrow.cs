@@ -8,12 +8,14 @@ public class Arrow : MonoBehaviour
     public int maxParticleLevel;
     public int particleLevel;
 
+    private Game game;
     private Rigidbody2D rigidBody;
     private ParticleSystem particles;
     private ParticleSystem.MainModule main;
 
     void Start()
     {
+        game = GameObject.Find("Game").GetComponent<Game>();
         rigidBody = gameObject.GetComponent<Rigidbody2D>();
         particles = gameObject.GetComponent<ParticleSystem>();
         main = particles.main;
@@ -40,6 +42,12 @@ public class Arrow : MonoBehaviour
             {
                 particles.Stop();
             }
+        }
+
+        if (!game.gameBounds.Contains(transform.position))
+        {
+            gameObject.SetActive(false);
+            game.TargetHit(false);
         }
     }
 

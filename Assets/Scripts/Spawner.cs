@@ -10,8 +10,9 @@ public class Spawner : MonoBehaviour
     public float spawnInterval;
     public SpawnerStrategy.SpawnStrategy spawnStrategy;
 
+    private Vector2 tmpVector;
+    private Movement tmpMovement;
     private float elapsedTime;
-    Movement movement;
 
     private void Start()
     {
@@ -36,19 +37,20 @@ public class Spawner : MonoBehaviour
         {
             foreach (var obj in objList) // [0; 1] -> [xMin; xMax]
             {
-                Vector2 pos = obj.transform.position;
-                pos.x = pos.x * bounds.width + bounds.xMin;
-                pos.y = pos.y * bounds.height + bounds.yMin;
-                obj.transform.position = pos;
-                movement = obj.GetComponent<Movement>();
-                if (movement != null)
+                tmpVector = obj.transform.position;
+                tmpVector.x = tmpVector.x * bounds.width + bounds.xMin;
+                tmpVector.y = tmpVector.y * bounds.height + bounds.yMin;
+                obj.transform.position = tmpVector;
+
+                tmpMovement = obj.GetComponent<Movement>();
+                if (tmpMovement != null)
                 {
-                    for (int i = 0; i < movement.waypoints.Count; i++)
+                    for (int i = 0; i < tmpMovement.waypoints.Count; i++)
                     {
-                        Vector2 point = movement.waypoints[i];
-                        point.x = point.x * bounds.width + bounds.xMin;
-                        point.y = point.y * bounds.height + bounds.yMin;
-                        movement.waypoints[i] = point;
+                        tmpVector = tmpMovement.waypoints[i];
+                        tmpVector.x = tmpVector.x * bounds.width + bounds.xMin;
+                        tmpVector.y = tmpVector.y * bounds.height + bounds.yMin;
+                        tmpMovement.waypoints[i] = tmpVector;
                     }
                 }
             }
