@@ -139,7 +139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1dd754e08ea6464ca7078a334de3a44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  arrowPrefab: {fileID: 1728026612821354, guid: a491d3d5780ea2f49bc96a520ea57362,
+  arrowPrefab: {fileID: 1637009932660826, guid: a491d3d5780ea2f49bc96a520ea57362,
     type: 2}
   targetPrefab: {fileID: 1746746088200582, guid: 29e4076cfc5b56341948bb5a451233cd,
     type: 2}
@@ -150,10 +150,16 @@ MonoBehaviour:
   targetMinY: 4
   minForce: 0.5
   maxForce: 4
-  forceMultiplier: 150
+  forceMultiplier: 500
   arrowRespawnInterval: 0.3
   arrow: {fileID: 0}
   swipe: {x: 0, y: 0}
+  gameBounds:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
 --- !u!4 &145310317
 Transform:
   m_ObjectHideFlags: 0

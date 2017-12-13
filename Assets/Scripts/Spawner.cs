@@ -7,7 +7,7 @@ public class Spawner : MonoBehaviour
 {
     public GameObject prefab;
     public Rect bounds;
-    public float spawnInterval;
+    public float spawnInterval = 0f;
     public SpawnerStrategy.SpawnStrategy spawnStrategy;
 
     private Vector2 tmpVector;
@@ -21,15 +21,18 @@ public class Spawner : MonoBehaviour
 
     private void Update()
     {
-        elapsedTime += Time.deltaTime;
-        if (elapsedTime > spawnInterval)
+        if (spawnInterval > 0f)
         {
-            Spawn();
-            elapsedTime = 0;
+            elapsedTime += Time.deltaTime;
+            if (elapsedTime > spawnInterval)
+            {
+                Spawn();
+                elapsedTime = 0f;
+            }
         }
     }
 
-    private void Spawn()
+    public void Spawn()
     {
         var objList = spawnStrategy(GetObject);
 

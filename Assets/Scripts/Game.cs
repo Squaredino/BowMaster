@@ -16,6 +16,7 @@ public class Game : MonoBehaviour
 
     private AimAssist aimAssist;
     private Vector2 startTouchPos;
+    private Spawner targetSpawner;
     private float swipeMagnitude;
     private int bullseyeStreak;
 
@@ -25,11 +26,11 @@ public class Game : MonoBehaviour
         float cameraWidth = cameraHeight * Camera.main.aspect;
         gameBounds = new Rect(-cameraWidth, -cameraHeight, cameraWidth * 2, cameraHeight * 2);
 
-        Spawner targetSpawner = new GameObject("TargetSpawner").AddComponent<Spawner>();
+        targetSpawner = new GameObject("TargetSpawner").AddComponent<Spawner>();
         targetSpawner.prefab = targetPrefab;
-        targetSpawner.spawnInterval = 2f;
         targetSpawner.spawnStrategy = SpawnerStrategy.SimpleMoving;
         targetSpawner.bounds = new Rect(gameBounds.x + .5f, gameBounds.y + .5f + targetMinY, gameBounds.width - 1, gameBounds.height - 1 - targetMinY); //
+        targetSpawner.Spawn();
 
         aimAssist = Instantiate(aimAssistPrefab).GetComponent<AimAssist>();
 
@@ -89,9 +90,7 @@ public class Game : MonoBehaviour
     private void ShootArrow(Vector2 direction)
     {
         var force = direction * forceMultiplier;
-        var rigidBody = arrow.GetComponent<Rigidbody2D>();
-        rigidBody.simulated = true;
-        rigidBody.AddForce(force);
+        arrow.GetComponent<Arrow>().Shoot(force);
         arrow = null;
         StartCoroutine(Utils.DelayedAction(RespawnArrow, arrowRespawnInterval));
     }
@@ -111,5 +110,18 @@ public class Game : MonoBehaviour
     public void TargetHit(bool isHit, bool isBullseye = false)
     {
         bullseyeStreak = isHit && isBullseye ? bullseyeStreak + 1 : 0;
+
+        if (isHit)
+        {
+            if (UnityEngine.Random.value < 0.1)
+            {
+                targetSpawner.spawnStrategy = SpawnerStrategy.SimpleMoving;
+            }
+            else
+            {
+                targetSpawner.spawnStrategy = SpawnerStrategy.Simple;
+            }
+            targetSpawner.Spawn();
+        }
     }
 }

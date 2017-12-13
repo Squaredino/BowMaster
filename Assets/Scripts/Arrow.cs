@@ -9,14 +9,17 @@ public class Arrow : MonoBehaviour
     public int particleLevel;
 
     private Game game;
-    private Rigidbody2D rigidBody;
+    private GameObject arrowHead;
+    private Rigidbody2D rigidBody, arrowHeadRigidBody;
     private ParticleSystem particles;
     private ParticleSystem.MainModule main;
 
     void Start()
     {
         game = GameObject.Find("Game").GetComponent<Game>();
+        arrowHead = transform.GetChild(0).gameObject;
         rigidBody = gameObject.GetComponent<Rigidbody2D>();
+        arrowHeadRigidBody = arrowHead.GetComponent<Rigidbody2D>();
         particles = gameObject.GetComponent<ParticleSystem>();
         main = particles.main;
     }
@@ -46,25 +49,26 @@ public class Arrow : MonoBehaviour
 
         if (!game.gameBounds.Contains(transform.position))
         {
+            Stop();
             gameObject.SetActive(false);
             game.TargetHit(false);
         }
     }
 
-    private void OnBecameInvisible()
+    public void Shoot(Vector2 force)
     {
-        //gameObject.SetActive(false);
+        rigidBody.simulated = true;
+        arrowHeadRigidBody.simulated = true;
+        rigidBody.AddForce(force);
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    public void Stop()
     {
-        if (collision.gameObject.name.Contains("Target"))
-        {
-            StartCoroutine(Utils.DelayedAction(Despawn, despawnTimer));
-        }
+        rigidBody.simulated = false;
+        arrowHeadRigidBody.simulated = false;
     }
 
-    private void Despawn()
+    public void Despawn()
     {
         gameObject.SetActive(false);
     }

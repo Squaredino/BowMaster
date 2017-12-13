@@ -37,4 +37,9 @@ public class Movement : MonoBehaviour
             transform.position = waypoints[currWaypoint++];
         }
     }
+
+    private void OnDisable()
+    {
+        waypoints.Clear();
+    }
 }

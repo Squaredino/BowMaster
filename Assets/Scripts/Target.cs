@@ -26,47 +26,20 @@ public class Target : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnEnable()
     {
-        if (collision.gameObject.name.Contains("Arrow") && collision.contacts.Any())
+        if (rigidBody)
         {
-            bool isBullseye = false;
-            Vector2 point = Vector2.zero;
-
-            foreach (var col in collision.contacts)
-            {
-                point.x += col.point.x;
-                point.y += col.point.y;
-            }
-            point.x /= collision.contacts.Count();
-            point.y /= collision.contacts.Count();
-
-            Bounds bounds = gameObject.GetComponent<Renderer>().bounds;
-
-            if (Mathf.Abs(point.x - bounds.center.x) < centerRadius * transform.localScale.x * (1 - (Mathf.Abs(transform.rotation.z) / 90)))
-            {
-                isBullseye = true;
-            }
-
-            collision.rigidbody.simulated = false;
-            collision.otherRigidbody.simulated = false;
-            StartCoroutine(Utils.DelayedAction(Despawn, 0.5f));
-
-            game.TargetHit(true, isBullseye);
+            rigidBody.simulated = true;
         }
     }
 
-    private void OnBecameVisible()
+    public void Stop()
     {
-        rigidBody.simulated = true;
+        rigidBody.simulated = false;
     }
 
-    private void OnEnable()
-    {
-        StartCoroutine(Utils.DelayedAction(Despawn, despawnTimer));
-    }
-
-    private void Despawn()
+    public void Despawn()
     {
         gameObject.SetActive(false);
     }
