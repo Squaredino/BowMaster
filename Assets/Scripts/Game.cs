@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Game : MonoBehaviour
 {
@@ -9,10 +10,12 @@ public class Game : MonoBehaviour
     public Vector2 archerPos, arrowArcherOffset;
     public float targetMinY;
     public float minForce, maxForce, forceMultiplier;
-    public float arrowRespawnInterval;
+    public float arrowRespawnInterval, targetRespawnInterval;
     public GameObject arrow;
     public Vector2 swipe;
     public Rect gameBounds;
+    public Text scoreText;
+    public int score;
 
     private AimAssist aimAssist;
     private Vector2 startTouchPos;
@@ -43,6 +46,8 @@ public class Game : MonoBehaviour
         {
             HandleInput();
         }
+
+        scoreText.text = score.ToString();
     }
 
     private void HandleInput()
@@ -121,7 +126,10 @@ public class Game : MonoBehaviour
             {
                 targetSpawner.spawnStrategy = SpawnerStrategy.Simple;
             }
+            //Utils.DelayedAction(targetSpawner.Spawn, targetRespawnInterval);
             targetSpawner.Spawn();
+
+            score += 1 + bullseyeStreak;
         }
     }
 }

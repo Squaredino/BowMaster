@@ -26,7 +26,7 @@ public class Arrow : MonoBehaviour
 
     void Update()
     {
-        if (rigidBody.simulated && rigidBody.velocity.y > 0 && particleLevel > 0)
+        if (rigidBody.simulated && particleLevel > 0)
         {
             if (!particles.isEmitting)
             {
@@ -64,7 +64,11 @@ public class Arrow : MonoBehaviour
 
     public void Stop()
     {
+        rigidBody.velocity = Vector2.zero;
+        rigidBody.angularVelocity = 0f;
         rigidBody.simulated = false;
+        arrowHeadRigidBody.velocity = Vector2.zero;
+        arrowHeadRigidBody.angularVelocity = 0f;
         arrowHeadRigidBody.simulated = false;
     }
 
