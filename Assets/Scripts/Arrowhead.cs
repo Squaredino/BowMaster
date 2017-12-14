@@ -31,6 +31,7 @@ public class Arrowhead : MonoBehaviour
         else if (collision.gameObject.name.Contains("Bullseye"))
         {
             target = collision.transform.parent.GetComponent<Target>();
+            target.ShowBullseyeText();
             bullseye = true;
         }
 

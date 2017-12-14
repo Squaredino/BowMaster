@@ -253,7 +253,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1683491166
+  randomSeed: -402085983
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3620,7 +3620,7 @@ FixedJoint2D:
   m_ConnectedRigidBody: {fileID: 50991574088913740}
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
-  m_AutoConfigureConnectedAnchor: 0
+  m_AutoConfigureConnectedAnchor: 1
   m_Anchor: {x: 0, y: 0}
   m_ConnectedAnchor: {x: 0, y: 0}
   m_DampingRatio: 0

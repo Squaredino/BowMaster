@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Target : MonoBehaviour
 {
@@ -11,11 +12,13 @@ public class Target : MonoBehaviour
 
     private Game game;
     private Rigidbody2D rigidBody;
+    private Text text;
 
     void Start()
     {
         game = GameObject.Find("Game").GetComponent<Game>();
-        rigidBody = gameObject.GetComponent<Rigidbody2D>();
+        rigidBody = GetComponent<Rigidbody2D>();
+        text = transform.Find("Canvas/BullseyeText").GetComponent<Text>();
     }
 
     void Update()
@@ -42,5 +45,10 @@ public class Target : MonoBehaviour
     public void Despawn()
     {
         gameObject.SetActive(false);
+    }
+
+    public void ShowBullseyeText()
+    {
+        text.gameObject.SetActive(true);
     }
 }

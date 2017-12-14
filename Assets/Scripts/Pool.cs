@@ -31,6 +31,14 @@ public class Pool : MonoBehaviour
                     obj.transform.position = Vector3.zero;
                     obj.transform.rotation = Quaternion.identity;
                     obj.transform.localScale = Vector3.one;
+
+                    for (int i = 0; i < obj.transform.childCount; i++)
+                    {
+                        var child = obj.transform.GetChild(i);
+                        child.transform.position = Vector3.zero;
+                        child.transform.rotation = Quaternion.identity;
+                    }
+
                     pools[prefab].availableObjects.Enqueue(obj);
                 }
             }
