@@ -44,6 +44,7 @@ public class Target : MonoBehaviour
 
     public void Despawn()
     {
+        text.gameObject.SetActive(false);
         gameObject.SetActive(false);
     }
 

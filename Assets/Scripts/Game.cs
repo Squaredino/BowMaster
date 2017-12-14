@@ -95,6 +95,7 @@ public class Game : MonoBehaviour
     private void ShootArrow(Vector2 direction)
     {
         var force = direction * forceMultiplier;
+        arrow.GetComponent<Arrow>().particleLevel = bullseyeStreak;
         arrow.GetComponent<Arrow>().Shoot(force);
         arrow = null;
         StartCoroutine(Utils.DelayedAction(RespawnArrow, arrowRespawnInterval));
@@ -109,7 +110,6 @@ public class Game : MonoBehaviour
 
         arrow = Pool.Get(arrowPrefab);
         arrow.transform.position = archerPos + arrowArcherOffset;
-        arrow.GetComponent<Arrow>().particleLevel = bullseyeStreak;
     }
 
     public void TargetHit(bool isHit, bool isBullseye = false)
