@@ -64,9 +64,14 @@ public class Pool : MonoBehaviour
         for (int i = 0; i < growSize; i++)
         {
             var obj = Instantiate(prefab);
-            obj.transform.parent = transform;
+            obj.transform.SetParent(transform);
             obj.SetActive(false);
             objects.Add(obj);
         }
+    }
+
+    private void OnDestroy()
+    {
+        pools.Clear();
     }
 }

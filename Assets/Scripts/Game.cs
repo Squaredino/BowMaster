@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Game : MonoBehaviour
@@ -38,6 +39,8 @@ public class Game : MonoBehaviour
         aimAssist = Instantiate(aimAssistPrefab).GetComponent<AimAssist>();
 
         RespawnArrow();
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     void Update()
@@ -130,6 +133,30 @@ public class Game : MonoBehaviour
             targetSpawner.Spawn();
 
             score += 1 + bullseyeStreak;
+        }
+        else
+        {
+            GameOver();
+        }
+    }
+
+    private void GameOver()
+    {
+        if (PlayerPrefs.GetInt("Highscore") < score)
+        {
+            PlayerPrefs.SetInt("Highscore", score);
+        }
+        PlayerPrefs.SetInt("LastScore", score);
+
+        SceneManager.LoadScene("gameover");
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "gameover")
+        {
+            GameObject.Find("RecordText").GetComponent<Text>().text = PlayerPrefs.GetInt("LastScore").ToString();
+            GameObject.Find("HighscoreText").GetComponent<Text>().text = string.Format("BEST: {0}", PlayerPrefs.GetInt("Highscore"));
         }
     }
 }
