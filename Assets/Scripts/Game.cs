@@ -121,22 +121,26 @@ public class Game : MonoBehaviour
 
         if (isHit)
         {
-            if (UnityEngine.Random.value < 0.1)
-            {
-                targetSpawner.spawnStrategy = SpawnerStrategy.SimpleMoving;
-            }
-            else
-            {
-                targetSpawner.spawnStrategy = SpawnerStrategy.Simple;
-            }
-            //Utils.DelayedAction(targetSpawner.Spawn, targetRespawnInterval);
-            targetSpawner.Spawn();
+            SetSpawnerStrategy();
+            StartCoroutine(Utils.DelayedAction(targetSpawner.Spawn, targetRespawnInterval));
 
             score += 1 + bullseyeStreak;
         }
         else
         {
             GameOver();
+        }
+    }
+
+    private void SetSpawnerStrategy()
+    {
+        if (UnityEngine.Random.value < 0.1)
+        {
+            targetSpawner.spawnStrategy = SpawnerStrategy.SimpleMoving;
+        }
+        else
+        {
+            targetSpawner.spawnStrategy = SpawnerStrategy.Simple;
         }
     }
 
@@ -148,12 +152,12 @@ public class Game : MonoBehaviour
         }
         PlayerPrefs.SetInt("LastScore", score);
 
-        SceneManager.LoadScene("gameover");
+        SceneManager.LoadScene("GameOverScreen");
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name == "gameover")
+        if (scene.name == "GameOverScreen")
         {
             GameObject.Find("RecordText").GetComponent<Text>().text = PlayerPrefs.GetInt("LastScore").ToString();
             GameObject.Find("HighscoreText").GetComponent<Text>().text = string.Format("BEST: {0}", PlayerPrefs.GetInt("Highscore"));

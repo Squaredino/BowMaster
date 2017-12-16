@@ -148,7 +148,7 @@ MonoBehaviour:
   archerPos: {x: 0, y: -3}
   arrowArcherOffset: {x: 0, y: 0.5}
   targetMinY: 5
-  minForce: 1
+  minForce: 0.5
   maxForce: 4
   forceMultiplier: 750
   arrowRespawnInterval: 0.3

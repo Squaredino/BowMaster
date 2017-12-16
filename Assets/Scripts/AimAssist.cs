@@ -14,7 +14,7 @@ public class AimAssist : MonoBehaviour
     void Start()
     {
         parentObj = new GameObject("AimAssistParent");
-        transform.parent = parentObj.transform;
+        transform.SetParent(parentObj.transform);
         render = gameObject.GetComponent<Renderer>();
         game = GameObject.Find("Game").GetComponent<Game>();
     }
