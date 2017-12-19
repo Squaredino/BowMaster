@@ -17,12 +17,16 @@ public class Game : MonoBehaviour
     public Rect gameBounds;
     public Text scoreText;
     public int score;
+    public GameObject timerBarObj;
+    public float timerTotalStart;
+    public float timerHitBonus, timerBullseyeBonus;
 
     private AimAssist aimAssist;
     private Vector2 startTouchPos;
     private Spawner targetSpawner;
     private float swipeMagnitude;
     private int bullseyeStreak;
+    private TimerBar timerBar;
 
     void Start()
     {
@@ -38,6 +42,11 @@ public class Game : MonoBehaviour
 
         aimAssist = Instantiate(aimAssistPrefab).GetComponent<AimAssist>();
 
+        timerBar = timerBarObj.GetComponent<TimerBar>();
+        timerBar.ShowTimer();
+        timerBar.StartTimer(timerTotalStart);
+        timerBar.TimerOver += GameOver;
+
         RespawnArrow();
 
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -51,6 +60,8 @@ public class Game : MonoBehaviour
         }
 
         scoreText.text = score.ToString();
+
+        timerBar.SetTotalTime(timerTotalStart - Mathf.Sqrt(score / 10f));
     }
 
     private void HandleInput()
@@ -125,10 +136,8 @@ public class Game : MonoBehaviour
             StartCoroutine(Utils.DelayedAction(targetSpawner.Spawn, targetRespawnInterval));
 
             score += 1 + bullseyeStreak;
-        }
-        else
-        {
-            GameOver();
+
+            timerBar.AddTime(isBullseye ? timerBullseyeBonus : timerHitBonus);
         }
     }
 
