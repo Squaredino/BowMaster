@@ -18,6 +18,17 @@ public static class SpawnerStrategy
         return objects;
     }
 
+    public static List<GameObject> First(GetObject getMethod)
+    {
+        List<GameObject> objects = new List<GameObject>();
+        GameObject obj = getMethod();
+
+        obj.transform.position = new Vector2(0.5f, 0.3f);
+        objects.Add(obj);
+
+        return objects;
+    }
+
     public static List<GameObject> HalfSized(GetObject getMethod)
     {
         List<GameObject> objects = new List<GameObject>();

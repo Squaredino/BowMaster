@@ -24,17 +24,18 @@ public class AimAssist : MonoBehaviour
         if (game.arrow != null)
         {
             render.enabled = true;
+
             transform.localPosition = Vector3.up * game.arrow.GetComponent<Renderer>().bounds.extents.y;
             parentObj.transform.position = game.arrow.transform.position;
             parentObj.transform.rotation = game.arrow.transform.rotation;
+
+            tmpVector = transform.localScale;
+            tmpVector.y = game.swipe.magnitude * scaleModifier;
+            transform.localScale = tmpVector;
         }
         else
         {
             render.enabled = false;
         }
-
-        tmpVector = transform.localScale;
-        tmpVector.y = game.swipe.magnitude * scaleModifier;
-        transform.localScale = tmpVector;
     }
 }

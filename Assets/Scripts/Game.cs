@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class Game : MonoBehaviour
 {
@@ -16,17 +17,19 @@ public class Game : MonoBehaviour
     public Vector2 swipe;
     public Rect gameBounds;
     public Text scoreText;
-    public int score;
+    public int score, bullseyeStreak;
+    public GameObject crown;
     public GameObject timerBarObj;
     public float timerTotalStart;
     public float timerHitBonus, timerBullseyeBonus;
+    public Color cameraDefaultColor, cameraHitColor, cameraBullseyeColor;
 
-    private AimAssist aimAssist;
     private Vector2 startTouchPos;
     private Spawner targetSpawner;
     private float swipeMagnitude;
-    private int bullseyeStreak;
     private TimerBar timerBar;
+    private bool gameStarted = false;
+    private bool isArrowFlying = false;
 
     void Start()
     {
@@ -36,16 +39,18 @@ public class Game : MonoBehaviour
 
         targetSpawner = new GameObject("TargetSpawner").AddComponent<Spawner>();
         targetSpawner.prefab = targetPrefab;
-        targetSpawner.spawnStrategy = SpawnerStrategy.SimpleMoving;
-        targetSpawner.bounds = new Rect(gameBounds.x + .5f, gameBounds.y + .5f + targetMinY, gameBounds.width - 1, gameBounds.height - 1 - targetMinY); //
+        targetSpawner.spawnStrategy = SpawnerStrategy.First;
+        targetSpawner.bounds = new Rect(gameBounds.x + 1f, gameBounds.y + 1f + targetMinY, gameBounds.width - 2f, gameBounds.height - 2 - targetMinY); //
         targetSpawner.Spawn();
 
-        aimAssist = Instantiate(aimAssistPrefab).GetComponent<AimAssist>();
+        Instantiate(aimAssistPrefab).GetComponent<AimAssist>();
+
+        Camera.main.backgroundColor = cameraDefaultColor;
 
         timerBar = timerBarObj.GetComponent<TimerBar>();
         timerBar.ShowTimer();
-        timerBar.StartTimer(timerTotalStart);
-        timerBar.TimerOver += GameOver;
+
+        scoreText.text = PlayerPrefs.GetInt("Highscore").ToString();
 
         RespawnArrow();
 
@@ -59,9 +64,19 @@ public class Game : MonoBehaviour
             HandleInput();
         }
 
-        scoreText.text = score.ToString();
+        if (gameStarted)
+        {
+            scoreText.text = score.ToString();
+        }
 
-        timerBar.SetTotalTime(timerTotalStart - Mathf.Sqrt(score / 10f));
+        if (timerBar.IsTimerOver() && !isArrowFlying)
+        {
+            GameOver();
+        }
+        else
+        {
+            timerBar.SetTotalTime(timerTotalStart - score / 50f);
+        }
     }
 
     private void HandleInput()
@@ -100,6 +115,10 @@ public class Game : MonoBehaviour
                 if (swipe.y > 0)
                 {
                     ShootArrow(swipe);
+                    if (!gameStarted)
+                    {
+                        StartGame();
+                    }
                     swipe = Vector2.zero;
                 }
             }
@@ -109,8 +128,10 @@ public class Game : MonoBehaviour
     private void ShootArrow(Vector2 direction)
     {
         var force = direction * forceMultiplier;
-        arrow.GetComponent<Arrow>().particleLevel = bullseyeStreak;
-        arrow.GetComponent<Arrow>().Shoot(force);
+        var arrowScript = arrow.GetComponent<Arrow>();
+        arrowScript.particleLevel = bullseyeStreak;
+        arrowScript.Shoot(force);
+        isArrowFlying = true;
         arrow = null;
         StartCoroutine(Utils.DelayedAction(RespawnArrow, arrowRespawnInterval));
     }
@@ -136,9 +157,15 @@ public class Game : MonoBehaviour
             StartCoroutine(Utils.DelayedAction(targetSpawner.Spawn, targetRespawnInterval));
 
             score += 1 + bullseyeStreak;
+            scoreText.transform.DOPunchScale(Vector3.one * Mathf.Min(bullseyeStreak / 10f, 1), 0.3f);
 
             timerBar.AddTime(isBullseye ? timerBullseyeBonus : timerHitBonus);
+
+            Camera.main.DOColor(isBullseye ? cameraBullseyeColor : cameraHitColor, 0.1f).OnComplete(() =>
+                Camera.main.DOColor(cameraDefaultColor, 0.1f));
         }
+
+        isArrowFlying = false;
     }
 
     private void SetSpawnerStrategy()
@@ -151,6 +178,13 @@ public class Game : MonoBehaviour
         {
             targetSpawner.spawnStrategy = SpawnerStrategy.Simple;
         }
+    }
+
+    private void StartGame()
+    {
+        crown.GetComponent<SpriteRenderer>().DOFade(0f, 0.5f).OnComplete(() => crown.SetActive(false));
+        timerBar.StartTimer(timerTotalStart);
+        gameStarted = true;
     }
 
     private void GameOver()
@@ -169,7 +203,7 @@ public class Game : MonoBehaviour
         if (scene.name == "GameOverScreen")
         {
             GameObject.Find("RecordText").GetComponent<Text>().text = PlayerPrefs.GetInt("LastScore").ToString();
-            GameObject.Find("HighscoreText").GetComponent<Text>().text = string.Format("BEST: {0}", PlayerPrefs.GetInt("Highscore"));
+            GameObject.Find("HighscoreText").GetComponent<Text>().text = PlayerPrefs.GetInt("Highscore").ToString();
         }
     }
 }
