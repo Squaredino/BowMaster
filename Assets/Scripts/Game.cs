@@ -23,6 +23,7 @@ public class Game : MonoBehaviour
     public float timerTotalStart;
     public float timerHitBonus, timerBullseyeBonus;
     public Color cameraDefaultColor, cameraHitColor, cameraBullseyeColor;
+    public bool reverseControls;
 
     private Vector2 startTouchPos;
     private Spawner targetSpawner;
@@ -33,14 +34,15 @@ public class Game : MonoBehaviour
 
     void Start()
     {
+        float gameAspect = Mathf.Min(0.5f, Camera.main.aspect);
         float cameraHeight = Camera.main.orthographicSize;
-        float cameraWidth = cameraHeight * Camera.main.aspect;
+        float cameraWidth = cameraHeight * gameAspect;
         gameBounds = new Rect(-cameraWidth, -cameraHeight, cameraWidth * 2, cameraHeight * 2);
 
         targetSpawner = new GameObject("TargetSpawner").AddComponent<Spawner>();
         targetSpawner.prefab = targetPrefab;
         targetSpawner.spawnStrategy = SpawnerStrategy.First;
-        targetSpawner.bounds = new Rect(gameBounds.x + 1f, gameBounds.y + 1f + targetMinY, gameBounds.width - 2f, gameBounds.height - 2 - targetMinY); //
+        targetSpawner.bounds = new Rect(gameBounds.x, gameBounds.y + targetMinY, gameBounds.width, gameBounds.height - targetMinY); //
         targetSpawner.Spawn();
 
         Instantiate(aimAssistPrefab).GetComponent<AimAssist>();
@@ -93,6 +95,7 @@ public class Game : MonoBehaviour
             {
                 swipe = startTouchPos - (Vector2)Camera.main.ScreenToWorldPoint(touch.position);
                 swipe = Utils.RestrictVector(swipe, minForce, maxForce);
+                swipe = reverseControls ? -swipe : swipe;
                 arrow.transform.rotation = Quaternion.FromToRotation(new Vector2(0, 1), swipe);
             }
             if (touch.phase == TouchPhase.Ended)
@@ -107,6 +110,7 @@ public class Game : MonoBehaviour
             {
                 swipe = startTouchPos - (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 swipe = Utils.RestrictVector(swipe, minForce, maxForce);
+                swipe = reverseControls ? -swipe : swipe;
                 arrow.transform.rotation = Quaternion.FromToRotation(Vector2.up, swipe);
             }
             if (Input.GetMouseButtonUp(0))
@@ -182,7 +186,7 @@ public class Game : MonoBehaviour
 
     private void StartGame()
     {
-        crown.GetComponent<SpriteRenderer>().DOFade(0f, 0.5f).OnComplete(() => crown.SetActive(false));
+        crown.GetComponent<Image>().DOFade(0f, 0.5f).OnComplete(() => crown.SetActive(false));
         timerBar.StartTimer(timerTotalStart);
         gameStarted = true;
     }
@@ -195,15 +199,11 @@ public class Game : MonoBehaviour
         }
         PlayerPrefs.SetInt("LastScore", score);
 
-        SceneManager.LoadScene("GameOverScreen");
+        SceneManager.LoadScene("Game"); //("GameOverScreen");
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name == "GameOverScreen")
-        {
-            GameObject.Find("RecordText").GetComponent<Text>().text = PlayerPrefs.GetInt("LastScore").ToString();
-            GameObject.Find("HighscoreText").GetComponent<Text>().text = PlayerPrefs.GetInt("Highscore").ToString();
-        }
+        
     }
 }
