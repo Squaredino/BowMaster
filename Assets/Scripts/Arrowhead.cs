@@ -20,6 +20,11 @@ public class Arrowhead : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (!GetComponent<Rigidbody2D>().simulated)
+        {
+            return;
+        }
+
         Target target = null;
         bool bullseye = false;
 

@@ -27,7 +27,7 @@ public class Game : MonoBehaviour
 
     private Vector2 startTouchPos;
     private Spawner targetSpawner;
-    private float swipeMagnitude;
+    private float swipeMagnitude, swipeTime;
     private TimerBar timerBar;
     private bool gameStarted = false;
     private bool isArrowFlying = false;
@@ -42,7 +42,7 @@ public class Game : MonoBehaviour
         targetSpawner = new GameObject("TargetSpawner").AddComponent<Spawner>();
         targetSpawner.prefab = targetPrefab;
         targetSpawner.spawnStrategy = SpawnerStrategy.First;
-        targetSpawner.bounds = new Rect(gameBounds.x, gameBounds.y + targetMinY, gameBounds.width, gameBounds.height - targetMinY); //
+        targetSpawner.bounds = new Rect(gameBounds.x + .5f, gameBounds.y + .5f + targetMinY, gameBounds.width - 1f, gameBounds.height - 1f - targetMinY); //
         targetSpawner.Spawn();
 
         Instantiate(aimAssistPrefab).GetComponent<AimAssist>();
@@ -105,12 +105,14 @@ public class Game : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 startTouchPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                swipeTime = 0f;
             }
             if (Input.GetMouseButton(0))
             {
                 swipe = startTouchPos - (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 swipe = Utils.RestrictVector(swipe, minForce, maxForce);
                 swipe = reverseControls ? -swipe : swipe;
+                swipeTime += Time.deltaTime;
                 arrow.transform.rotation = Quaternion.FromToRotation(Vector2.up, swipe);
             }
             if (Input.GetMouseButtonUp(0))
@@ -118,7 +120,8 @@ public class Game : MonoBehaviour
 #endif
                 if (swipe.y > 0)
                 {
-                    ShootArrow(swipe);
+                    var k = minForce + (Mathf.Max(maxForce - minForce - Mathf.Max(swipeTime - 0.1f, 0f) * 20, 0f));
+                    ShootArrow(swipe.normalized * k);
                     if (!gameStarted)
                     {
                         StartGame();
@@ -161,12 +164,16 @@ public class Game : MonoBehaviour
             StartCoroutine(Utils.DelayedAction(targetSpawner.Spawn, targetRespawnInterval));
 
             score += 1 + bullseyeStreak;
-            scoreText.transform.DOPunchScale(Vector3.one * Mathf.Min(bullseyeStreak / 10f, 1), 0.3f);
+            scoreText.transform.DOPunchScale(Vector3.one * Mathf.Min(0.5f + bullseyeStreak / 10f, 1.5f), 0.3f);
 
             timerBar.AddTime(isBullseye ? timerBullseyeBonus : timerHitBonus);
 
             Camera.main.DOColor(isBullseye ? cameraBullseyeColor : cameraHitColor, 0.1f).OnComplete(() =>
                 Camera.main.DOColor(cameraDefaultColor, 0.1f));
+        }
+        else
+        {
+            GameOver();
         }
 
         isArrowFlying = false;
