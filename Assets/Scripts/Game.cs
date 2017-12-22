@@ -122,9 +122,8 @@ public class Game : MonoBehaviour
 #endif
                 if (swipe.y > 0)
                 {
-                    swipeTime = Mathf.Min(Mathf.Max(swipeTime, minSwipeTime), maxSwipeTime); //
-                    ShootArrow(swipe, maxSwipeTime - swipeTime); //TODO
-                    //////////////////////////////////////////////////
+                    swipeTime = Mathf.Min(Mathf.Max(swipeTime, minSwipeTime), maxSwipeTime);
+                    ShootArrow(swipe, (maxSwipeTime - swipeTime) * forceMultiplier); 
 
                     if (!gameStarted)
                     {
