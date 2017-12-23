@@ -9,13 +9,12 @@ using DG.Tweening;
 public class Game : MonoBehaviour
 {
     public const float gameAspect = .5f;
-    public const float gameFieldPadding = .5f;
     public const float minScorePunch = .5f, maxScorePunch = 1.5f;
 
     public GameObject arrowPrefab, targetPrefab, aimAssistPrefab;
     public Vector2 archerPos, arrowArcherOffset;
-    public float targetMinHeight;
-    public float minSwipeTime, maxSwipeTime, forceMultiplier;
+    public float minSwipeTime, maxSwipeTime;
+    public float minForce, maxForce, forceMultiplier;
     public float arrowRespawnInterval, targetRespawnInterval;
     public GameObject arrow;
     public Vector2 swipe;
@@ -28,6 +27,7 @@ public class Game : MonoBehaviour
     public float timeReductionPerHit;
     public Color cameraDefaultColor, cameraHitColor, cameraBullseyeColor;
     public bool reverseControls;
+    public float targetAreaPadLeft, targetAreaPadTop, targetAreaPadRight, targetAreaPadBottom;
 
     private Vector2 startTouchPos;
     private Spawner targetSpawner;
@@ -36,6 +36,7 @@ public class Game : MonoBehaviour
     private int targetHits = 0;
     private bool gameStarted = false;
     private bool isArrowFlying = false;
+    private float forceCoef;
 
     void Start()
     {
@@ -47,15 +48,17 @@ public class Game : MonoBehaviour
         targetSpawner.prefab = targetPrefab;
         targetSpawner.spawnStrategy = SpawnerStrategy.First;
         targetSpawner.bounds = new Rect(
-            gameBounds.x + gameFieldPadding,
-            gameBounds.y + gameFieldPadding + targetMinHeight,
-            gameBounds.width - gameFieldPadding * 2,
-            gameBounds.height - gameFieldPadding * 2 - targetMinHeight);
+            gameBounds.x + targetAreaPadLeft,
+            gameBounds.y + targetAreaPadBottom,
+            gameBounds.width - targetAreaPadLeft - targetAreaPadRight,
+            gameBounds.height - targetAreaPadTop - targetAreaPadBottom);
         targetSpawner.Spawn();
 
         //Instantiate(aimAssistPrefab).GetComponent<AimAssist>();
 
         Camera.main.backgroundColor = cameraDefaultColor;
+
+        forceCoef = (maxForce - minForce) / (maxSwipeTime - minSwipeTime);
 
         timerBar = timerBarObj.GetComponent<TimerBar>();
         timerBar.ShowTimer();
@@ -99,7 +102,7 @@ public class Game : MonoBehaviour
                 swipe = startTouchPos - (Vector2)Camera.main.ScreenToWorldPoint(touch.position);
                 swipe = reverseControls ? -swipe : swipe;
                 swipeTime += Time.deltaTime;
-                arrow.transform.rotation = Quaternion.FromToRotation(new Vector2(0, 1), swipe);
+                arrow.transform.rotation = Quaternion.FromToRotation(Vector2.up, swipe);
             }
             if (touch.phase == TouchPhase.Ended)
             {
@@ -123,7 +126,8 @@ public class Game : MonoBehaviour
                 if (swipe.y > 0)
                 {
                     swipeTime = Mathf.Min(Mathf.Max(swipeTime, minSwipeTime), maxSwipeTime);
-                    ShootArrow(swipe, (maxSwipeTime - swipeTime) * forceMultiplier); 
+                    var force = Mathf.Min(Mathf.Max(forceCoef * (maxSwipeTime - swipeTime), minForce), maxForce);
+                    ShootArrow(swipe, force * forceMultiplier); 
 
                     if (!gameStarted)
                     {
