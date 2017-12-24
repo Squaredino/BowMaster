@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Arrow : MonoBehaviour
 {
+    public const float particleSizeMin = .5f, particleSizeGrow = .2f;
+
     public float despawnTimer;
     public int maxParticleLevel;
     public int particleLevel;
@@ -33,8 +35,10 @@ public class Arrow : MonoBehaviour
                 particleLevel = Mathf.Min(particleLevel, maxParticleLevel);
 
                 var startSize = main.startSize;
-                startSize.constant = particleLevel / 10f;
-                main.simulationSpeed = 1 + particleLevel / 10f;
+                startSize.constant = particleSizeMin + particleLevel * particleSizeGrow;
+                main.startSize = startSize;
+
+                //main.simulationSpeed = 1 + particleLevel / 10f;
 
                 particles.Play();
             }
@@ -64,11 +68,7 @@ public class Arrow : MonoBehaviour
 
     public void Stop()
     {
-        rigidBody.velocity = Vector2.zero;
-        rigidBody.angularVelocity = 0f;
         rigidBody.simulated = false;
-        arrowHeadRigidBody.velocity = Vector2.zero;
-        arrowHeadRigidBody.angularVelocity = 0f;
         arrowHeadRigidBody.simulated = false;
     }
 

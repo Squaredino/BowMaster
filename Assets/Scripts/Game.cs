@@ -9,7 +9,7 @@ using DG.Tweening;
 public class Game : MonoBehaviour
 {
     public const float gameAspect = .5f;
-    public const float minScorePunch = .5f, maxScorePunch = 1.5f;
+    public const float minScorePunch = .5f, maxScorePunch = 1.5f, scorePunchDuration = 0.3f;
 
     public GameObject arrowPrefab, targetPrefab, aimAssistPrefab;
     public Vector2 archerPos, arrowArcherOffset;
@@ -23,7 +23,7 @@ public class Game : MonoBehaviour
     public int score, bullseyeStreak;
     public GameObject crown;
     public GameObject timerBarObj;
-    public float timerTotalStart;
+    public float timerStartTime, timerMinTime;
     public float timeReductionPerHit;
     public Color cameraDefaultColor, cameraHitColor, cameraBullseyeColor;
     public bool reverseControls;
@@ -123,6 +123,10 @@ public class Game : MonoBehaviour
             if (Input.GetMouseButtonUp(0))
             {
 #endif
+                swipe = startTouchPos - (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                swipe = reverseControls ? -swipe : swipe;
+                swipeTime += Time.deltaTime;
+                arrow.transform.rotation = Quaternion.FromToRotation(Vector2.up, swipe);
                 if (swipe.y > 0)
                 {
                     swipeTime = Mathf.Min(Mathf.Max(swipeTime, minSwipeTime), maxSwipeTime);
@@ -171,9 +175,9 @@ public class Game : MonoBehaviour
 
             bullseyeStreak = isBullseye ? bullseyeStreak + 1 : 0;
             score += 1 + bullseyeStreak;
-            scoreText.transform.DOPunchScale(Vector3.one * Mathf.Min(minScorePunch + bullseyeStreak / 10f, maxScorePunch), 0.3f);
+            scoreText.transform.DOPunchScale(Vector3.one * Mathf.Min(minScorePunch + bullseyeStreak / 10f, maxScorePunch), scorePunchDuration);
             
-            timerBar.StartTimer(Mathf.Max(timerTotalStart - timeReductionPerHit * targetHits, 1f));
+            timerBar.StartTimer(Mathf.Max(timerStartTime - timeReductionPerHit * targetHits, timerMinTime));
 
             Camera.main.DOColor(isBullseye ? cameraBullseyeColor : cameraHitColor, 0.1f).OnComplete(() =>
                 Camera.main.DOColor(cameraDefaultColor, 0.1f));
@@ -204,7 +208,7 @@ public class Game : MonoBehaviour
     private void StartGame()
     {
         crown.GetComponent<Image>().DOFade(0f, 0.5f).OnComplete(() => crown.SetActive(false));
-        timerBar.StartTimer(timerTotalStart);
+        timerBar.StartTimer(timerStartTime);
         gameStarted = true;
     }
 

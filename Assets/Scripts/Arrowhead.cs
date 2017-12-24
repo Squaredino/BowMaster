@@ -20,7 +20,7 @@ public class Arrowhead : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (!GetComponent<Rigidbody2D>().simulated)
+        if (!collision.rigidbody.simulated || !collision.otherRigidbody.simulated)
         {
             return;
         }

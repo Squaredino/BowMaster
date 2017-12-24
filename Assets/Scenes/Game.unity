@@ -149,12 +149,12 @@ MonoBehaviour:
   archerPos: {x: 0, y: -3}
   arrowArcherOffset: {x: 0, y: 0.5}
   minSwipeTime: 0.1
-  maxSwipeTime: 0.3
+  maxSwipeTime: 0.4
   minForce: 1
   maxForce: 3
-  forceMultiplier: 750
-  arrowRespawnInterval: 0.3
-  targetRespawnInterval: 0.5
+  forceMultiplier: 1000
+  arrowRespawnInterval: 0.2
+  targetRespawnInterval: 0.4
   arrow: {fileID: 0}
   swipe: {x: 0, y: 0}
   gameBounds:
@@ -168,7 +168,8 @@ MonoBehaviour:
   bullseyeStreak: 0
   crown: {fileID: 522800121}
   timerBarObj: {fileID: 1770619058}
-  timerTotalStart: 5
+  timerStartTime: 5
+  timerMinTime: 1
   timeReductionPerHit: 0.1
   cameraDefaultColor: {r: 0.025659185, g: 0, b: 0.33823532, a: 1}
   cameraHitColor: {r: 0.8627451, g: 0.8627451, b: 1, a: 1}
@@ -177,7 +178,7 @@ MonoBehaviour:
   targetAreaPadLeft: 0.5
   targetAreaPadTop: 1
   targetAreaPadRight: 0.5
-  targetAreaPadBottom: 4
+  targetAreaPadBottom: 5
 --- !u!4 &145310317
 Transform:
   m_ObjectHideFlags: 0
@@ -232,7 +233,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.89705884, g: 0.89705884, b: 0.89705884, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -788,7 +789,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: f324260858bba3640a61832f73afe842, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 879c5702e1b48894c9ec84b2d784c105, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1

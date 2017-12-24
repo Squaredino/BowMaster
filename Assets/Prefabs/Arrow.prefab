@@ -179,8 +179,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcbc738687347ba438c6d03835f78234, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  despawnTimer: 0.5
-  maxParticleLevel: 3
+  despawnTimer: 0.4
+  maxParticleLevel: 5
   particleLevel: 0
 --- !u!114 &114458708724853602
 MonoBehaviour:
@@ -253,7 +253,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1680126683
+  randomSeed: -741378613
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -343,7 +343,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.32352942, g: 0.3561865, b: 1, a: 1}
+      maxColor: {r: 1, g: 0.2559838, b: 0.03676468, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -813,7 +813,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 10
+      scalar: 50
       minScalar: 10
       maxCurve:
         serializedVersion: 2

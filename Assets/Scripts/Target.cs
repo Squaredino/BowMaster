@@ -12,13 +12,14 @@ public class Target : MonoBehaviour
     public float centerRadius;
 
     private Game game;
-    private Rigidbody2D rigidBody;
+    private Rigidbody2D rigidBody, bullseyeRigidBody;
     private Text text;
 
     void Start()
     {
         game = GameObject.Find("Game").GetComponent<Game>();
         rigidBody = GetComponent<Rigidbody2D>();
+        bullseyeRigidBody = transform.Find("Bullseye").GetComponent<Rigidbody2D>();
         text = transform.Find("Canvas/BullseyeText").GetComponent<Text>();
     }
 
@@ -35,12 +36,14 @@ public class Target : MonoBehaviour
         if (rigidBody)
         {
             rigidBody.simulated = true;
+            bullseyeRigidBody.simulated = true;
         }
     }
 
     public void Stop()
     {
         rigidBody.simulated = false;
+        bullseyeRigidBody.simulated = false;
     }
 
     public void Despawn()
