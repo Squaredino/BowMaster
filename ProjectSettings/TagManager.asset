@@ -41,12 +41,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Background
-    uniqueID: 2853473065
+  - name: target
+    uniqueID: 1007694681
     locked: 0
-  - name: Target
-    uniqueID: 3431095917
-    locked: 0
-  - name: Arrow
-    uniqueID: 2602125869
+  - name: arrow
+    uniqueID: 2060037909
     locked: 0
