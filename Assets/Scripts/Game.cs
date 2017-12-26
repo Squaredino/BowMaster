@@ -8,7 +8,7 @@ using DG.Tweening;
 
 public class Game : MonoBehaviour
 {
-    public const float gameAspect = .5f;
+    public const float gameAspect = 9f/16f;
     public const float minScorePunch = .5f, maxScorePunch = 1.5f, scorePunchDuration = 0.3f;
 
     public GameObject arrowPrefab, targetPrefab, aimAssistPrefab;
@@ -195,9 +195,18 @@ public class Game : MonoBehaviour
 
     private void SetSpawnerStrategy()
     {
-        if (UnityEngine.Random.value < 0.1)
+        var random = UnityEngine.Random.value;
+        if (random < 0.1)
         {
             targetSpawner.spawnStrategy = SpawnerStrategy.SimpleMoving;
+        }
+        else if (random < 0.15)
+        {
+            targetSpawner.spawnStrategy = SpawnerStrategy.SimpleMovingVertical;
+        }
+        else if (random < 0.2)
+        {
+            targetSpawner.spawnStrategy = SpawnerStrategy.HalfSized;
         }
         else
         {
