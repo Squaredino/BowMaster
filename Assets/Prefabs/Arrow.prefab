@@ -179,7 +179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcbc738687347ba438c6d03835f78234, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  despawnTimer: 0.4
+  despawnTimer: 0.3
   maxParticleLevel: 5
   particleLevel: 0
 --- !u!114 &114458708724853602

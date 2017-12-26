@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Arrow : MonoBehaviour
 {
     public const float particleSizeMin = .5f, particleSizeGrow = .2f;
+    public const float fadeInDuration = 0.1f, fadeOutDuration = 0.1f;
 
     public float despawnTimer;
     public int maxParticleLevel;
@@ -66,6 +68,13 @@ public class Arrow : MonoBehaviour
         rigidBody.AddForce(force);
     }
 
+    private void OnEnable()
+    {
+        var scale = transform.localScale;
+        transform.localScale = Vector3.zero;
+        transform.DOScale(scale, fadeInDuration);
+    }
+
     public void Stop()
     {
         rigidBody.simulated = false;
@@ -74,6 +83,6 @@ public class Arrow : MonoBehaviour
 
     public void Despawn()
     {
-        gameObject.SetActive(false);
+        transform.DOScale(Vector3.zero, fadeOutDuration).OnComplete(() => gameObject.SetActive(false));
     }
 }

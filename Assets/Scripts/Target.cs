@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class Target : MonoBehaviour
 {
+    public const float fadeInDuration = 0.2f, fadeOutDuration = 0.2f;
+
     public float despawnTimer;
     public bool faceArcher;
     public float centerRadius;
@@ -38,6 +40,10 @@ public class Target : MonoBehaviour
             rigidBody.simulated = true;
             bullseyeRigidBody.simulated = true;
         }
+
+        var scale = transform.localScale;
+        transform.localScale = Vector3.zero;
+        transform.DOScale(scale, fadeInDuration);
     }
 
     public void Stop()
@@ -48,6 +54,11 @@ public class Target : MonoBehaviour
 
     public void Despawn()
     {
+        transform.DOScale(Vector3.zero, fadeOutDuration).OnComplete(Deactivate);
+    }
+
+    private void Deactivate()
+    { 
         text.gameObject.SetActive(false);
         gameObject.SetActive(false);
     }

@@ -171,7 +171,7 @@ MonoBehaviour:
   timerStartTime: 5
   timerMinTime: 1
   timeReductionPerHit: 0.1
-  cameraDefaultColor: {r: 0.025659185, g: 0, b: 0.33823532, a: 1}
+  cameraDefaultColor: {r: 0.08513929, g: 0, b: 0.14705884, a: 1}
   cameraHitColor: {r: 0, g: 0, b: 0.52205884, a: 1}
   cameraBullseyeColor: {r: 0.28676468, g: 0, b: 0, a: 1}
   reverseControls: 1
@@ -204,6 +204,7 @@ GameObject:
   - component: {fileID: 226661528}
   - component: {fileID: 226661527}
   - component: {fileID: 226661531}
+  - component: {fileID: 226661532}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -290,6 +291,27 @@ MonoBehaviour:
   _gameWidth: 16
   _isChangeCameraSize: 0
   _isNeverSleep: 1
+--- !u!114 &226661532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 226661526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dc9e4a4560b8b04eb94d47b1c181149, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  allowDrag: 1
+  frequency: 0.5
+  nbDecimal: 1
+  startRect:
+    serializedVersion: 2
+    x: 5
+    y: 5
+    width: 75
+    height: 30
+  updateColor: 1
 --- !u!1 &329923598
 GameObject:
   m_ObjectHideFlags: 0

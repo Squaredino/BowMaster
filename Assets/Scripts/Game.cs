@@ -10,6 +10,7 @@ public class Game : MonoBehaviour
 {
     public const float gameAspect = 9f/16f;
     public const float minScorePunch = .5f, maxScorePunch = 1.5f, scorePunchDuration = 0.3f;
+    public const float cameraShakeDuration = 0.2f, cameraShakeStrength = 0.1f, cameraShakeVibratio = 30f;
 
     public GameObject arrowPrefab, targetPrefab, aimAssistPrefab;
     public Vector2 archerPos, arrowArcherOffset;
@@ -179,8 +180,13 @@ public class Game : MonoBehaviour
             
             timerBar.StartTimer(Mathf.Max(timerStartTime - timeReductionPerHit * targetHits, timerMinTime));
 
-            Camera.main.DOColor(isBullseye ? cameraBullseyeColor : cameraHitColor, 0.1f).OnComplete(() =>
-                Camera.main.DOColor(cameraDefaultColor, 0.1f));
+            if (isBullseye)
+            {
+                Camera.main.DOShakePosition(cameraShakeDuration, cameraShakeStrength, (int)cameraShakeVibratio);
+            }
+
+            //Camera.main.DOColor(isBullseye ? cameraBullseyeColor : cameraHitColor, 0.1f).OnComplete(() =>
+            //    Camera.main.DOColor(cameraDefaultColor, 0.1f));
 
             SetSpawnerStrategy();
             StartCoroutine(Utils.DelayedAction(targetSpawner.Spawn, targetRespawnInterval));
