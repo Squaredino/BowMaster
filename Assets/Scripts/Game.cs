@@ -8,9 +8,10 @@ using DG.Tweening;
 
 public class Game : MonoBehaviour
 {
-    public const float gameAspect = 9f/16f;
+    public const float gameAspect = 9f / 16f;
     public const float minScorePunch = .5f, maxScorePunch = 1.5f, scorePunchDuration = 0.3f;
     public const float cameraShakeDuration = 0.2f, cameraShakeStrength = 0.1f, cameraShakeVibratio = 30f;
+    public const float minTargetScale = 0.6f;
 
     public GameObject arrowPrefab, targetPrefab, aimAssistPrefab;
     public Vector2 archerPos, arrowArcherOffset;
@@ -48,6 +49,7 @@ public class Game : MonoBehaviour
         targetSpawner = new GameObject("TargetSpawner").AddComponent<Spawner>();
         targetSpawner.prefab = targetPrefab;
         targetSpawner.spawnStrategy = SpawnerStrategy.First;
+        targetSpawner.scale = Vector3.one;
         targetSpawner.bounds = new Rect(
             gameBounds.x + targetAreaPadLeft,
             gameBounds.y + targetAreaPadBottom,
@@ -132,7 +134,7 @@ public class Game : MonoBehaviour
                 {
                     swipeTime = Mathf.Min(Mathf.Max(swipeTime, minSwipeTime), maxSwipeTime);
                     var force = Mathf.Min(Mathf.Max(forceCoef * (maxSwipeTime - swipeTime), minForce), maxForce);
-                    ShootArrow(swipe, force * forceMultiplier); 
+                    ShootArrow(swipe, force * forceMultiplier);
 
                     if (!gameStarted)
                     {
@@ -177,7 +179,7 @@ public class Game : MonoBehaviour
             bullseyeStreak = isBullseye ? bullseyeStreak + 1 : 0;
             score += 1 + bullseyeStreak;
             scoreText.transform.DOPunchScale(Vector3.one * Mathf.Min(minScorePunch + bullseyeStreak / 10f, maxScorePunch), scorePunchDuration);
-            
+
             timerBar.StartTimer(Mathf.Max(timerStartTime - timeReductionPerHit * targetHits, timerMinTime));
 
             if (isBullseye)
@@ -210,14 +212,13 @@ public class Game : MonoBehaviour
         {
             targetSpawner.spawnStrategy = SpawnerStrategy.SimpleMovingVertical;
         }
-        else if (random < 0.2)
-        {
-            targetSpawner.spawnStrategy = SpawnerStrategy.HalfSized;
-        }
         else
         {
             targetSpawner.spawnStrategy = SpawnerStrategy.Simple;
         }
+
+        float minScale = Mathf.Max(minTargetScale, 1f - targetHits * 0.01f);
+        targetSpawner.scale = Vector3.one * UnityEngine.Random.Range(minScale, 1f);
     }
 
     private void StartGame()

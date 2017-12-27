@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class Target : MonoBehaviour
 {
-    public const float fadeInDuration = 0.2f, fadeOutDuration = 0.2f;
+    public const float fadeInDuration = 0.15f, fadeOutDuration = 0.15f;
 
     public float despawnTimer;
     public bool faceArcher;
@@ -40,10 +40,16 @@ public class Target : MonoBehaviour
             rigidBody.simulated = true;
             bullseyeRigidBody.simulated = true;
         }
+    }
 
+    private void OnBecameVisible()
+    { 
         var scale = transform.localScale;
-        transform.localScale = Vector3.zero;
-        transform.DOScale(scale, fadeInDuration);
+        if (!DOTween.IsTweening(transform))
+        {
+            transform.localScale = Vector3.zero;
+            transform.DOScale(scale, fadeInDuration);
+        }
     }
 
     public void Stop()

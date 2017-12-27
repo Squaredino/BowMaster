@@ -68,11 +68,14 @@ public class Arrow : MonoBehaviour
         rigidBody.AddForce(force);
     }
 
-    private void OnEnable()
+    private void OnBecameVisible()
     {
         var scale = transform.localScale;
-        transform.localScale = Vector3.zero;
-        transform.DOScale(scale, fadeInDuration);
+        if (!DOTween.IsTweening(transform))
+        {
+            transform.localScale = Vector3.zero;
+            transform.DOScale(scale, fadeInDuration);
+        }
     }
 
     public void Stop()

@@ -9,6 +9,7 @@ public class Spawner : MonoBehaviour
     public Rect bounds;
     public float spawnInterval = 0f;
     public SpawnerStrategy.SpawnStrategy spawnStrategy;
+    public Vector3 scale;
 
     private Vector2 tmpVector;
     private Movement tmpMovement;
@@ -44,6 +45,8 @@ public class Spawner : MonoBehaviour
                 tmpVector.x = tmpVector.x * bounds.width + bounds.xMin;
                 tmpVector.y = tmpVector.y * bounds.height + bounds.yMin;
                 obj.transform.position = tmpVector;
+
+                obj.transform.localScale = scale;
 
                 tmpMovement = obj.GetComponent<Movement>();
                 if (tmpMovement != null)
