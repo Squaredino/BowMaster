@@ -76,6 +76,7 @@ public static class SpawnerStrategy
         waypoints.Add(new Vector2(Random.Range(0, minDist), yOffset));
         waypoints.Add(new Vector2(Random.Range(waypoints[0].x + minDist, 1), yOffset));
         movement.waypoints = waypoints;
+        obj.transform.position = waypoints[0];
         objects.Add(obj);
 
         return objects;
@@ -99,6 +100,7 @@ public static class SpawnerStrategy
         waypoints.Add(new Vector2(xOffset, Random.Range(0, minDist)));
         waypoints.Add(new Vector2(xOffset, Random.Range(waypoints[0].y + minDist, 1)));
         movement.waypoints = waypoints;
+        obj.transform.position = waypoints[0];
         objects.Add(obj);
 
         return objects;

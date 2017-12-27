@@ -29,13 +29,9 @@ public class Movement : MonoBehaviour
         }
     }
 
-    private void OnBecameVisible()
+    private void OnEnable()
     {
-        if (waypoints.Any())
-        {
-            currWaypoint = 0;
-            transform.position = waypoints[currWaypoint++];
-        }
+        currWaypoint = 0;
     }
 
     private void OnDisable()

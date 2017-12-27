@@ -7,22 +7,24 @@ using UnityEngine.UI;
 
 public class Target : MonoBehaviour
 {
-    public const float fadeInDuration = 0.15f, fadeOutDuration = 0.15f;
+    public const float fadeOutDuration = 0.15f;
 
     public float despawnTimer;
     public bool faceArcher;
     public float centerRadius;
 
     private Game game;
+    private GameObject sprite;
     private Rigidbody2D rigidBody, bullseyeRigidBody;
     private Text text;
 
     void Start()
     {
         game = GameObject.Find("Game").GetComponent<Game>();
+        sprite = transform.Find("Sprite").gameObject;
         rigidBody = GetComponent<Rigidbody2D>();
         bullseyeRigidBody = transform.Find("Bullseye").GetComponent<Rigidbody2D>();
-        text = transform.Find("Canvas/BullseyeText").GetComponent<Text>();
+        text = transform.Find("Sprite/Canvas/BullseyeText").GetComponent<Text>();
     }
 
     void Update()
@@ -42,16 +44,6 @@ public class Target : MonoBehaviour
         }
     }
 
-    private void OnBecameVisible()
-    { 
-        var scale = transform.localScale;
-        if (!DOTween.IsTweening(transform))
-        {
-            transform.localScale = Vector3.zero;
-            transform.DOScale(scale, fadeInDuration);
-        }
-    }
-
     public void Stop()
     {
         rigidBody.simulated = false;
@@ -60,7 +52,7 @@ public class Target : MonoBehaviour
 
     public void Despawn()
     {
-        transform.DOScale(Vector3.zero, fadeOutDuration).OnComplete(Deactivate);
+        sprite.transform.DOScale(Vector3.zero, fadeOutDuration).OnComplete(Deactivate);
     }
 
     private void Deactivate()

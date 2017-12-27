@@ -6,14 +6,14 @@ using UnityEngine;
 public class Arrow : MonoBehaviour
 {
     public const float particleSizeMin = .5f, particleSizeGrow = .2f;
-    public const float fadeInDuration = 0.1f, fadeOutDuration = 0.1f;
+    public const float fadeOutDuration = 0.1f;
 
     public float despawnTimer;
     public int maxParticleLevel;
     public int particleLevel;
 
     private Game game;
-    private GameObject arrowHead;
+    private GameObject arrowHead, sprite;
     private Rigidbody2D rigidBody, arrowHeadRigidBody;
     private ParticleSystem particles;
     private ParticleSystem.MainModule main;
@@ -21,7 +21,8 @@ public class Arrow : MonoBehaviour
     void Start()
     {
         game = GameObject.Find("Game").GetComponent<Game>();
-        arrowHead = transform.GetChild(0).gameObject;
+        arrowHead = transform.Find("Arrowhead").gameObject;
+        sprite = transform.Find("Sprite").gameObject;
         rigidBody = gameObject.GetComponent<Rigidbody2D>();
         arrowHeadRigidBody = arrowHead.GetComponent<Rigidbody2D>();
         particles = gameObject.GetComponent<ParticleSystem>();
@@ -68,16 +69,6 @@ public class Arrow : MonoBehaviour
         rigidBody.AddForce(force);
     }
 
-    private void OnBecameVisible()
-    {
-        var scale = transform.localScale;
-        if (!DOTween.IsTweening(transform))
-        {
-            transform.localScale = Vector3.zero;
-            transform.DOScale(scale, fadeInDuration);
-        }
-    }
-
     public void Stop()
     {
         rigidBody.simulated = false;
@@ -86,6 +77,6 @@ public class Arrow : MonoBehaviour
 
     public void Despawn()
     {
-        transform.DOScale(Vector3.zero, fadeOutDuration).OnComplete(() => gameObject.SetActive(false));
+        sprite.transform.DOScale(Vector3.zero, fadeOutDuration).OnComplete(() => gameObject.SetActive(false));
     }
 }
