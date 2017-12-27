@@ -12,6 +12,7 @@ public class Game : MonoBehaviour
     public const float minScorePunch = .5f, maxScorePunch = 1.5f, scorePunchDuration = 0.3f;
     public const float cameraShakeDuration = 0.2f, cameraShakeStrength = 0.1f, cameraShakeVibratio = 30f;
     public const float minTargetScale = 0.6f;
+    public const long vibrateDuration = 100;
 
     public GameObject arrowPrefab, targetPrefab, aimAssistPrefab;
     public Vector2 archerPos, arrowArcherOffset;
@@ -185,6 +186,7 @@ public class Game : MonoBehaviour
             if (isBullseye)
             {
                 Camera.main.DOShakePosition(cameraShakeDuration, cameraShakeStrength, (int)cameraShakeVibratio);
+                Vibration.Vibrate(vibrateDuration);
             }
 
             //Camera.main.DOColor(isBullseye ? cameraBullseyeColor : cameraHitColor, 0.1f).OnComplete(() =>
