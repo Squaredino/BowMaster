@@ -146,6 +146,8 @@ MonoBehaviour:
     type: 2}
   aimAssistPrefab: {fileID: 1131058645665400, guid: d982b2e690ab80b4db94dfc332d917c6,
     type: 2}
+  crossPrefab: {fileID: 1066951351650734, guid: 1dbb5512b5eb5344494c3ca8e571f45a,
+    type: 2}
   archerPos: {x: 0, y: -3}
   arrowArcherOffset: {x: 0, y: 0.5}
   minSwipeTime: 0.1
@@ -179,6 +181,13 @@ MonoBehaviour:
   targetAreaPadTop: 1.5
   targetAreaPadRight: 1
   targetAreaPadBottom: 5
+  bullseyeText:
+  - GOOD
+  - PERFECT
+  - AWESOME
+  - BULLSEYE
+  - IMPRESSIVE
+  - EXCELLENT
 --- !u!4 &145310317
 Transform:
   m_ObjectHideFlags: 0

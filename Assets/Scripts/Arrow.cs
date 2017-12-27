@@ -58,7 +58,7 @@ public class Arrow : MonoBehaviour
         {
             Stop();
             gameObject.SetActive(false);
-            game.TargetHit(false);
+            game.TargetMiss(transform.position);
         }
     }
 

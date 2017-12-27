@@ -46,7 +46,7 @@ public class Arrowhead : MonoBehaviour
             arrow.Stop();
             StartCoroutine(Utils.DelayedAction(target.Despawn, target.despawnTimer));
             StartCoroutine(Utils.DelayedAction(arrow.Despawn, arrow.despawnTimer));
-            game.TargetHit(true, bullseye);
+            game.TargetHit(bullseye);
         }
     }
 }

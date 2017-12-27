@@ -14,7 +14,7 @@ public class Game : MonoBehaviour
     public const float minTargetScale = 0.6f;
     public const long vibrateDuration = 100;
 
-    public GameObject arrowPrefab, targetPrefab, aimAssistPrefab;
+    public GameObject arrowPrefab, targetPrefab, aimAssistPrefab, crossPrefab;
     public Vector2 archerPos, arrowArcherOffset;
     public float minSwipeTime, maxSwipeTime;
     public float minForce, maxForce, forceMultiplier;
@@ -31,6 +31,7 @@ public class Game : MonoBehaviour
     public Color cameraDefaultColor, cameraHitColor, cameraBullseyeColor;
     public bool reverseControls;
     public float targetAreaPadLeft, targetAreaPadTop, targetAreaPadRight, targetAreaPadBottom;
+    public string[] bullseyeText;
 
     private Vector2 startTouchPos;
     private Spawner targetSpawner;
@@ -40,6 +41,7 @@ public class Game : MonoBehaviour
     private bool gameStarted = false;
     private bool isArrowFlying = false;
     private float forceCoef;
+    private GameObject cross;
 
     void Start()
     {
@@ -59,6 +61,10 @@ public class Game : MonoBehaviour
         targetSpawner.Spawn();
 
         //Instantiate(aimAssistPrefab).GetComponent<AimAssist>();
+
+        cross = Instantiate(crossPrefab);
+        DontDestroyOnLoad(cross);
+        cross.SetActive(false);
 
         Camera.main.backgroundColor = cameraDefaultColor;
 
@@ -171,36 +177,50 @@ public class Game : MonoBehaviour
         arrow.transform.position = archerPos + arrowArcherOffset;
     }
 
-    public void TargetHit(bool isHit, bool isBullseye = false)
+    public void TargetHit(bool isBullseye = false)
     {
-        if (isHit)
+        targetHits++;
+
+        bullseyeStreak = isBullseye ? bullseyeStreak + 1 : 0;
+        score += 1 + bullseyeStreak;
+        scoreText.transform.DOPunchScale(Vector3.one * Mathf.Min(minScorePunch + bullseyeStreak / 10f, maxScorePunch), scorePunchDuration);
+
+        timerBar.StartTimer(Mathf.Max(timerStartTime - timeReductionPerHit * targetHits, timerMinTime));
+
+        if (isBullseye)
         {
-            targetHits++;
-
-            bullseyeStreak = isBullseye ? bullseyeStreak + 1 : 0;
-            score += 1 + bullseyeStreak;
-            scoreText.transform.DOPunchScale(Vector3.one * Mathf.Min(minScorePunch + bullseyeStreak / 10f, maxScorePunch), scorePunchDuration);
-
-            timerBar.StartTimer(Mathf.Max(timerStartTime - timeReductionPerHit * targetHits, timerMinTime));
-
-            if (isBullseye)
+            Camera.main.DOShakePosition(cameraShakeDuration, cameraShakeStrength, (int)cameraShakeVibratio);
+            if (bullseyeStreak >= 3)
             {
-                Camera.main.DOShakePosition(cameraShakeDuration, cameraShakeStrength, (int)cameraShakeVibratio);
                 Vibration.Vibrate(vibrateDuration);
             }
-
-            //Camera.main.DOColor(isBullseye ? cameraBullseyeColor : cameraHitColor, 0.1f).OnComplete(() =>
-            //    Camera.main.DOColor(cameraDefaultColor, 0.1f));
-
-            SetSpawnerStrategy();
-            StartCoroutine(Utils.DelayedAction(targetSpawner.Spawn, targetRespawnInterval));
         }
-        else
-        {
-            GameOver();
-        }
+
+        //Camera.main.DOColor(isBullseye ? cameraBullseyeColor : cameraHitColor, 0.1f).OnComplete(() =>
+        //    Camera.main.DOColor(cameraDefaultColor, 0.1f));
+
+        SetSpawnerStrategy();
+        StartCoroutine(Utils.DelayedAction(targetSpawner.Spawn, targetRespawnInterval));
 
         isArrowFlying = false;
+    }
+
+    public void TargetMiss(Vector3 position)
+    {
+        cross.GetComponent<Cross>().Show(position);
+        GameOver();
+    }
+
+    public string GetBullseyeText()
+    {
+        if (bullseyeStreak < 3)
+        {
+            return bullseyeText[bullseyeStreak];
+        }
+        else
+        { 
+            return bullseyeText[UnityEngine.Random.Range(3, bullseyeText.Length - 1)];
+        }
     }
 
     private void SetSpawnerStrategy()

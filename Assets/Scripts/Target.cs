@@ -64,6 +64,7 @@ public class Target : MonoBehaviour
     public void ShowBullseyeText()
     {
         text.gameObject.SetActive(true);
+        text.text = game.GetBullseyeText();
         text.transform.DOPunchScale(Vector3.one, 0.2f);
     }
 }
