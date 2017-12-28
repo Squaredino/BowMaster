@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Cross : MonoBehaviour
 {
     public const float padding = 0.1f;
+    public const float fadeInDuration = 1.0f, fadeOutDuration = 0.3f;
 
     public float displayDuration;
     
@@ -19,7 +21,11 @@ public class Cross : MonoBehaviour
         position.y = Mathf.Max(position.y, game.gameBounds.y + render.bounds.extents.y + padding);
 
         transform.position = position;
+        transform.localScale = Vector3.zero;
         gameObject.SetActive(true);
-        StartCoroutine(Utils.DelayedAction(() => Destroy(gameObject), displayDuration));
+        transform.DOScale(Vector3.one, fadeInDuration).SetEase(Ease.OutElastic);
+        StartCoroutine(Utils.DelayedAction(
+            () => transform.DOScale(Vector3.zero, fadeOutDuration).OnComplete(
+                () => Destroy(gameObject)), displayDuration));
     }
 }
