@@ -23,7 +23,7 @@ public static class SpawnerStrategy
         List<GameObject> objects = new List<GameObject>();
         GameObject obj = getMethod();
 
-        obj.transform.position = new Vector2(0.5f, 0.3f);
+        obj.transform.position = new Vector2(0.5f, 0.25f);
         objects.Add(obj);
 
         return objects;

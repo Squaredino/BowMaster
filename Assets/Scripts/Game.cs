@@ -10,19 +10,21 @@ public class Game : MonoBehaviour
 {
     public const float gameAspect = 9f / 16f;
     public const float minScorePunch = .5f, maxScorePunch = 1.5f, scorePunchDuration = 0.3f;
+    public const float highscoreScale = 1.6f, highscoreDuration = 0.15f;
     public const float cameraShakeDuration = 0.2f, cameraShakeStrength = 0.1f, cameraShakeVibratio = 30f;
     public const float minTargetScale = 0.6f;
     public const long vibrateDuration = 100;
 
-    public GameObject arrowPrefab, targetPrefab, aimAssistPrefab, crossPrefab;
-    public Vector2 archerPos, arrowArcherOffset;
+    public GameObject arrowPrefab, targetPrefab, aimAssistPrefab;
+    public GameObject crossPrefab, fireworksPrefab;
+    public Vector2 archerPos, arrowArcherOffset, fireworksPos;
     public float minSwipeTime, maxSwipeTime;
     public float minForce, maxForce, forceMultiplier;
     public float arrowRespawnInterval, targetRespawnInterval;
     public GameObject arrow;
     public Vector2 swipe;
     public Rect gameBounds;
-    public Text scoreText;
+    public Text scoreText, highscoreText;
     public int score, bullseyeStreak;
     public GameObject crown;
     public GameObject timerBarObj;
@@ -41,7 +43,7 @@ public class Game : MonoBehaviour
     private bool gameStarted = false;
     private bool isArrowFlying = false;
     private float forceCoef;
-    private GameObject cross;
+    private GameObject cross, fireworks;
 
     void Start()
     {
@@ -72,6 +74,8 @@ public class Game : MonoBehaviour
 
         timerBar = timerBarObj.GetComponent<TimerBar>();
         timerBar.ShowTimer();
+
+        CheckHighScore();
 
         scoreText.text = PlayerPrefs.GetInt("Highscore").ToString();
 
@@ -219,7 +223,7 @@ public class Game : MonoBehaviour
         }
         else
         { 
-            return bullseyeText[UnityEngine.Random.Range(3, bullseyeText.Length - 1)];
+            return bullseyeText[3 + bullseyeStreak % (bullseyeText.Length - 3)];
         }
     }
 
@@ -247,15 +251,27 @@ public class Game : MonoBehaviour
     {
         crown.GetComponent<Image>().DOFade(0f, 0.5f).OnComplete(() => crown.SetActive(false));
         timerBar.StartTimer(timerStartTime);
+        if (fireworks != null)
+        {
+            fireworks.GetComponent<ParticleSystem>().Stop();
+        }
+        highscoreText.gameObject.SetActive(false);
         gameStarted = true;
+    }
+
+    private void CheckHighScore()
+    {
+        if (PlayerPrefs.GetInt("LastScore") > PlayerPrefs.GetInt("Highscore"))
+        {
+            fireworks = Instantiate(fireworksPrefab, fireworksPos, Quaternion.identity);
+            highscoreText.gameObject.SetActive(true);
+            scoreText.transform.DOScale(highscoreScale, highscoreDuration).SetLoops(6, LoopType.Yoyo).SetEase(Ease.InOutQuad);
+            PlayerPrefs.SetInt("Highscore", PlayerPrefs.GetInt("LastScore"));
+        }
     }
 
     private void GameOver()
     {
-        if (PlayerPrefs.GetInt("Highscore") < score)
-        {
-            PlayerPrefs.SetInt("Highscore", score);
-        }
         PlayerPrefs.SetInt("LastScore", score);
 
         SceneManager.LoadScene("Game"); //("GameOverScreen");

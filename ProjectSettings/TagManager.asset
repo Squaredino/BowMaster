@@ -41,6 +41,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: ui
+    uniqueID: 3322218431
+    locked: 0
   - name: cross
     uniqueID: 2168276723
     locked: 0
