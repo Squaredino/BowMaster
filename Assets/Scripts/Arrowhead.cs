@@ -26,19 +26,21 @@ public class Arrowhead : MonoBehaviour
         }
 
         Target target = null;
-        bool bullseye = false;
+        bool isBullseye = false;
 
         if (collision.gameObject.name.Contains("Target"))
         {
             target = collision.gameObject.GetComponent<Target>();
-            bullseye = false;
+            isBullseye = false;
         }
         else if (collision.gameObject.name.Contains("Bullseye"))
         {
             target = collision.transform.parent.GetComponent<Target>();
             target.ShowBullseyeText();
-            bullseye = true;
+            isBullseye = true;
         }
+
+        arrow.PlayHitParticles(isBullseye);
 
         if (target != null)
         {
@@ -46,7 +48,7 @@ public class Arrowhead : MonoBehaviour
             arrow.Stop();
             StartCoroutine(Utils.DelayedAction(target.Despawn, target.despawnTimer));
             StartCoroutine(Utils.DelayedAction(arrow.Despawn, arrow.despawnTimer));
-            game.TargetHit(bullseye);
+            game.TargetHit(isBullseye);
         }
     }
 }

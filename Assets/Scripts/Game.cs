@@ -43,7 +43,8 @@ public class Game : MonoBehaviour
     private bool gameStarted = false;
     private bool isArrowFlying = false;
     private float forceCoef;
-    private GameObject cross, fireworks;
+    private GameObject cross;
+    private ParticleSystem fireworks;
 
     void Start()
     {
@@ -67,6 +68,8 @@ public class Game : MonoBehaviour
         cross = Instantiate(crossPrefab);
         DontDestroyOnLoad(cross);
         cross.SetActive(false);
+
+        fireworks = GameObject.Find("Canvas/Fireworks").gameObject.GetComponent<ParticleSystem>();
 
         Camera.main.backgroundColor = cameraDefaultColor;
 
@@ -161,7 +164,7 @@ public class Game : MonoBehaviour
         var forceVector = direction.normalized * force;
 
         var arrowScript = arrow.GetComponent<Arrow>();
-        arrowScript.particleLevel = bullseyeStreak;
+        arrowScript.SetParticleLevel(bullseyeStreak);
         arrowScript.Shoot(forceVector);
 
         isArrowFlying = true;
@@ -251,11 +254,11 @@ public class Game : MonoBehaviour
     {
         crown.GetComponent<Image>().DOFade(0f, 0.5f).OnComplete(() => crown.SetActive(false));
         timerBar.StartTimer(timerStartTime);
-        if (fireworks != null)
+        fireworks.Stop();
+        if (highscoreText.gameObject.activeSelf)
         {
-            fireworks.GetComponent<ParticleSystem>().Stop();
+            highscoreText.transform.DOScale(Vector3.zero, highscoreDuration).OnComplete(() => highscoreText.gameObject.SetActive(false));
         }
-        highscoreText.gameObject.SetActive(false);
         gameStarted = true;
     }
 
@@ -263,8 +266,10 @@ public class Game : MonoBehaviour
     {
         if (PlayerPrefs.GetInt("LastScore") > PlayerPrefs.GetInt("Highscore"))
         {
-            fireworks = Instantiate(fireworksPrefab, fireworksPos, Quaternion.identity);
+            fireworks.Play();
             highscoreText.gameObject.SetActive(true);
+            highscoreText.transform.localScale = Vector3.zero;
+            highscoreText.transform.DOScale(Vector3.one, highscoreDuration);
             scoreText.transform.DOScale(highscoreScale, highscoreDuration).SetLoops(6, LoopType.Yoyo).SetEase(Ease.InOutQuad);
             PlayerPrefs.SetInt("Highscore", PlayerPrefs.GetInt("LastScore"));
         }

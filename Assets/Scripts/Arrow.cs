@@ -10,13 +10,13 @@ public class Arrow : MonoBehaviour
 
     public float despawnTimer;
     public int maxParticleLevel;
-    public int particleLevel;
 
+    private int particleLevel;
     private Game game;
     private GameObject arrowHead, sprite;
     private Rigidbody2D rigidBody, arrowHeadRigidBody;
-    private ParticleSystem particles;
-    private ParticleSystem.MainModule main;
+    private ParticleSystem particlesLite, particlesHeavy;
+    private ParticleSystem particlesNormalHit, particlesBullseyeHit;
 
     void Start()
     {
@@ -25,33 +25,34 @@ public class Arrow : MonoBehaviour
         sprite = transform.Find("Sprite").gameObject;
         rigidBody = gameObject.GetComponent<Rigidbody2D>();
         arrowHeadRigidBody = arrowHead.GetComponent<Rigidbody2D>();
-        particles = gameObject.GetComponent<ParticleSystem>();
-        main = particles.main;
+        particlesLite = transform.Find("Particles/TrailLite").gameObject.GetComponent<ParticleSystem>();
+        particlesHeavy = transform.Find("Particles/TrailHeavy").gameObject.GetComponent<ParticleSystem>();
+        particlesNormalHit = transform.Find("Particles/NormalHit").gameObject.GetComponent<ParticleSystem>();
+        particlesBullseyeHit = transform.Find("Particles/BullseyeHit").gameObject.GetComponent<ParticleSystem>();
     }
 
     void Update()
     {
-        if (rigidBody.simulated && particleLevel > 0)
+        if (particleLevel <= 0)
         {
-            if (!particles.isEmitting)
-            {
-                particleLevel = Mathf.Min(particleLevel, maxParticleLevel);
-
-                var startSize = main.startSize;
-                startSize.constant = particleSizeMin + particleLevel * particleSizeGrow;
-                main.startSize = startSize;
-
-                //main.simulationSpeed = 1 + particleLevel / 10f;
-
-                particles.Play();
-            }
+            if (particlesLite.isEmitting)
+                particlesLite.Stop();
+            if (particlesHeavy.isEmitting)
+                particlesHeavy.Stop();
         }
-        else
+        else if (particleLevel < 3)
         {
-            if (particles.isEmitting)
-            {
-                particles.Stop();
-            }
+            if (!particlesLite.isEmitting)
+                particlesLite.Play();
+            if (particlesHeavy.isEmitting)
+                particlesHeavy.Stop();
+        }
+        else if (particleLevel >= 3)
+        {
+            if (particlesLite.isEmitting)
+                particlesLite.Stop();
+            if (!particlesHeavy.isEmitting)
+                particlesHeavy.Play();
         }
 
         if (!game.gameBounds.Contains(transform.position))
@@ -59,6 +60,25 @@ public class Arrow : MonoBehaviour
             Stop();
             gameObject.SetActive(false);
             game.TargetMiss(transform.position);
+        }
+    }
+
+    public void SetParticleLevel(int particleLevel)
+    {
+        this.particleLevel = Mathf.Min(maxParticleLevel, Mathf.Max(0, particleLevel));
+    }
+
+    public void PlayHitParticles(bool isBullseye = false)
+    {
+        if (isBullseye)
+        {
+            particlesBullseyeHit.transform.localPosition = Vector2.up * 0.64f;
+            particlesBullseyeHit.Play();
+        }
+        else
+        {
+            particlesNormalHit.transform.localPosition = Vector2.up * 0.64f;
+            particlesNormalHit.Play();
         }
     }
 
@@ -73,10 +93,13 @@ public class Arrow : MonoBehaviour
     {
         rigidBody.simulated = false;
         arrowHeadRigidBody.simulated = false;
+        particleLevel = 0;
     }
 
     public void Despawn()
     {
+        particlesLite.Clear();
+        particlesHeavy.Clear();
         sprite.transform.DOScale(Vector3.zero, fadeOutDuration).OnComplete(() => gameObject.SetActive(false));
     }
 }

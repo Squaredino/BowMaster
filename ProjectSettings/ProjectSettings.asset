@@ -158,9 +158,9 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Android: com.squaredino.archertest
-    Standalone: com.squaredino.archertest
-    iOS: com.squaredino.archertest
+    Android: com.squaredino.archer
+    Standalone: com.squaredino.archer
+    iOS: com.squaredino.archer
   buildNumber: {}
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 16
