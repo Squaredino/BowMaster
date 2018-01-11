@@ -6,6 +6,7 @@ using UnityEngine;
 public class FadeIn : MonoBehaviour
 {
     public float fadeInDuration;
+    public Ease ease;
 
     private void OnBecameVisible()
     {
@@ -13,7 +14,7 @@ public class FadeIn : MonoBehaviour
         {
             var scale = transform.localScale;
             transform.localScale = Vector3.zero;
-            transform.DOScale(scale, fadeInDuration);
+            transform.DOScale(scale, fadeInDuration).SetEase(ease);
         }
     }
 }

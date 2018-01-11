@@ -10,10 +10,11 @@ public class Game : MonoBehaviour
 {
     public const float gameAspect = 9f / 16f;
     public const float minScorePunch = .5f, maxScorePunch = 1.5f, scorePunchDuration = 0.3f;
-    public const float highscoreScale = 1.6f, highscoreDuration = 0.15f;
+    public const float highscoreScale = 1.6f, highscoreDuration = 0.25f;
     public const float cameraShakeDuration = 0.2f, cameraShakeStrength = 0.1f, cameraShakeVibratio = 30f;
     public const float minTargetScale = 0.6f;
     public const long vibrateDuration = 100;
+    public const int positionsStoreCount = 5;
 
     public GameObject arrowPrefab, targetPrefab, aimAssistPrefab;
     public GameObject crossPrefab, fireworksPrefab;
@@ -23,6 +24,7 @@ public class Game : MonoBehaviour
     public float arrowRespawnInterval, targetRespawnInterval;
     public GameObject arrow;
     public Vector2 swipe;
+    public Queue<Vector2> touchPositions;
     public Rect gameBounds;
     public Text scoreText, highscoreText;
     public int score, bullseyeStreak;
@@ -31,20 +33,19 @@ public class Game : MonoBehaviour
     public float timerStartTime, timerMinTime;
     public float timeReductionPerHit;
     public Color cameraDefaultColor, cameraHitColor, cameraBullseyeColor;
-    public bool reverseControls;
     public float targetAreaPadLeft, targetAreaPadTop, targetAreaPadRight, targetAreaPadBottom;
     public string[] bullseyeText;
+    public Spawner targetSpawner;
 
-    private Vector2 startTouchPos;
-    private Spawner targetSpawner;
     private float swipeTime;
     private TimerBar timerBar;
-    private int targetHits = 0;
-    private bool gameStarted = false;
-    private bool isArrowFlying = false;
+    private int targetHits;
+    private bool gameStarted;
+    private bool isArrowFlying;
     private float forceCoef;
-    private GameObject cross;
+    private Cross cross;
     private ParticleSystem fireworks;
+    private Vector2 lastTouch;
 
     void Start()
     {
@@ -52,10 +53,7 @@ public class Game : MonoBehaviour
         float cameraWidth = cameraHeight * Mathf.Min(gameAspect, Camera.main.aspect);
         gameBounds = new Rect(-cameraWidth, -cameraHeight, cameraWidth * 2, cameraHeight * 2);
 
-        targetSpawner = new GameObject("TargetSpawner").AddComponent<Spawner>();
-        targetSpawner.prefab = targetPrefab;
         targetSpawner.spawnStrategy = SpawnerStrategy.First;
-        targetSpawner.scale = Vector3.one;
         targetSpawner.bounds = new Rect(
             gameBounds.x + targetAreaPadLeft,
             gameBounds.y + targetAreaPadBottom,
@@ -65,9 +63,10 @@ public class Game : MonoBehaviour
 
         //Instantiate(aimAssistPrefab).GetComponent<AimAssist>();
 
-        cross = Instantiate(crossPrefab);
-        DontDestroyOnLoad(cross);
-        cross.SetActive(false);
+        touchPositions = new Queue<Vector2>();
+
+        cross = Instantiate(crossPrefab).GetComponent<Cross>();
+        cross.gameObject.SetActive(false);
 
         fireworks = GameObject.Find("Canvas/Fireworks").gameObject.GetComponent<ParticleSystem>();
 
@@ -99,7 +98,7 @@ public class Game : MonoBehaviour
 
         if (timerBar.IsTimerOver() && !isArrowFlying)
         {
-            GameOver();
+            GameReset();
         }
     }
 
@@ -111,51 +110,75 @@ public class Game : MonoBehaviour
             Touch touch = Input.GetTouch(0);
             if (touch.phase == TouchPhase.Began)
             {
-                startTouchPos = Camera.main.ScreenToWorldPoint(touch.position);
-                swipeTime = 0f;
+                InputStart(Camera.main.ScreenToWorldPoint(touch.position));
             }
             if (touch.phase == TouchPhase.Moved)
             {
-                swipe = startTouchPos - (Vector2)Camera.main.ScreenToWorldPoint(touch.position);
-                swipe = reverseControls ? -swipe : swipe;
-                swipeTime += Time.deltaTime;
-                arrow.transform.rotation = Quaternion.FromToRotation(Vector2.up, swipe);
+                InputMove(Camera.main.ScreenToWorldPoint(touch.position));
             }
             if (touch.phase == TouchPhase.Ended)
             {
+                InputEnd(Camera.main.ScreenToWorldPoint(touch.position));
+            }
+        }
 #else
+        if (Input.GetMouseButtonDown(0))
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                startTouchPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                swipeTime = 0f;
-            }
-            if (Input.GetMouseButton(0))
-            {
-                swipe = startTouchPos - (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                swipe = reverseControls ? -swipe : swipe;
-                swipeTime += Time.deltaTime;
-                arrow.transform.rotation = Quaternion.FromToRotation(Vector2.up, swipe);
-            }
-            if (Input.GetMouseButtonUp(0))
-            {
-#endif
-                swipe = startTouchPos - (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                swipe = reverseControls ? -swipe : swipe;
-                swipeTime += Time.deltaTime;
-                arrow.transform.rotation = Quaternion.FromToRotation(Vector2.up, swipe);
-                if (swipe.y > 0)
-                {
-                    swipeTime = Mathf.Min(Mathf.Max(swipeTime, minSwipeTime), maxSwipeTime);
-                    var force = Mathf.Min(Mathf.Max(forceCoef * (maxSwipeTime - swipeTime), minForce), maxForce);
-                    ShootArrow(swipe, force * forceMultiplier);
+            InputStart(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+        }
 
-                    if (!gameStarted)
-                    {
-                        StartGame();
-                    }
-                }
+        if (Input.GetMouseButton(0))
+        {
+            InputMove(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            InputEnd(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+        }
+#endif
+    }
+
+    private void InputStart(Vector3 position)
+    {
+        swipe = Vector2.zero;
+        touchPositions.Enqueue(position);
+        lastTouch = position;
+        swipeTime = 0f;
+    }
+
+    private void InputMove(Vector3 position)
+    {
+        if (position.y > lastTouch.y)
+        {
+            touchPositions.Enqueue(position);
+            if (touchPositions.Count > positionsStoreCount)
+            {
+                touchPositions.Dequeue();
             }
+
+            swipe = (Vector2) position - touchPositions.Peek();
+            arrow.transform.rotation = Quaternion.FromToRotation(Vector2.up, swipe);
+        }
+
+        swipeTime += Time.deltaTime;
+        lastTouch = position;
+    }
+
+    private void InputEnd(Vector3 position)
+    {
+        InputMove(position);
+        touchPositions.Clear();
+        if (swipe.sqrMagnitude == 0f || swipe.y <= 0f) return;
+
+        arrow.transform.rotation = Quaternion.FromToRotation(Vector2.up, swipe);
+        swipeTime = Mathf.Min(Mathf.Max(swipeTime, minSwipeTime), maxSwipeTime);
+        var force = Mathf.Min(Mathf.Max(forceCoef * (maxSwipeTime - swipeTime), minForce), maxForce);
+        ShootArrow(swipe, force * forceMultiplier);
+
+        if (!gameStarted)
+        {
+            StartGame();
         }
     }
 
@@ -163,14 +186,21 @@ public class Game : MonoBehaviour
     {
         var forceVector = direction.normalized * force;
 
-        var arrowScript = arrow.GetComponent<Arrow>();
-        arrowScript.SetParticleLevel(bullseyeStreak);
-        arrowScript.Shoot(forceVector);
+        SetArrowParticles();
+        arrow.GetComponent<Arrow>().Shoot(forceVector);
 
         isArrowFlying = true;
         arrow = null;
 
         StartCoroutine(Utils.DelayedAction(RespawnArrow, arrowRespawnInterval));
+    }
+
+    private void SetArrowParticles()
+    {
+        if (arrow != null)
+        {
+            arrow.GetComponent<Arrow>().SetParticleLevel(bullseyeStreak);
+        }
     }
 
     public void RespawnArrow()
@@ -190,18 +220,22 @@ public class Game : MonoBehaviour
 
         bullseyeStreak = isBullseye ? bullseyeStreak + 1 : 0;
         score += 1 + bullseyeStreak;
-        scoreText.transform.DOPunchScale(Vector3.one * Mathf.Min(minScorePunch + bullseyeStreak / 10f, maxScorePunch), scorePunchDuration);
+        scoreText.transform.localScale = Vector3.one;
+        scoreText.transform.DOPunchScale(Vector3.one * Mathf.Min(minScorePunch + bullseyeStreak / 10f, maxScorePunch),
+            scorePunchDuration);
 
         timerBar.StartTimer(Mathf.Max(timerStartTime - timeReductionPerHit * targetHits, timerMinTime));
 
         if (isBullseye)
         {
-            Camera.main.DOShakePosition(cameraShakeDuration, cameraShakeStrength, (int)cameraShakeVibratio);
+            Camera.main.DOShakePosition(cameraShakeDuration, cameraShakeStrength, (int) cameraShakeVibratio);
             if (bullseyeStreak >= 3)
             {
                 Vibration.Vibrate(vibrateDuration);
             }
         }
+
+        SetArrowParticles();
 
         //Camera.main.DOColor(isBullseye ? cameraBullseyeColor : cameraHitColor, 0.1f).OnComplete(() =>
         //    Camera.main.DOColor(cameraDefaultColor, 0.1f));
@@ -214,8 +248,8 @@ public class Game : MonoBehaviour
 
     public void TargetMiss(Vector3 position)
     {
-        cross.GetComponent<Cross>().Show(position);
-        GameOver();
+        GameReset();
+        cross.Show(position);
     }
 
     public string GetBullseyeText()
@@ -224,10 +258,8 @@ public class Game : MonoBehaviour
         {
             return bullseyeText[bullseyeStreak];
         }
-        else
-        { 
-            return bullseyeText[3 + bullseyeStreak % (bullseyeText.Length - 3)];
-        }
+
+        return bullseyeText[3 + bullseyeStreak % (bullseyeText.Length - 3)];
     }
 
     private void SetSpawnerStrategy()
@@ -246,19 +278,22 @@ public class Game : MonoBehaviour
             targetSpawner.spawnStrategy = SpawnerStrategy.Simple;
         }
 
-        float minScale = Mathf.Max(minTargetScale, 1f - targetHits * 0.01f);
+        var minScale = Mathf.Max(minTargetScale, 1f - targetHits * 0.01f);
         targetSpawner.scale = Vector3.one * UnityEngine.Random.Range(minScale, 1f);
     }
 
     private void StartGame()
     {
         crown.GetComponent<Image>().DOFade(0f, 0.5f).OnComplete(() => crown.SetActive(false));
-        timerBar.StartTimer(timerStartTime);
+        timerBar.ContinueTimer();
         fireworks.Stop();
+        cross.Hide();
         if (highscoreText.gameObject.activeSelf)
         {
-            highscoreText.transform.DOScale(Vector3.zero, highscoreDuration).OnComplete(() => highscoreText.gameObject.SetActive(false));
+            highscoreText.transform.DOScale(Vector3.zero, highscoreDuration)
+                .OnComplete(() => highscoreText.gameObject.SetActive(false));
         }
+
         gameStarted = true;
     }
 
@@ -267,18 +302,39 @@ public class Game : MonoBehaviour
         if (PlayerPrefs.GetInt("LastScore") > PlayerPrefs.GetInt("Highscore"))
         {
             fireworks.Play();
-            highscoreText.gameObject.SetActive(true);
+
             highscoreText.transform.localScale = Vector3.zero;
+            highscoreText.gameObject.SetActive(true);
             highscoreText.transform.DOScale(Vector3.one, highscoreDuration);
-            scoreText.transform.DOScale(highscoreScale, highscoreDuration).SetLoops(6, LoopType.Yoyo).SetEase(Ease.InOutQuad);
+
+            scoreText.transform.DOScale(highscoreScale, highscoreDuration).SetLoops(6, LoopType.Yoyo)
+                .SetEase(Ease.InOutQuad);
             PlayerPrefs.SetInt("Highscore", PlayerPrefs.GetInt("LastScore"));
         }
     }
 
-    private void GameOver()
+    private void GameReset()
     {
         PlayerPrefs.SetInt("LastScore", score);
+        CheckHighScore();
 
-        SceneManager.LoadScene("Game"); //("GameOverScreen");
+        targetSpawner.DespawnAll();
+        targetSpawner.spawnStrategy = SpawnerStrategy.First;
+        targetSpawner.Spawn();
+        timerBar.StartTimer(timerStartTime);
+        timerBar.PauseTimer();
+        StopAllCoroutines();
+        if (arrow == null)
+        {
+            RespawnArrow();
+        }
+
+        score = 0;
+        bullseyeStreak = 0;
+        targetHits = 0;
+        gameStarted = false;
+        isArrowFlying = false;
+
+        scoreText.text = PlayerPrefs.GetInt("Highscore").ToString();
     }
 }

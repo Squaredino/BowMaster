@@ -14,6 +14,7 @@ public class Arrow : MonoBehaviour
     private int particleLevel;
     private Game game;
     private GameObject arrowHead, sprite;
+    private Renderer spriteRenderer;
     private Rigidbody2D rigidBody, arrowHeadRigidBody;
     private ParticleSystem particlesLite, particlesHeavy;
     private ParticleSystem particlesNormalHit, particlesBullseyeHit;
@@ -23,6 +24,7 @@ public class Arrow : MonoBehaviour
         game = GameObject.Find("Game").GetComponent<Game>();
         arrowHead = transform.Find("Arrowhead").gameObject;
         sprite = transform.Find("Sprite").gameObject;
+        spriteRenderer = sprite.GetComponent<Renderer>();
         rigidBody = gameObject.GetComponent<Rigidbody2D>();
         arrowHeadRigidBody = arrowHead.GetComponent<Rigidbody2D>();
         particlesLite = transform.Find("Particles/TrailLite").gameObject.GetComponent<ParticleSystem>();
@@ -55,17 +57,17 @@ public class Arrow : MonoBehaviour
                 particlesHeavy.Play();
         }
 
-        if (!game.gameBounds.Contains(transform.position))
+        if (rigidBody.simulated && !game.gameBounds.Contains(spriteRenderer.bounds.max) && !game.gameBounds.Contains(spriteRenderer.bounds.min))
         {
             Stop();
-            gameObject.SetActive(false);
+            Despawn();
             game.TargetMiss(transform.position);
         }
     }
 
-    public void SetParticleLevel(int particleLevel)
+    public void SetParticleLevel(int level)
     {
-        this.particleLevel = Mathf.Min(maxParticleLevel, Mathf.Max(0, particleLevel));
+        this.particleLevel = Mathf.Min(maxParticleLevel, Mathf.Max(0, level));
     }
 
     public void PlayHitParticles(bool isBullseye = false)

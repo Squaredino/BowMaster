@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Pool : MonoBehaviour
 {
-    private const int INITIAL_SIZE = 10;
+    private const int INITIAL_SIZE = 5;
     private const int GROW_SIZE = 5;
 
     private static Dictionary<GameObject, Pool> pools = new Dictionary<GameObject, Pool>();
@@ -28,17 +28,7 @@ public class Pool : MonoBehaviour
             {
                 if (!obj.activeSelf)
                 {
-                    obj.transform.position = Vector3.zero;
-                    obj.transform.rotation = Quaternion.identity;
-                    obj.transform.localScale = Vector3.one;
-
-                    for (int i = 0; i < obj.transform.childCount; i++)
-                    {
-                        var child = obj.transform.GetChild(i);
-                        child.transform.position = Vector3.zero;
-                        child.transform.rotation = Quaternion.identity;
-                        child.transform.localScale = Vector3.one;
-                    }
+                    ResetObj(obj);
 
                     pools[prefab].availableObjects.Enqueue(obj);
                 }
@@ -52,6 +42,21 @@ public class Pool : MonoBehaviour
         var returnedObj = pools[prefab].availableObjects.Dequeue();
         returnedObj.SetActive(true);
         return returnedObj;
+    }
+
+    private static void ResetObj(GameObject obj)
+    {
+        obj.transform.position = Vector3.zero;
+        obj.transform.rotation = Quaternion.identity;
+        obj.transform.localScale = Vector3.one;
+
+        for (int i = 0; i < obj.transform.childCount; i++)
+        {
+            var child = obj.transform.GetChild(i);
+            child.transform.position = Vector3.zero;
+            child.transform.rotation = Quaternion.identity;
+            child.transform.localScale = Vector3.one;
+        }
     }
 
     private void Initialize(GameObject prefab)
@@ -69,6 +74,20 @@ public class Pool : MonoBehaviour
             obj.SetActive(false);
             objects.Add(obj);
         }
+    }
+
+    public static void Reset(GameObject prefab)
+    {
+        var pool = pools[prefab];
+
+        foreach (var obj in pool.objects)
+        {
+            ResetObj(obj);
+            obj.SetActive(false);
+            pool.availableObjects.Enqueue(obj);
+        }
+
+        pool.availableObjects.Clear();
     }
 
     private void OnDestroy()

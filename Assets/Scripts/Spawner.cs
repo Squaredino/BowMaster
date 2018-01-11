@@ -8,7 +8,7 @@ public class Spawner : MonoBehaviour
     public GameObject prefab;
     public Rect bounds;
     public float spawnInterval = 0f;
-    public SpawnerStrategy.SpawnStrategy spawnStrategy;
+    public SpawnerStrategy.SpawnStrategy spawnStrategy = SpawnerStrategy.Simple;
     public Vector3 scale;
 
     private Vector2 tmpVector;
@@ -61,6 +61,11 @@ public class Spawner : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void DespawnAll()
+    {
+        Pool.Reset(prefab);
     }
 
     public GameObject GetObject()
