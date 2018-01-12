@@ -148,8 +148,7 @@ MonoBehaviour:
     type: 2}
   crossPrefab: {fileID: 1066951351650734, guid: 1dbb5512b5eb5344494c3ca8e571f45a,
     type: 2}
-  fireworksPrefab: {fileID: 1213224876999508, guid: 70710dd58f4d50f4f920a876c709e8a1,
-    type: 2}
+  fireworksPrefab: {fileID: 0}
   archerPos: {x: 0, y: -3}
   arrowArcherOffset: {x: 0, y: 0.5}
   fireworksPos: {x: 0, y: 2.5}
@@ -173,13 +172,14 @@ MonoBehaviour:
   score: 0
   bullseyeStreak: 0
   crown: {fileID: 522800121}
+  backgroundObj: {fileID: 1989645558}
   timerBarObj: {fileID: 1770619058}
   timerStartTime: 5
   timerMinTime: 1
   timeReductionPerHit: 0.1
-  cameraDefaultColor: {r: 0.08513929, g: 0, b: 0.14705884, a: 1}
-  cameraHitColor: {r: 0, g: 0, b: 0.52205884, a: 1}
-  cameraBullseyeColor: {r: 0.28676468, g: 0, b: 0, a: 1}
+  bgDefaultColor: {r: 0.114349045, g: 0.114349045, b: 0.3455882, a: 1}
+  bgHitColor: {r: 0.63235295, g: 0.63235295, b: 0.63235295, a: 1}
+  bgBullseyeColor: {r: 0.8014706, g: 0.27108565, b: 0.27108565, a: 1}
   targetAreaPadLeft: 1
   targetAreaPadTop: 1.5
   targetAreaPadRight: 1
@@ -192,6 +192,7 @@ MonoBehaviour:
   - IMPRESSIVE
   - EXCELLENT
   targetSpawner: {fileID: 1138822124}
+  fireworks: {fileID: 464181023}
 --- !u!4 &145310317
 Transform:
   m_ObjectHideFlags: 0
@@ -7768,7 +7769,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 879c5702e1b48894c9ec84b2d784c105, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f14191863ea664c42b48a34ebf8ce8d1, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1

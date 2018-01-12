@@ -10,6 +10,7 @@ public class Game : MonoBehaviour
 {
     public const float gameAspect = 9f / 16f;
     public const float minScorePunch = .5f, maxScorePunch = 1.5f, scorePunchDuration = 0.3f;
+    public const float bgColorInDuration = 0.05f, bgColorOutDuration = 0.8f;
     public const float highscoreScale = 1.6f, highscoreDuration = 0.25f;
     public const float cameraShakeDuration = 0.2f, cameraShakeStrength = 0.1f, cameraShakeVibratio = 30f;
     public const float minTargetScale = 0.6f;
@@ -28,14 +29,15 @@ public class Game : MonoBehaviour
     public Rect gameBounds;
     public Text scoreText, highscoreText;
     public int score, bullseyeStreak;
-    public GameObject crown;
+    public GameObject crown, backgroundObj;
     public GameObject timerBarObj;
     public float timerStartTime, timerMinTime;
     public float timeReductionPerHit;
-    public Color cameraDefaultColor, cameraHitColor, cameraBullseyeColor;
+    public Color bgDefaultColor, bgHitColor, bgBullseyeColor;
     public float targetAreaPadLeft, targetAreaPadTop, targetAreaPadRight, targetAreaPadBottom;
     public string[] bullseyeText;
     public Spawner targetSpawner;
+    public ParticleSystem fireworks;
 
     private float swipeTime;
     private TimerBar timerBar;
@@ -44,8 +46,8 @@ public class Game : MonoBehaviour
     private bool isArrowFlying;
     private float forceCoef;
     private Cross cross;
-    private ParticleSystem fireworks;
     private Vector2 lastTouch;
+    private Image background;
 
     void Start()
     {
@@ -68,9 +70,8 @@ public class Game : MonoBehaviour
         cross = Instantiate(crossPrefab).GetComponent<Cross>();
         cross.gameObject.SetActive(false);
 
-        fireworks = GameObject.Find("Canvas/Fireworks").gameObject.GetComponent<ParticleSystem>();
-
-        Camera.main.backgroundColor = cameraDefaultColor;
+        background = backgroundObj.GetComponent<Image>();
+        background.color = bgDefaultColor;
 
         forceCoef = (maxForce - minForce) / (maxSwipeTime - minSwipeTime);
 
@@ -217,9 +218,9 @@ public class Game : MonoBehaviour
     public void TargetHit(bool isBullseye = false)
     {
         targetHits++;
-
         bullseyeStreak = isBullseye ? bullseyeStreak + 1 : 0;
         score += 1 + bullseyeStreak;
+
         scoreText.transform.localScale = Vector3.one;
         scoreText.transform.DOPunchScale(Vector3.one * Mathf.Min(minScorePunch + bullseyeStreak / 10f, maxScorePunch),
             scorePunchDuration);
@@ -237,8 +238,9 @@ public class Game : MonoBehaviour
 
         SetArrowParticles();
 
-        //Camera.main.DOColor(isBullseye ? cameraBullseyeColor : cameraHitColor, 0.1f).OnComplete(() =>
-        //    Camera.main.DOColor(cameraDefaultColor, 0.1f));
+        background.DOKill();
+        background.DOColor(bullseyeStreak > 2 ? bgBullseyeColor : bgHitColor, bgColorInDuration)
+            .OnComplete(() => background.DOColor(bgDefaultColor, bgColorOutDuration));
 
         SetSpawnerStrategy();
         StartCoroutine(Utils.DelayedAction(targetSpawner.Spawn, targetRespawnInterval));
@@ -309,6 +311,7 @@ public class Game : MonoBehaviour
 
             scoreText.transform.DOScale(highscoreScale, highscoreDuration).SetLoops(6, LoopType.Yoyo)
                 .SetEase(Ease.InOutQuad);
+
             PlayerPrefs.SetInt("Highscore", PlayerPrefs.GetInt("LastScore"));
         }
     }
