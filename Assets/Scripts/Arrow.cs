@@ -12,8 +12,10 @@ public class Arrow : MonoBehaviour
     public int maxParticleLevel;
 
     private int particleLevel;
+    private bool isOutOfBounds;
     private Game game;
     private GameObject arrowHead, sprite;
+    private Line line;
     private Renderer spriteRenderer;
     private Rigidbody2D rigidBody, arrowHeadRigidBody;
     private ParticleSystem particlesLite, particlesHeavy;
@@ -23,12 +25,13 @@ public class Arrow : MonoBehaviour
     {
         game = GameObject.Find("Game").GetComponent<Game>();
         arrowHead = transform.Find("Arrowhead").gameObject;
+        line = transform.Find("Line").GetComponent<Line>();
         sprite = transform.Find("Sprite").gameObject;
         spriteRenderer = sprite.GetComponent<Renderer>();
         rigidBody = gameObject.GetComponent<Rigidbody2D>();
         arrowHeadRigidBody = arrowHead.GetComponent<Rigidbody2D>();
-        particlesLite = transform.Find("Particles/TrailLite").gameObject.GetComponent<ParticleSystem>();
-        particlesHeavy = transform.Find("Particles/TrailHeavy").gameObject.GetComponent<ParticleSystem>();
+        particlesLite = transform.Find("TrailLite").gameObject.GetComponent<ParticleSystem>();
+        particlesHeavy = transform.Find("TrailHeavy").gameObject.GetComponent<ParticleSystem>();
         particlesNormalHit = transform.Find("Particles/NormalHit").gameObject.GetComponent<ParticleSystem>();
         particlesBullseyeHit = transform.Find("Particles/BullseyeHit").gameObject.GetComponent<ParticleSystem>();
     }
@@ -42,14 +45,14 @@ public class Arrow : MonoBehaviour
             if (particlesHeavy.isEmitting)
                 particlesHeavy.Stop();
         }
-        else if (particleLevel < 3)
+        else if (particleLevel < 2)
         {
             if (!particlesLite.isEmitting)
                 particlesLite.Play();
             if (particlesHeavy.isEmitting)
                 particlesHeavy.Stop();
         }
-        else if (particleLevel >= 3)
+        else if (particleLevel >= 2)
         {
             if (particlesLite.isEmitting)
                 particlesLite.Stop();
@@ -57,17 +60,47 @@ public class Arrow : MonoBehaviour
                 particlesHeavy.Play();
         }
 
-        if (rigidBody.simulated && !game.gameBounds.Contains(spriteRenderer.bounds.max) && !game.gameBounds.Contains(spriteRenderer.bounds.min))
+        if (rigidBody.simulated)
         {
-            Stop();
-            Despawn();
-            game.TargetMiss(transform.position);
+            line.EndPoint = sprite.transform.position;
+
+            if (!game.gameBounds.Contains(spriteRenderer.bounds.max) ||
+                !game.gameBounds.Contains(spriteRenderer.bounds.min))
+            {
+                if (!isOutOfBounds)
+                {
+                    game.TargetMiss(transform.position);
+                    isOutOfBounds = true;
+                }
+
+                if (!game.gameBounds.Contains(spriteRenderer.bounds.max) &&
+                    !game.gameBounds.Contains(spriteRenderer.bounds.min))
+                {
+                    Stop();
+                    Despawn();
+                }
+            }
+        }
+    }
+
+    void OnEnable()
+    {
+        if (line)
+        {
+            line.StartPoint = sprite.transform.position;
+            line.EndPoint = sprite.transform.position;
+        }
+
+        if (particlesHeavy)
+        {
+            particlesLite.transform.localPosition = Vector3.up * 0.2f;
+            particlesHeavy.transform.localPosition = Vector3.up * 0.2f;
         }
     }
 
     public void SetParticleLevel(int level)
     {
-        this.particleLevel = Mathf.Min(maxParticleLevel, Mathf.Max(0, level));
+        particleLevel = Mathf.Min(maxParticleLevel, Mathf.Max(0, level));
     }
 
     public void PlayHitParticles(bool isBullseye = false)
@@ -88,6 +121,7 @@ public class Arrow : MonoBehaviour
     {
         rigidBody.simulated = true;
         arrowHeadRigidBody.simulated = true;
+        line.StartPoint = sprite.transform.position;
         rigidBody.AddForce(force);
     }
 
@@ -102,6 +136,7 @@ public class Arrow : MonoBehaviour
     {
         particlesLite.Clear();
         particlesHeavy.Clear();
+        isOutOfBounds = false;
         sprite.transform.DOScale(Vector3.zero, fadeOutDuration).OnComplete(() => gameObject.SetActive(false));
     }
 }

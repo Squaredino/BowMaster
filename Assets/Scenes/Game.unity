@@ -177,9 +177,9 @@ MonoBehaviour:
   timerStartTime: 5
   timerMinTime: 1
   timeReductionPerHit: 0.1
-  bgDefaultColor: {r: 0.114349045, g: 0.114349045, b: 0.3455882, a: 1}
+  bgDefaultColor: {r: 0.14432648, g: 0.07947665, b: 0.30882353, a: 1}
   bgHitColor: {r: 0.63235295, g: 0.63235295, b: 0.63235295, a: 1}
-  bgBullseyeColor: {r: 0.8014706, g: 0.27108565, b: 0.27108565, a: 1}
+  bgBullseyeColor: {r: 0.8014706, g: 0.3577355, b: 0.19447447, a: 1}
   targetAreaPadLeft: 1
   targetAreaPadTop: 1.5
   targetAreaPadRight: 1

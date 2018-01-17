@@ -143,7 +143,6 @@ public class Game : MonoBehaviour
     private void InputStart(Vector3 position)
     {
         swipe = Vector2.zero;
-        touchPositions.Enqueue(position);
         lastTouch = position;
         swipeTime = 0f;
     }
@@ -152,14 +151,14 @@ public class Game : MonoBehaviour
     {
         if (position.y > lastTouch.y)
         {
-            touchPositions.Enqueue(position);
+            touchPositions.Enqueue((Vector2)position - lastTouch);
             if (touchPositions.Count > positionsStoreCount)
             {
                 touchPositions.Dequeue();
             }
 
-            swipe = (Vector2) position - touchPositions.Peek();
-            arrow.transform.rotation = Quaternion.FromToRotation(Vector2.up, swipe);
+            //swipe = (Vector2) position - touchPositions.Peek();
+            //arrow.transform.rotation = Quaternion.FromToRotation(Vector2.up, swipe);
         }
 
         swipeTime += Time.deltaTime;
@@ -169,6 +168,13 @@ public class Game : MonoBehaviour
     private void InputEnd(Vector3 position)
     {
         InputMove(position);
+
+        swipe = Vector2.zero;
+        foreach (var pos in touchPositions)
+        {
+            swipe += pos;
+        }
+
         touchPositions.Clear();
         if (swipe.sqrMagnitude == 0f || swipe.y <= 0f) return;
 
@@ -200,7 +206,7 @@ public class Game : MonoBehaviour
     {
         if (arrow != null)
         {
-            arrow.GetComponent<Arrow>().SetParticleLevel(bullseyeStreak);
+            arrow.GetComponent<Arrow>().SetParticleLevel(bullseyeStreak > 1 ? bullseyeStreak - 1 : bullseyeStreak);
         }
     }
 
@@ -237,7 +243,7 @@ public class Game : MonoBehaviour
         }
 
         SetArrowParticles();
-
+        
         background.DOKill();
         background.DOColor(bullseyeStreak > 2 ? bgBullseyeColor : bgHitColor, bgColorInDuration)
             .OnComplete(() => background.DOColor(bgDefaultColor, bgColorOutDuration));
