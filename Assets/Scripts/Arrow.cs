@@ -10,6 +10,7 @@ public class Arrow : MonoBehaviour
 
     public float despawnTimer;
     public int maxParticleLevel;
+    public float maxTrailLength;
 
     private int particleLevel;
     private bool isOutOfBounds;
@@ -20,6 +21,7 @@ public class Arrow : MonoBehaviour
     private Rigidbody2D rigidBody, arrowHeadRigidBody;
     private ParticleSystem particlesLite, particlesHeavy;
     private ParticleSystem particlesNormalHit, particlesBullseyeHit;
+    private Vector2 startPoint;
 
     void Start()
     {
@@ -62,7 +64,7 @@ public class Arrow : MonoBehaviour
 
         if (rigidBody.simulated)
         {
-            line.EndPoint = sprite.transform.position;
+            line.EndPoint = Vector2.down * Mathf.Min(Vector2.Distance(startPoint, sprite.transform.position), maxTrailLength);
 
             if (!game.gameBounds.Contains(spriteRenderer.bounds.max) ||
                 !game.gameBounds.Contains(spriteRenderer.bounds.min))
@@ -87,8 +89,8 @@ public class Arrow : MonoBehaviour
     {
         if (line)
         {
-            line.StartPoint = sprite.transform.position;
-            line.EndPoint = sprite.transform.position;
+            line.StartPoint = Vector2.zero;
+            line.EndPoint = Vector2.zero;
         }
 
         if (particlesHeavy)
@@ -96,6 +98,13 @@ public class Arrow : MonoBehaviour
             particlesLite.transform.localPosition = Vector3.up * 0.2f;
             particlesHeavy.transform.localPosition = Vector3.up * 0.2f;
         }
+    }
+
+    public void OnHit(bool isBullseye = false)
+    {
+        PlayHitParticles(isBullseye);
+        Stop();
+        StartCoroutine(Utils.DelayedAction(Despawn, despawnTimer));
     }
 
     public void SetParticleLevel(int level)
@@ -121,12 +130,13 @@ public class Arrow : MonoBehaviour
     {
         rigidBody.simulated = true;
         arrowHeadRigidBody.simulated = true;
-        line.StartPoint = sprite.transform.position;
+        startPoint = sprite.transform.position;
         rigidBody.AddForce(force);
     }
 
     public void Stop()
     {
+        line.Move(Vector2.zero, 0.5f);
         rigidBody.simulated = false;
         arrowHeadRigidBody.simulated = false;
         particleLevel = 0;

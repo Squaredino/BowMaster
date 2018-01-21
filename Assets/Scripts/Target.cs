@@ -11,11 +11,11 @@ public class Target : MonoBehaviour
 
     public float despawnTimer;
     public bool faceArcher;
-    public float centerRadius;
 
     private Game game;
     private GameObject sprite;
     private Rigidbody2D rigidBody, bullseyeRigidBody;
+    private ParticleSystem particlesHitLite, particlesHitHeavy;
     private Text text;
 
     void Start()
@@ -25,13 +25,15 @@ public class Target : MonoBehaviour
         rigidBody = GetComponent<Rigidbody2D>();
         bullseyeRigidBody = transform.Find("Bullseye").GetComponent<Rigidbody2D>();
         text = transform.Find("Sprite/Canvas/BullseyeText").GetComponent<Text>();
+        particlesHitLite = transform.Find("Particles/HitLite").gameObject.GetComponent<ParticleSystem>();
+        particlesHitHeavy = transform.Find("Particles/HitHeavy").gameObject.GetComponent<ParticleSystem>();
     }
 
     void Update()
     {
         if (faceArcher)
         {
-            transform.up = transform.position - (Vector3)game.archerPos; // rotate towards archer
+            transform.up = transform.position - (Vector3) game.archerPos; // rotate towards archer
         }
     }
 
@@ -44,6 +46,26 @@ public class Target : MonoBehaviour
         }
     }
 
+    public void OnHit(bool isBullseye = false)
+    {
+        if (isBullseye) ShowBullseyeText();
+        PlayHitParticles(isBullseye);
+        Stop();
+        StartCoroutine(Utils.DelayedAction(Despawn, despawnTimer));
+    }
+
+    public void PlayHitParticles(bool isBullseye)
+    {
+        if (isBullseye)
+        {
+            particlesHitHeavy.Play();
+        }
+        else
+        {
+            particlesHitLite.Play();
+        }
+    }
+
     public void Stop()
     {
         rigidBody.simulated = false;
@@ -52,13 +74,12 @@ public class Target : MonoBehaviour
 
     public void Despawn()
     {
-        sprite.transform.DOScale(Vector3.zero, fadeOutDuration).OnComplete(Deactivate);
-    }
-
-    private void Deactivate()
-    { 
-        text.gameObject.SetActive(false);
-        gameObject.SetActive(false);
+        sprite.transform.DOScale(Vector3.zero, fadeOutDuration).OnComplete(
+            () =>
+            {
+                text.gameObject.SetActive(false);
+                gameObject.SetActive(false);
+            });
     }
 
     public void ShowBullseyeText()

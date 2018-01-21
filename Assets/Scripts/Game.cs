@@ -243,10 +243,13 @@ public class Game : MonoBehaviour
         }
 
         SetArrowParticles();
-        
-        background.DOKill();
-        background.DOColor(bullseyeStreak > 2 ? bgBullseyeColor : bgHitColor, bgColorInDuration)
-            .OnComplete(() => background.DOColor(bgDefaultColor, bgColorOutDuration));
+
+        if (isBullseye)
+        {
+            background.DOKill();
+            background.DOColor(bullseyeStreak > 2 ? bgBullseyeColor : bgHitColor, bgColorInDuration)
+                .OnComplete(() => background.DOColor(bgDefaultColor, bgColorOutDuration));
+        }
 
         SetSpawnerStrategy();
         StartCoroutine(Utils.DelayedAction(targetSpawner.Spawn, targetRespawnInterval));
