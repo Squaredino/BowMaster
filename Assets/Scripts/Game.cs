@@ -209,7 +209,7 @@ public class Game : MonoBehaviour
     {
         if (arrow != null)
         {
-            arrow.GetComponent<Arrow>().SetParticleLevel(bullseyeStreak > 1 ? bullseyeStreak - 1 : bullseyeStreak);
+            arrow.GetComponent<Arrow>().SetParticleLevel(bullseyeStreak >= 2 ? 2 : bullseyeStreak);
         }
     }
 
@@ -222,6 +222,7 @@ public class Game : MonoBehaviour
 
         arrow = Pool.Get(arrowPrefab);
         arrow.transform.position = archerPos + arrowArcherOffset;
+        SetArrowParticles();
     }
 
     public void TargetHit(bool isBullseye = false)

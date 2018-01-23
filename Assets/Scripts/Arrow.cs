@@ -62,6 +62,8 @@ public class Arrow : MonoBehaviour
                 particlesHeavy.Play();
         }
 
+        SetParticlePositions();
+
         if (rigidBody.simulated)
         {
             line.EndPoint = Vector2.down * Mathf.Min(Vector2.Distance(startPoint, sprite.transform.position), maxTrailLength);
@@ -92,11 +94,14 @@ public class Arrow : MonoBehaviour
             line.StartPoint = Vector2.zero;
             line.EndPoint = Vector2.zero;
         }
+    }
 
-        if (particlesHeavy)
+    private void SetParticlePositions()
+    {
+        if (particlesLite && particlesHeavy)
         {
-            particlesLite.transform.localPosition = Vector3.up * 0.2f;
-            particlesHeavy.transform.localPosition = Vector3.up * 0.2f;
+            particlesLite.transform.localPosition = Vector3.down * 0.4f;
+            particlesHeavy.transform.localPosition = Vector3.down * 0.4f;
         }
     }
 
