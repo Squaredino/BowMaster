@@ -7,13 +7,15 @@ using UnityEngine.UI;
 
 public class Target : MonoBehaviour
 {
-    public const float fadeOutDuration = 0.15f;
+    public const float fadeOutDuration = 0.15f, jumpDuration = 0.1f;
+    public const float jumpPowerNormal = 0.05f, jumpPowerBullseye = 0.1f;
 
     public float despawnTimer;
     public bool faceArcher;
+    public Color hitColorNormal, hitColorBullseye;
 
     private Game game;
-    private GameObject sprite;
+    private SpriteRenderer sprite;
     private Rigidbody2D rigidBody, bullseyeRigidBody;
     private ParticleSystem particlesHitLite, particlesHitHeavy;
     private Text text;
@@ -21,7 +23,7 @@ public class Target : MonoBehaviour
     void Start()
     {
         game = GameObject.Find("Game").GetComponent<Game>();
-        sprite = transform.Find("Sprite").gameObject;
+        sprite = transform.Find("Sprite").GetComponent<SpriteRenderer>();
         rigidBody = GetComponent<Rigidbody2D>();
         bullseyeRigidBody = transform.Find("Bullseye").GetComponent<Rigidbody2D>();
         text = transform.Find("Sprite/Canvas/BullseyeText").GetComponent<Text>();
@@ -49,6 +51,9 @@ public class Target : MonoBehaviour
     public void OnHit(bool isBullseye = false)
     {
         if (isBullseye) ShowBullseyeText();
+        sprite.transform.DOLocalJump(Vector3.zero, isBullseye ? jumpPowerBullseye : jumpPowerNormal, 1, jumpDuration);
+        sprite.DOColor(isBullseye ? hitColorBullseye : hitColorNormal, jumpDuration)
+            .OnComplete(() => sprite.DOColor(Color.white, jumpDuration));
         PlayHitParticles(isBullseye);
         Stop();
         StartCoroutine(Utils.DelayedAction(Despawn, despawnTimer));

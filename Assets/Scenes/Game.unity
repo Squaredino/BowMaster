@@ -171,7 +171,7 @@ MonoBehaviour:
   highscoreText: {fileID: 1727815928}
   score: 0
   bullseyeStreak: 0
-  crown: {fileID: 522800121}
+  crownObj: {fileID: 522800121}
   backgroundObj: {fileID: 1989645558}
   timerBarObj: {fileID: 1770619058}
   timerStartTime: 5

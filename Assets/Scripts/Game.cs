@@ -13,6 +13,7 @@ public class Game : MonoBehaviour
     public const float bgColorInDuration = 0.05f, bgColorOutDuration = 0.8f;
     public const float highscoreScale = 1.6f, highscoreDuration = 0.25f;
     public const float cameraShakeDuration = 0.2f, cameraShakeStrength = 0.1f, cameraShakeVibratio = 30f;
+    public const float crownFadeInDuration = 0.2f, crownFadeOutDuration = 0.5f;
     public const float minTargetScale = 0.6f;
     public const long vibrateDuration = 100;
     public const int positionsStoreCount = 5;
@@ -29,7 +30,7 @@ public class Game : MonoBehaviour
     public Rect gameBounds;
     public Text scoreText, highscoreText;
     public int score, bullseyeStreak;
-    public GameObject crown, backgroundObj;
+    public GameObject crownObj, backgroundObj;
     public GameObject timerBarObj;
     public float timerStartTime, timerMinTime;
     public float timeReductionPerHit;
@@ -47,7 +48,7 @@ public class Game : MonoBehaviour
     private float forceCoef;
     private Cross cross;
     private Vector2 lastTouch;
-    private Image background;
+    private Image crown, background;
 
     void Start()
     {
@@ -69,6 +70,8 @@ public class Game : MonoBehaviour
 
         cross = Instantiate(crossPrefab).GetComponent<Cross>();
         cross.gameObject.SetActive(false);
+
+        crown = crownObj.GetComponent<Image>();
 
         background = backgroundObj.GetComponent<Image>();
         background.color = bgDefaultColor;
@@ -295,7 +298,7 @@ public class Game : MonoBehaviour
 
     private void StartGame()
     {
-        crown.GetComponent<Image>().DOFade(0f, 0.5f).OnComplete(() => crown.SetActive(false));
+        crown.DOFade(0f, crownFadeOutDuration);
         timerBar.ContinueTimer();
         fireworks.Stop();
         cross.Hide();
@@ -335,6 +338,7 @@ public class Game : MonoBehaviour
         targetSpawner.Spawn();
         timerBar.StartTimer(timerStartTime);
         timerBar.PauseTimer();
+        crown.DOFade(1f, crownFadeInDuration);
         StopAllCoroutines();
         if (arrow == null)
         {
