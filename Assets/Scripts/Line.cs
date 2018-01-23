@@ -38,6 +38,12 @@ public class Line : MonoBehaviour
         lineRenderer.startColor = startColor;
         lineRenderer.endColor = endColor;
     }
+
+    void OnEnable()
+    {
+        isDrawing = false;
+        movingSpeed = 0f;
+    }
     
     void Update()
     {

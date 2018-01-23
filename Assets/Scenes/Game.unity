@@ -144,13 +144,9 @@ MonoBehaviour:
     type: 2}
   targetPrefab: {fileID: 1746746088200582, guid: 29e4076cfc5b56341948bb5a451233cd,
     type: 2}
-  aimAssistPrefab: {fileID: 1131058645665400, guid: d982b2e690ab80b4db94dfc332d917c6,
-    type: 2}
   crossPrefab: {fileID: 1066951351650734, guid: 1dbb5512b5eb5344494c3ca8e571f45a,
     type: 2}
-  fireworksPrefab: {fileID: 0}
-  archerPos: {x: 0, y: -3}
-  arrowArcherOffset: {x: 0, y: 0.5}
+  arrowPos: {x: 0, y: -2.5}
   fireworksPos: {x: 0, y: 2.5}
   minSwipeTime: 0.1
   maxSwipeTime: 0.4
@@ -159,8 +155,6 @@ MonoBehaviour:
   forceMultiplier: 1000
   arrowRespawnInterval: 0.2
   targetRespawnInterval: 0.4
-  arrow: {fileID: 0}
-  swipe: {x: 0, y: 0}
   gameBounds:
     serializedVersion: 2
     x: 0
@@ -171,12 +165,13 @@ MonoBehaviour:
   highscoreText: {fileID: 1727815928}
   score: 0
   bullseyeStreak: 0
-  crownObj: {fileID: 522800121}
-  backgroundObj: {fileID: 1989645558}
-  timerBarObj: {fileID: 1770619058}
-  timerStartTime: 5
+  targetHits: 0
+  crown: {fileID: 522800123}
+  background: {fileID: 1989645560}
+  timerBar: {fileID: 1770619060}
+  timerMaxTime: 5
   timerMinTime: 1
-  timeReductionPerHit: 0.1
+  timerReductionPerHit: 0.1
   bgDefaultColor: {r: 0.14432648, g: 0.07947665, b: 0.30882353, a: 1}
   bgHitColor: {r: 0.63235295, g: 0.63235295, b: 0.63235295, a: 1}
   bgBullseyeColor: {r: 0.8014706, g: 0.3577355, b: 0.19447447, a: 1}
@@ -547,7 +542,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1391634553
+  randomSeed: 1601667449
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -4066,7 +4061,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -1977091978
+  randomSeed: -478226805
   InitialModule:
     serializedVersion: 3
     enabled: 1

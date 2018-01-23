@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using DG.Tweening;
 
@@ -18,67 +15,55 @@ public class Game : MonoBehaviour
     public const long vibrateDuration = 100;
     public const int positionsStoreCount = 5;
 
-    public GameObject arrowPrefab, targetPrefab, aimAssistPrefab;
-    public GameObject crossPrefab, fireworksPrefab;
-    public Vector2 archerPos, arrowArcherOffset, fireworksPos;
+    public GameObject arrowPrefab, targetPrefab, crossPrefab;
+    public Vector2 arrowPos, fireworksPos;
     public float minSwipeTime, maxSwipeTime;
     public float minForce, maxForce, forceMultiplier;
     public float arrowRespawnInterval, targetRespawnInterval;
-    public GameObject arrow;
-    public Vector2 swipe;
-    public Queue<Vector2> touchPositions;
     public Rect gameBounds;
     public Text scoreText, highscoreText;
-    public int score, bullseyeStreak;
-    public GameObject crownObj, backgroundObj;
-    public GameObject timerBarObj;
-    public float timerStartTime, timerMinTime;
-    public float timeReductionPerHit;
+    public int score, bullseyeStreak, targetHits;
+    public Image crown, background;
+    public TimerBar timerBar;
+    public float timerMaxTime, timerMinTime, timerReductionPerHit;
     public Color bgDefaultColor, bgHitColor, bgBullseyeColor;
     public float targetAreaPadLeft, targetAreaPadTop, targetAreaPadRight, targetAreaPadBottom;
     public string[] bullseyeText;
     public Spawner targetSpawner;
     public ParticleSystem fireworks;
 
+    private GameObject arrow;
     private float swipeTime;
-    private TimerBar timerBar;
-    private int targetHits;
+    private Queue<Vector2> touchPositions;
     private bool gameStarted;
     private bool isArrowFlying;
     private float forceCoef;
     private Cross cross;
     private Vector2 lastTouch;
-    private Image crown, background;
 
     void Start()
     {
-        float cameraHeight = Camera.main.orthographicSize;
-        float cameraWidth = cameraHeight * Mathf.Min(gameAspect, Camera.main.aspect);
+        var cameraHeight = Camera.main.orthographicSize;
+        var cameraWidth = cameraHeight * Mathf.Min(gameAspect, Camera.main.aspect);
         gameBounds = new Rect(-cameraWidth, -cameraHeight, cameraWidth * 2, cameraHeight * 2);
 
-        targetSpawner.spawnStrategy = SpawnerStrategy.First;
         targetSpawner.bounds = new Rect(
             gameBounds.x + targetAreaPadLeft,
             gameBounds.y + targetAreaPadBottom,
             gameBounds.width - targetAreaPadLeft - targetAreaPadRight,
             gameBounds.height - targetAreaPadTop - targetAreaPadBottom);
+        targetSpawner.spawnStrategy = SpawnerStrategy.First;
         targetSpawner.Spawn();
-
-        //Instantiate(aimAssistPrefab).GetComponent<AimAssist>();
 
         touchPositions = new Queue<Vector2>();
 
         cross = Instantiate(crossPrefab).GetComponent<Cross>();
         cross.gameObject.SetActive(false);
-
-        crown = crownObj.GetComponent<Image>();
-
-        background = backgroundObj.GetComponent<Image>();
+        
         background.color = bgDefaultColor;
 
         forceCoef = (maxForce - minForce) / (maxSwipeTime - minSwipeTime);
 
-        timerBar = timerBarObj.GetComponent<TimerBar>();
         timerBar.ShowTimer();
 
         CheckHighScore();
@@ -145,7 +130,6 @@ public class Game : MonoBehaviour
 
     private void InputStart(Vector3 position)
     {
-        swipe = Vector2.zero;
         lastTouch = position;
         swipeTime = 0f;
     }
@@ -159,9 +143,6 @@ public class Game : MonoBehaviour
             {
                 touchPositions.Dequeue();
             }
-
-            //swipe = (Vector2) position - touchPositions.Peek();
-            //arrow.transform.rotation = Quaternion.FromToRotation(Vector2.up, swipe);
         }
 
         swipeTime += Time.deltaTime;
@@ -172,7 +153,7 @@ public class Game : MonoBehaviour
     {
         InputMove(position);
 
-        swipe = Vector2.zero;
+        var swipe = Vector2.zero;
         foreach (var pos in touchPositions)
         {
             swipe += pos;
@@ -221,7 +202,7 @@ public class Game : MonoBehaviour
         }
 
         arrow = Pool.Get(arrowPrefab);
-        arrow.transform.position = archerPos + arrowArcherOffset;
+        arrow.transform.position = arrowPos;
         SetArrowParticles();
     }
 
@@ -235,7 +216,7 @@ public class Game : MonoBehaviour
         scoreText.transform.DOPunchScale(Vector3.one * Mathf.Min(minScorePunch + bullseyeStreak / 10f, maxScorePunch),
             scorePunchDuration);
 
-        timerBar.StartTimer(Mathf.Max(timerStartTime - timeReductionPerHit * targetHits, timerMinTime));
+        timerBar.StartTimer(Mathf.Max(timerMaxTime - timerReductionPerHit * targetHits, timerMinTime));
 
         if (isBullseye)
         {
@@ -334,10 +315,17 @@ public class Game : MonoBehaviour
         PlayerPrefs.SetInt("LastScore", score);
         CheckHighScore();
 
+        score = 0;
+        bullseyeStreak = 0;
+        targetHits = 0;
+        gameStarted = false;
+        isArrowFlying = false;
+
+        SetArrowParticles();
         targetSpawner.DespawnAll();
         targetSpawner.spawnStrategy = SpawnerStrategy.First;
         targetSpawner.Spawn();
-        timerBar.StartTimer(timerStartTime);
+        timerBar.StartTimer(timerMaxTime);
         timerBar.PauseTimer();
         crown.DOFade(1f, crownFadeInDuration);
         StopAllCoroutines();
@@ -345,12 +333,6 @@ public class Game : MonoBehaviour
         {
             RespawnArrow();
         }
-
-        score = 0;
-        bullseyeStreak = 0;
-        targetHits = 0;
-        gameStarted = false;
-        isArrowFlying = false;
 
         scoreText.text = PlayerPrefs.GetInt("Highscore").ToString();
     }
