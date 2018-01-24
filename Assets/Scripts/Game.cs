@@ -160,7 +160,7 @@ public class Game : MonoBehaviour
         }
 
         touchPositions.Clear();
-        if (swipe.sqrMagnitude == 0f || swipe.y <= 0f) return;
+        if (swipe.y <= 0.5f) return;
 
         arrow.transform.rotation = Quaternion.FromToRotation(Vector2.up, swipe);
         swipeTime = Mathf.Min(Mathf.Max(swipeTime, minSwipeTime), maxSwipeTime);
