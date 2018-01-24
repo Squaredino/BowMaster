@@ -13,7 +13,7 @@ public class Game : MonoBehaviour
     public const float crownFadeInDuration = 0.2f, crownFadeOutDuration = 0.5f;
     public const float minTargetScale = 0.6f;
     public const long vibrateDuration = 100;
-    public const int positionsStoreCount = 5;
+    public const int positionsStoreCount = 10;
 
     public GameObject arrowPrefab, targetPrefab, crossPrefab;
     public Vector2 arrowPos, fireworksPos;
@@ -136,7 +136,7 @@ public class Game : MonoBehaviour
 
     private void InputMove(Vector3 position)
     {
-        if (position.y > lastTouch.y)
+        if (position.y > lastTouch.y + 0.07f)
         {
             touchPositions.Enqueue((Vector2)position - lastTouch);
             if (touchPositions.Count > positionsStoreCount)
@@ -327,6 +327,7 @@ public class Game : MonoBehaviour
         targetSpawner.Spawn();
         timerBar.StartTimer(timerMaxTime);
         timerBar.PauseTimer();
+        crown.DOKill();
         crown.DOFade(1f, crownFadeInDuration);
         StopAllCoroutines();
         if (arrow == null)
