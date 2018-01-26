@@ -1,41 +1,49 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
     public List<Vector2> waypoints;
     public float speed;
+    public Ease ease;
+    
+    private Sequence sequence;
+    private bool waypointsSet;
 
-    private Rigidbody2D rigidBody;
-    private int currWaypoint = 0;
-    private float minDist = 0.2f;
-
-    void Start()
+    void LateUpdate()
     {
-        rigidBody = gameObject.GetComponent<Rigidbody2D>();
+        if (waypointsSet) return;
+        waypointsSet = true;
+        SetWaypoints();
     }
 
-    void Update()
+    void OnDisable()
     {
-        if (waypoints.Any())
-        {
-            rigidBody.MovePosition(rigidBody.position + (waypoints[currWaypoint] - rigidBody.position).normalized * speed * Time.deltaTime);
-            if (Vector2.Distance(rigidBody.position, waypoints[currWaypoint]) < minDist)
-            {
-                currWaypoint = currWaypoint + 1 >= waypoints.Count ? 0 : currWaypoint + 1;
-            }
-        }
+        waypointsSet = false;
+        sequence.Kill();
     }
 
-    private void OnEnable()
+    public void Stop()
     {
-        currWaypoint = 0;
+        sequence.Kill();
     }
 
-    private void OnDisable()
+    private void SetWaypoints()
     {
+        if (!waypoints.Any()) return;
+
+        transform.position = waypoints[0];
+        sequence = DOTween.Sequence();
+
+        for (var i = 1; i < waypoints.Count; i++)
+            sequence.Append(transform.DOMove(waypoints[i], Vector2.Distance(waypoints[i], waypoints[i - 1]) / speed).SetEase(ease));
+        sequence.Append(transform.DOMove(waypoints[0], Vector2.Distance(waypoints[0], waypoints.Last()) / speed).SetEase(ease));
+
+        sequence.SetLoops(-1);
+        sequence.Play();
+
         waypoints.Clear();
     }
 }

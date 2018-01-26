@@ -16,6 +16,7 @@ public class Target : MonoBehaviour
     private Rigidbody2D rigidBody, bullseyeRigidBody;
     private ParticleSystem particlesHitLite, particlesHitHeavy;
     private Text bullseyeText;
+    private Movement movement;
 
     void Start()
     {
@@ -26,6 +27,7 @@ public class Target : MonoBehaviour
         bullseyeText = transform.Find("Sprite/Canvas/BullseyeText").GetComponent<Text>();
         particlesHitLite = transform.Find("Particles/HitLite").gameObject.GetComponent<ParticleSystem>();
         particlesHitHeavy = transform.Find("Particles/HitHeavy").gameObject.GetComponent<ParticleSystem>();
+        movement = GetComponent<Movement>();
     }
 
     void Update()
@@ -47,6 +49,7 @@ public class Target : MonoBehaviour
 
     public void OnHit(bool isBullseye = false)
     {
+        movement.Stop();
         if (isBullseye) ShowBullseyeText();
         PlayHitAnimations(isBullseye);
         PlayHitParticles(isBullseye);

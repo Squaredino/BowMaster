@@ -321,10 +321,15 @@ public class Game : MonoBehaviour
         gameStarted = false;
         isArrowFlying = false;
 
+        if (targetSpawner.spawnStrategy != SpawnerStrategy.First)
+        {
+            targetSpawner.DespawnAll();
+            targetSpawner.spawnStrategy = SpawnerStrategy.First;
+            targetSpawner.scale = Vector3.one;
+            targetSpawner.Spawn();
+        }
+    
         SetArrowParticles();
-        targetSpawner.DespawnAll();
-        targetSpawner.spawnStrategy = SpawnerStrategy.First;
-        targetSpawner.Spawn();
         timerBar.StartTimer(timerMaxTime);
         timerBar.PauseTimer();
         crown.DOKill();
