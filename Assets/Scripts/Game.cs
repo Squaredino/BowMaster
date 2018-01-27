@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using TMPro;
 
 public class Game : MonoBehaviour
 {
@@ -12,23 +13,22 @@ public class Game : MonoBehaviour
     public const float cameraShakeDuration = 0.2f, cameraShakeStrength = 0.1f, cameraShakeVibratio = 30f;
     public const float crownFadeInDuration = 0.2f, crownFadeOutDuration = 0.5f;
     public const float minTargetScale = 0.6f;
-    public const long vibrateDuration = 100;
     public const int positionsStoreCount = 10;
 
+    [SerializeField] private PointsBallonManager _pointsBalloonManager;
     public GameObject arrowPrefab, targetPrefab, crossPrefab;
     public Vector2 arrowPos, fireworksPos;
     public float minSwipeTime, maxSwipeTime;
     public float minForce, maxForce, forceMultiplier;
     public float arrowRespawnInterval, targetRespawnInterval;
     public Rect gameBounds;
-    public Text scoreText, highscoreText;
+    [SerializeField] private TextMeshProUGUI scoreText, highscoreText;
     public int score, bullseyeStreak, targetHits;
     public Image crown, background;
     public TimerBar timerBar;
     public float timerMaxTime, timerMinTime, timerReductionPerHit;
     public Color bgDefaultColor, bgHitColor, bgBullseyeColor;
     public float targetAreaPadLeft, targetAreaPadTop, targetAreaPadRight, targetAreaPadBottom;
-    public string[] bullseyeText;
     public Spawner targetSpawner;
     public ParticleSystem fireworks;
 
@@ -52,6 +52,11 @@ public class Game : MonoBehaviour
             gameBounds.y + targetAreaPadBottom,
             gameBounds.width - targetAreaPadLeft - targetAreaPadRight,
             gameBounds.height - targetAreaPadTop - targetAreaPadBottom);
+        targetSpawner.scoreBounds = new Rect(
+            scoreText.transform.position.x - 1.5f,
+            scoreText.transform.position.y - 0.6f,
+            3f,
+            1.2f);
         targetSpawner.spawnStrategy = SpawnerStrategy.First;
         targetSpawner.Spawn();
 
@@ -206,11 +211,12 @@ public class Game : MonoBehaviour
         SetArrowParticles();
     }
 
-    public void TargetHit(bool isBullseye = false)
+    public void TargetHit(bool isBullseye, Vector3 position)
     {
         targetHits++;
         bullseyeStreak = isBullseye ? bullseyeStreak + 1 : 0;
         score += 1 + bullseyeStreak;
+        _pointsBalloonManager.Add(bullseyeStreak + 1, Camera.main.WorldToScreenPoint(position));
 
         scoreText.transform.localScale = Vector3.one;
         scoreText.transform.DOPunchScale(Vector3.one * Mathf.Min(minScorePunch + bullseyeStreak / 10f, maxScorePunch),
@@ -223,7 +229,7 @@ public class Game : MonoBehaviour
             Camera.main.DOShakePosition(cameraShakeDuration, cameraShakeStrength, (int) cameraShakeVibratio);
             if (bullseyeStreak >= 3)
             {
-                Vibration.Vibrate(vibrateDuration);
+                Handheld.Vibrate();
             }
         }
 
@@ -248,19 +254,14 @@ public class Game : MonoBehaviour
         cross.Show(position);
     }
 
-    public string GetBullseyeText()
+    public string GetHitText()
     {
-        if (bullseyeStreak < 3)
-        {
-            return bullseyeText[bullseyeStreak];
-        }
-
-        return bullseyeText[3 + bullseyeStreak % (bullseyeText.Length - 3)];
+        return string.Format("+{0}", 1 + bullseyeStreak);
     }
 
     private void SetSpawnerStrategy()
     {
-        var random = UnityEngine.Random.value;
+        var random = Random.value;
         if (random < 0.1)
         {
             targetSpawner.spawnStrategy = SpawnerStrategy.SimpleMoving;
@@ -275,7 +276,7 @@ public class Game : MonoBehaviour
         }
 
         var minScale = Mathf.Max(minTargetScale, 1f - targetHits * 0.01f);
-        targetSpawner.scale = Vector3.one * UnityEngine.Random.Range(minScale, 1f);
+        targetSpawner.scale = Vector3.one * Random.Range(minScale, 1f);
     }
 
     private void StartGame()

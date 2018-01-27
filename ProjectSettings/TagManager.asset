@@ -3,7 +3,9 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Bullseye
+  - Target
   layers:
   - Default
   - TransparentFX
@@ -52,4 +54,7 @@ TagManager:
     locked: 0
   - name: arrow
     uniqueID: 2060037909
+    locked: 0
+  - name: targetUp
+    uniqueID: 3626321799
     locked: 0

@@ -1,30 +1,29 @@
 ﻿using DG.Tweening;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Target : MonoBehaviour
 {
     public const float fadeOutDuration = 0.15f, jumpDuration = 0.1f;
     public const float jumpPowerNormal = 0.05f, jumpPowerBullseye = 0.1f;
-
+    [SerializeField] private GameObject _visual;
+    [SerializeField] private SpriteRenderer[] sprites = new SpriteRenderer[2];
     public float despawnTimer;
     public bool faceArcher;
+//    public Text hitText;
     public Color hitColorNormal, hitColorBullseye;
+//    public Color hitTextColorNormal, hitTextColorBullseye;
 
     private Game game;
-    private SpriteRenderer sprite;
+    
     private Rigidbody2D rigidBody, bullseyeRigidBody;
     private ParticleSystem particlesHitLite, particlesHitHeavy;
-    private Text bullseyeText;
     private Movement movement;
 
     void Start()
     {
         game = GameObject.Find("Game").GetComponent<Game>();
-        sprite = transform.Find("Sprite").GetComponent<SpriteRenderer>();
         rigidBody = GetComponent<Rigidbody2D>();
         bullseyeRigidBody = transform.Find("Bullseye").GetComponent<Rigidbody2D>();
-        bullseyeText = transform.Find("Sprite/Canvas/BullseyeText").GetComponent<Text>();
         particlesHitLite = transform.Find("Particles/HitLite").gameObject.GetComponent<ParticleSystem>();
         particlesHitHeavy = transform.Find("Particles/HitHeavy").gameObject.GetComponent<ParticleSystem>();
         movement = GetComponent<Movement>();
@@ -50,7 +49,7 @@ public class Target : MonoBehaviour
     public void OnHit(bool isBullseye = false)
     {
         movement.Stop();
-        if (isBullseye) ShowBullseyeText();
+//        ShowHitText(isBullseye);
         PlayHitAnimations(isBullseye);
         PlayHitParticles(isBullseye);
         Stop();
@@ -59,9 +58,12 @@ public class Target : MonoBehaviour
 
     private void PlayHitAnimations(bool isBullseye)
     {
-        sprite.transform.DOLocalJump(Vector3.zero, isBullseye ? jumpPowerBullseye : jumpPowerNormal, 1, jumpDuration);
-        sprite.DOColor(isBullseye ? hitColorBullseye : hitColorNormal, jumpDuration)
-            .OnComplete(() => sprite.DOColor(Color.white, jumpDuration));
+        _visual.transform.DOLocalJump(Vector3.zero, isBullseye ? jumpPowerBullseye : jumpPowerNormal, 1, jumpDuration);
+        foreach (SpriteRenderer _spr in sprites)
+        {
+            _spr.DOColor(isBullseye ? hitColorBullseye : hitColorNormal, jumpDuration)
+                .OnComplete(() => _spr.DOColor(Color.white, jumpDuration));
+        }
     }
 
     public void PlayHitParticles(bool isBullseye)
@@ -80,18 +82,19 @@ public class Target : MonoBehaviour
 
     public void Despawn()
     {
-        sprite.transform.DOScale(Vector3.zero, fadeOutDuration).OnComplete(
+        _visual.transform.DOScale(Vector3.zero, fadeOutDuration).OnComplete(
             () =>
             {
-                bullseyeText.gameObject.SetActive(false);
+//                hitText.gameObject.SetActive(false);
                 gameObject.SetActive(false);
             });
     }
 
-    public void ShowBullseyeText()
-    {
-        bullseyeText.gameObject.SetActive(true);
-        bullseyeText.text = game.GetBullseyeText();
-        bullseyeText.transform.DOPunchScale(Vector3.one, 0.2f);
-    }
+//    public void ShowHitText(bool isBullseye)
+//    {
+//        hitText.gameObject.SetActive(true);
+//        hitText.text = game.GetHitText();
+//        hitText.color = isBullseye ? hitTextColorBullseye : hitTextColorNormal;
+//        hitText.transform.DOPunchScale(Vector3.one * 2, 0.2f);
+//    }
 }

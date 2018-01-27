@@ -1,12 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
     public GameObject prefab;
-    public Rect bounds;
+    public Rect bounds, scoreBounds;
     public float spawnInterval = 0f;
     public SpawnerStrategy.SpawnStrategy spawnStrategy = SpawnerStrategy.Simple;
     public Vector3 scale;
@@ -44,9 +41,9 @@ public class Spawner : MonoBehaviour
                 tmpVector = obj.transform.position;
                 tmpVector.x = tmpVector.x * bounds.width + bounds.xMin;
                 tmpVector.y = tmpVector.y * bounds.height + bounds.yMin;
+                if (scoreBounds.Contains(tmpVector))
+                    tmpVector.x = tmpVector.x > scoreBounds.center.x ? scoreBounds.x : scoreBounds.xMax;
                 obj.transform.position = tmpVector;
-
-                obj.transform.localScale = scale;
 
                 tmpMovement = obj.GetComponent<Movement>();
                 if (tmpMovement != null)
@@ -59,6 +56,8 @@ public class Spawner : MonoBehaviour
                         tmpMovement.waypoints[i] = tmpVector;
                     }
                 }
+
+                obj.transform.localScale = scale;
             }
         }
     }

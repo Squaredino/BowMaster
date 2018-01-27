@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Arrowhead : MonoBehaviour
 {
@@ -13,11 +11,6 @@ public class Arrowhead : MonoBehaviour
         game = GameObject.Find("Game").GetComponent<Game>();
     }
 
-    void Update()
-    {
-
-    }
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (!collision.rigidbody.simulated || !collision.otherRigidbody.simulated)
@@ -28,11 +21,11 @@ public class Arrowhead : MonoBehaviour
         Target target = null;
         var isBullseye = false;
 
-        if (collision.gameObject.name.Contains("Target"))
+        if (collision.gameObject.CompareTag("Target"))
         {
             target = collision.gameObject.GetComponent<Target>();
         }
-        else if (collision.gameObject.name.Contains("Bullseye"))
+        else if (collision.gameObject.CompareTag("Bullseye"))
         {
             target = collision.transform.parent.GetComponent<Target>();
             isBullseye = true;
@@ -40,10 +33,10 @@ public class Arrowhead : MonoBehaviour
 
         if (target != null)
         {
+            game.TargetHit(isBullseye, target.transform.position);
+
             target.OnHit(isBullseye);
             arrow.OnHit(isBullseye);
-
-            game.TargetHit(isBullseye);
         }
     }
 }
