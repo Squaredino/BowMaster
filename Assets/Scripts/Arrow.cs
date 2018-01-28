@@ -14,7 +14,6 @@ public class Arrow : MonoBehaviour
     private bool isOutOfBounds;
     private Game game;
     private GameObject arrowHead, sprite;
-    private Line line;
     private Renderer spriteRenderer;
     private Rigidbody2D rigidBody, arrowHeadRigidBody;
     private ParticleSystem particlesLite, particlesHeavy;
@@ -25,7 +24,6 @@ public class Arrow : MonoBehaviour
     {
         game = GameObject.Find("Game").GetComponent<Game>();
         arrowHead = transform.Find("Arrowhead").gameObject;
-        line = transform.Find("Line").GetComponent<Line>();
         sprite = transform.Find("Sprite").gameObject;
         spriteRenderer = sprite.GetComponent<Renderer>();
         rigidBody = gameObject.GetComponent<Rigidbody2D>();
@@ -64,8 +62,6 @@ public class Arrow : MonoBehaviour
 
         if (rigidBody.simulated)
         {
-            line.EndPoint = Vector2.down * Mathf.Min(Vector2.Distance(startPoint, sprite.transform.position), maxTrailLength);
-
             if (!game.gameBounds.Contains(spriteRenderer.bounds.max) ||
                 !game.gameBounds.Contains(spriteRenderer.bounds.min))
             {
@@ -78,19 +74,9 @@ public class Arrow : MonoBehaviour
                 if (!game.gameBounds.Contains(spriteRenderer.bounds.max) &&
                     !game.gameBounds.Contains(spriteRenderer.bounds.min))
                 {
-                    Stop();
-                    Despawn();
+                    Invoke("Remove", 0.25f);
                 }
             }
-        }
-    }
-
-    void OnEnable()
-    {
-        if (line)
-        {
-            line.StartPoint = Vector2.zero;
-            line.EndPoint = Vector2.zero;
         }
     }
 
@@ -137,9 +123,14 @@ public class Arrow : MonoBehaviour
         rigidBody.AddForce(force);
     }
 
+    private void Remove()
+    {
+        Stop();
+        Despawn();
+    }
+
     public void Stop()
     {
-        line.Move(Vector2.zero, 0.5f);
         rigidBody.simulated = false;
         arrowHeadRigidBody.simulated = false;
         particleLevel = 0;

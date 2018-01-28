@@ -11,13 +11,14 @@ public class TimerBar : MonoBehaviour
     private float allTime = 10f;
     private float currentTime = 10f;
     private bool isActive;
-
+    private Image image;
     private Tweener tweener;
 
     private void Start()
     {
-        GetComponent<Image>().color = normalColor;
-        GetComponent<Image>().fillAmount = 1f;
+        image = GetComponent<Image>();
+        image.color = normalColor;
+        image.fillAmount = 1f;
         transform.parent.localScale = Vector3.zero;
     }
 
@@ -37,8 +38,8 @@ public class TimerBar : MonoBehaviour
     public void OnResetTimer()
     {
         isActive = false;
-        GetComponent<Image>().fillAmount = 0f;
-        GetComponent<Image>().color = normalColor;
+        image.fillAmount = 1f;
+        image.color = normalColor;
     }
 
     public void ChangeSize()
@@ -88,17 +89,17 @@ public class TimerBar : MonoBehaviour
         {
             currentTime -= Time.deltaTime;
             float res = currentTime / allTime;
-            GetComponent<Image>().color = normalColor;
+            image.color = normalColor;
             if (res <= portionLimitColor)
             {
-                GetComponent<Image>().color = limitColor;
+                image.color = limitColor;
                 ChangeSize();
             }
-            GetComponent<Image>().fillAmount = res;
+            image.fillAmount = res;
 
             if (currentTime <= 0f)
             {
-                GetComponent<Image>().color = normalColor;
+                image.color = normalColor;
                 isActive = false;
             }
         }

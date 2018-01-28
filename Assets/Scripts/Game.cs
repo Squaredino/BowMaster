@@ -171,11 +171,6 @@ public class Game : MonoBehaviour
         swipeTime = Mathf.Min(Mathf.Max(swipeTime, minSwipeTime), maxSwipeTime);
         var force = Mathf.Min(Mathf.Max(forceCoef * (maxSwipeTime - swipeTime), minForce), maxForce);
         ShootArrow(swipe, force * forceMultiplier);
-
-        if (!gameStarted)
-        {
-            StartGame();
-        }
     }
 
     private void ShootArrow(Vector2 direction, float force)
@@ -224,6 +219,8 @@ public class Game : MonoBehaviour
 
         timerBar.StartTimer(Mathf.Max(timerMaxTime - timerReductionPerHit * targetHits, timerMinTime));
 
+        SetArrowParticles();
+
         if (isBullseye)
         {
             Camera.main.DOShakePosition(cameraShakeDuration, cameraShakeStrength, (int) cameraShakeVibratio);
@@ -231,12 +228,7 @@ public class Game : MonoBehaviour
             {
                 Handheld.Vibrate();
             }
-        }
-
-        SetArrowParticles();
-
-        if (isBullseye)
-        {
+        
             background.DOKill();
             background.DOColor(bullseyeStreak > 2 ? bgBullseyeColor : bgHitColor, bgColorInDuration)
                 .OnComplete(() => background.DOColor(bgDefaultColor, bgColorOutDuration));
@@ -246,6 +238,11 @@ public class Game : MonoBehaviour
         StartCoroutine(Utils.DelayedAction(targetSpawner.Spawn, targetRespawnInterval));
 
         isArrowFlying = false;
+
+        if (!gameStarted)
+        {
+            StartGame();
+        }
     }
 
     public void TargetMiss(Vector3 position)
@@ -262,11 +259,11 @@ public class Game : MonoBehaviour
     private void SetSpawnerStrategy()
     {
         var random = Random.value;
-        if (random < 0.1)
+        if (random < 0.1f)
         {
             targetSpawner.spawnStrategy = SpawnerStrategy.SimpleMoving;
         }
-        else if (random < 0.15)
+        else if (random < 0.15f)
         {
             targetSpawner.spawnStrategy = SpawnerStrategy.SimpleMovingVertical;
         }
@@ -331,11 +328,11 @@ public class Game : MonoBehaviour
         }
     
         SetArrowParticles();
-        timerBar.StartTimer(timerMaxTime);
-        timerBar.PauseTimer();
         crown.DOKill();
         crown.DOFade(1f, crownFadeInDuration);
         StopAllCoroutines();
+        timerBar.PauseTimer();
+        StartCoroutine(Utils.DelayedAction(timerBar.OnResetTimer, 1f));
         if (arrow == null)
         {
             RespawnArrow();
