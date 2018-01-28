@@ -9,9 +9,7 @@ public class Target : MonoBehaviour
     [SerializeField] private SpriteRenderer[] sprites = new SpriteRenderer[2];
     public float despawnTimer;
     public bool faceArcher;
-//    public Text hitText;
     public Color hitColorNormal, hitColorBullseye;
-//    public Color hitTextColorNormal, hitTextColorBullseye;
 
     private Game game;
     
@@ -49,7 +47,6 @@ public class Target : MonoBehaviour
     public void OnHit(bool isBullseye = false)
     {
         movement.Stop();
-//        ShowHitText(isBullseye);
         PlayHitAnimations(isBullseye);
         PlayHitParticles(isBullseye);
         Stop();
@@ -85,16 +82,7 @@ public class Target : MonoBehaviour
         _visual.transform.DOScale(Vector3.zero, fadeOutDuration).OnComplete(
             () =>
             {
-//                hitText.gameObject.SetActive(false);
                 gameObject.SetActive(false);
             });
     }
-
-//    public void ShowHitText(bool isBullseye)
-//    {
-//        hitText.gameObject.SetActive(true);
-//        hitText.text = game.GetHitText();
-//        hitText.color = isBullseye ? hitTextColorBullseye : hitTextColorNormal;
-//        hitText.transform.DOPunchScale(Vector3.one * 2, 0.2f);
-//    }
 }

@@ -35,10 +35,11 @@ public class TimerBar : MonoBehaviour
         transform.parent.DOScale(0.0f, 0.2f);
     }
 
-    public void OnResetTimer()
+    public void ResetTimer()
     {
         isActive = false;
-        image.fillAmount = 1f;
+        image.DOFillAmount(1f, (1f - image.fillAmount) / 1f);
+        ChangeSize();
         image.color = normalColor;
     }
 

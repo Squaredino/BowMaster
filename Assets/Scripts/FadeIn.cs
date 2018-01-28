@@ -10,11 +10,11 @@ public class FadeIn : MonoBehaviour
 
     private void OnBecameVisible()
     {
-        if (!DOTween.IsTweening(transform))
-        {
+        //if (!DOTween.IsTweening(transform))
+        //{
             var scale = transform.localScale;
             transform.localScale = Vector3.zero;
             transform.DOScale(scale, fadeInDuration).SetEase(ease);
-        }
+        //}
     }
 }

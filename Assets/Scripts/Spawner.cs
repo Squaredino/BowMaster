@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using System.Linq;
+using DG.Tweening;
+using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
@@ -62,9 +65,9 @@ public class Spawner : MonoBehaviour
         }
     }
 
-    public void DespawnAll()
+    public List<GameObject> SpawnedObjects()
     {
-        Pool.Reset(prefab);
+        return Pool.GetActiveObjects(prefab).ToList();
     }
 
     public GameObject GetObject()

@@ -247,7 +247,7 @@ public class Game : MonoBehaviour
 
     public void TargetMiss(Vector3 position)
     {
-        GameReset();
+        if (gameStarted) GameReset();
         cross.Show(position);
     }
 
@@ -318,21 +318,28 @@ public class Game : MonoBehaviour
         targetHits = 0;
         gameStarted = false;
         isArrowFlying = false;
-
-        if (targetSpawner.spawnStrategy != SpawnerStrategy.First)
-        {
-            targetSpawner.DespawnAll();
-            targetSpawner.spawnStrategy = SpawnerStrategy.First;
-            targetSpawner.scale = Vector3.one;
-            targetSpawner.Spawn();
-        }
     
         SetArrowParticles();
         crown.DOKill();
         crown.DOFade(1f, crownFadeInDuration);
         StopAllCoroutines();
+
+        if (targetSpawner.spawnStrategy != SpawnerStrategy.First)
+        {
+            foreach (var target in targetSpawner.SpawnedObjects())
+            {
+                target.GetComponent<Target>().Stop();
+                target.GetComponent<Target>().Despawn();
+            }
+
+            targetSpawner.spawnStrategy = SpawnerStrategy.First;
+            targetSpawner.scale = Vector3.one;
+            targetSpawner.Spawn();
+        }
+
         timerBar.PauseTimer();
-        StartCoroutine(Utils.DelayedAction(timerBar.OnResetTimer, 1f));
+        StartCoroutine(Utils.DelayedAction(timerBar.ResetTimer, 0.3f));
+
         if (arrow == null)
         {
             RespawnArrow();

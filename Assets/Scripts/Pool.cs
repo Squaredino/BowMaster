@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Pool : MonoBehaviour
@@ -75,22 +76,8 @@ public class Pool : MonoBehaviour
         }
     }
 
-    public static void Reset(GameObject prefab)
+    public static List<GameObject> GetActiveObjects(GameObject prefab)
     {
-        var pool = pools[prefab];
-
-        foreach (var obj in pool.objects)
-        {
-            ResetObj(obj);
-            obj.SetActive(false);
-            pool.availableObjects.Enqueue(obj);
-        }
-
-        pool.availableObjects.Clear();
-    }
-
-    private void OnDestroy()
-    {
-        pools.Clear();
+        return pools[prefab].objects.Where(x => x.activeSelf).ToList();
     }
 }

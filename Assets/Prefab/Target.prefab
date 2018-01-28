@@ -36,7 +36,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4359221395900190}
-  - component: {fileID: 114490151764333624}
   m_Layer: 0
   m_Name: VIsual
   m_TagString: Untagged
@@ -106,6 +105,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4353282880592750}
   - component: {fileID: 212263113227815386}
+  - component: {fileID: 114632003625041418}
   m_Layer: 0
   m_Name: SpriteDown
   m_TagString: Untagged
@@ -137,6 +137,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4342663793212700}
   - component: {fileID: 212036193230514654}
+  - component: {fileID: 114143186568521498}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Untagged
@@ -345,6 +346,19 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.08, y: 0.12}
   m_EdgeRadius: 0
+--- !u!114 &114143186568521498
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1972375769607414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f1b7eb334dc84f4a9a0cba17cb45684, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fadeInDuration: 0.2
+  ease: 28
 --- !u!114 &114281123542172342
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -364,12 +378,12 @@ MonoBehaviour:
   faceArcher: 1
   hitColorNormal: {r: 1, g: 0.78431374, b: 0.78431374, a: 1}
   hitColorBullseye: {r: 1, g: 0.5882353, b: 0.5882353, a: 1}
---- !u!114 &114490151764333624
+--- !u!114 &114632003625041418
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1107801562461472}
+  m_GameObject: {fileID: 1751734845297358}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2f1b7eb334dc84f4a9a0cba17cb45684, type: 3}
