@@ -72,10 +72,11 @@ public class Gameplay : MonoBehaviour
         forceCoef = (maxForce - minForce) / (maxSwipeTime - minSwipeTime);
 
         timerBar.ShowTimer();
+       
+        var highscore = PlayerPrefs.GetInt("Highscore");
+        scoreText.text = highscore.ToString();
+        if (highscore <= 0) crown.DOFade(0f, 0f);
 
-        CheckHighScore();
-
-        scoreText.text = PlayerPrefs.GetInt("Highscore").ToString();
         _gameplayCounter = 0;
         RespawnArrow();
     }
