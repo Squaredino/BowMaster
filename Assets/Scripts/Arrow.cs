@@ -12,26 +12,47 @@ public class Arrow : MonoBehaviour
 
     private int particleLevel;
     private bool isOutOfBounds;
-    private Game game;
+    private Gameplay _gameplay;
     private GameObject arrowHead, sprite;
-    private Renderer spriteRenderer;
+    private SpriteRenderer _spriteRenderer;
     private Rigidbody2D rigidBody, arrowHeadRigidBody;
     private ParticleSystem particlesLite, particlesHeavy;
     private ParticleSystem particlesNormalHit, particlesBullseyeHit;
-    private Vector2 startPoint;
 
     void Start()
     {
-        game = GameObject.Find("Game").GetComponent<Game>();
+        _gameplay = GameObject.Find("Game").GetComponent<Gameplay>();
         arrowHead = transform.Find("Arrowhead").gameObject;
         sprite = transform.Find("Sprite").gameObject;
-        spriteRenderer = sprite.GetComponent<Renderer>();
+        _spriteRenderer = sprite.GetComponent<SpriteRenderer>();
         rigidBody = gameObject.GetComponent<Rigidbody2D>();
         arrowHeadRigidBody = arrowHead.GetComponent<Rigidbody2D>();
         particlesLite = transform.Find("TrailLite").gameObject.GetComponent<ParticleSystem>();
         particlesHeavy = transform.Find("TrailHeavy").gameObject.GetComponent<ParticleSystem>();
         particlesNormalHit = transform.Find("Particles/NormalHit").gameObject.GetComponent<ParticleSystem>();
         particlesBullseyeHit = transform.Find("Particles/BullseyeHit").gameObject.GetComponent<ParticleSystem>();
+//        LoadSkin(ScreenSkins.CurrentFaceId);
+    }
+
+    private void OnEnable()
+    {
+        GlobalEvents<OnChangeSkin>.Happened += OnChangeSkin;
+    }
+    
+    private void OnDisable()
+    {
+        GlobalEvents<OnChangeSkin>.Happened -= OnChangeSkin;
+    }
+
+    private void OnChangeSkin(OnChangeSkin obj)
+    {
+        LoadSkin(obj.Id);
+    }
+
+    private void LoadSkin(int objId)
+    {
+        if (_spriteRenderer.sprite) Resources.UnloadAsset(_spriteRenderer.sprite);
+        _spriteRenderer.sprite = Resources.Load<Sprite>("Gfx/Arrows/arrow_" + (objId + 1));
     }
 
     void Update()
@@ -62,17 +83,17 @@ public class Arrow : MonoBehaviour
 
         if (rigidBody.simulated)
         {
-            if (!game.gameBounds.Contains(spriteRenderer.bounds.max) ||
-                !game.gameBounds.Contains(spriteRenderer.bounds.min))
+            if (!_gameplay.gameBounds.Contains(_spriteRenderer.bounds.max) ||
+                !_gameplay.gameBounds.Contains(_spriteRenderer.bounds.min))
             {
                 if (!isOutOfBounds)
                 {
-                    game.TargetMiss(transform.position);
+                    _gameplay.TargetMiss(transform.position);
                     isOutOfBounds = true;
                 }
 
-                if (!game.gameBounds.Contains(spriteRenderer.bounds.max) &&
-                    !game.gameBounds.Contains(spriteRenderer.bounds.min))
+                if (!_gameplay.gameBounds.Contains(_spriteRenderer.bounds.max) &&
+                    !_gameplay.gameBounds.Contains(_spriteRenderer.bounds.min))
                 {
                     Invoke("Remove", 0.25f);
                 }
@@ -119,7 +140,6 @@ public class Arrow : MonoBehaviour
     {
         rigidBody.simulated = true;
         arrowHeadRigidBody.simulated = true;
-        startPoint = sprite.transform.position;
         rigidBody.AddForce(force);
     }
 

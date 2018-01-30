@@ -3,12 +3,12 @@
 public class Arrowhead : MonoBehaviour
 {
     private Arrow arrow;
-    private Game game;
+    private Gameplay _gameplay;
 
     void Start()
     {
         arrow = transform.parent.GetComponent<Arrow>();
-        game = GameObject.Find("Game").GetComponent<Game>();
+        _gameplay = GameObject.Find("Game").GetComponent<Gameplay>();
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -33,7 +33,7 @@ public class Arrowhead : MonoBehaviour
 
         if (target != null)
         {
-            game.TargetHit(isBullseye, target.transform.position);
+            _gameplay.TargetHit(isBullseye, target.transform.position);
 
             target.OnHit(isBullseye);
             arrow.OnHit(isBullseye);

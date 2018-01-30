@@ -657,7 +657,9 @@ PlayerSettings:
   webGLUseEmbeddedResources: 0
   webGLUseWasm: 0
   webGLCompressionFormat: 1
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    1: dUI_DoozyUI
+    4: dUI_DoozyUI;dUI_SceneLoaderDisabled;dUI_TextMeshPro
   platformArchitecture: {}
   scriptingBackend: {}
   incrementalIl2cppBuild: {}

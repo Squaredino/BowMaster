@@ -232,7 +232,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1746746088200582}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.118, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4359221395900190}
@@ -344,7 +344,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.08, y: 0.12}
+  m_Size: {x: 1.05, y: 0.12}
   m_EdgeRadius: 0
 --- !u!114 &114143186568521498
 MonoBehaviour:
@@ -372,8 +372,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _visual: {fileID: 1107801562461472}
   sprites:
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 212036193230514654}
+  - {fileID: 212263113227815386}
   despawnTimer: 0.3
   faceArcher: 1
   hitColorNormal: {r: 1, g: 0.78431374, b: 0.78431374, a: 1}

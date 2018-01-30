@@ -14,7 +14,7 @@ public class Cross : MonoBehaviour
     {
         transform.localScale = Vector3.one;
 
-        var game = GameObject.Find("Game").GetComponent<Game>();
+        var game = GameObject.Find("Game").GetComponent<Gameplay>();
         var render = GetComponent<Renderer>();
         
         position.x = Mathf.Min(position.x, game.gameBounds.width / 2f - render.bounds.extents.x - padding);

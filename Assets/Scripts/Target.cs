@@ -11,7 +11,7 @@ public class Target : MonoBehaviour
     public bool faceArcher;
     public Color hitColorNormal, hitColorBullseye;
 
-    private Game game;
+    private Gameplay _gameplay;
     
     private Rigidbody2D rigidBody, bullseyeRigidBody;
     private ParticleSystem particlesHitLite, particlesHitHeavy;
@@ -19,28 +19,51 @@ public class Target : MonoBehaviour
 
     void Start()
     {
-        game = GameObject.Find("Game").GetComponent<Game>();
+        _gameplay = GameObject.Find("Game").GetComponent<Gameplay>();
         rigidBody = GetComponent<Rigidbody2D>();
         bullseyeRigidBody = transform.Find("Bullseye").GetComponent<Rigidbody2D>();
         particlesHitLite = transform.Find("Particles/HitLite").gameObject.GetComponent<ParticleSystem>();
         particlesHitHeavy = transform.Find("Particles/HitHeavy").gameObject.GetComponent<ParticleSystem>();
         movement = GetComponent<Movement>();
+        
+//        LoadSkin(ScreenSkins.CurrentTargetId);
+    }
+    
+    private void OnEnable()
+    {
+        GlobalEvents<OnChangeTargetSkin>.Happened += OnChangeTargetSkin;
+        if (rigidBody)
+        {
+            rigidBody.simulated = true;
+            bullseyeRigidBody.simulated = true;
+        }
+    }
+
+    private void OnDisable()
+    {
+        GlobalEvents<OnChangeTargetSkin>.Happened -= OnChangeTargetSkin;
+    }
+
+    private void OnChangeTargetSkin(OnChangeTargetSkin obj)
+    {
+        LoadSkin(obj.Id);
+    }
+
+    private void LoadSkin(int objId)
+    {
+        // Верхний спрайт
+        if (sprites[0].sprite) Resources.UnloadAsset(sprites[0].sprite);
+        sprites[0].sprite = Resources.Load<Sprite>("Gfx/Targets/target_" + (objId + 1) + "_Up");
+        // Нижний спрайт
+        if (sprites[1].sprite) Resources.UnloadAsset(sprites[1].sprite);
+        sprites[1].sprite = Resources.Load<Sprite>("Gfx/Targets/target_" + (objId + 1) + "_Down");
     }
 
     void Update()
     {
         if (faceArcher)
         {
-            transform.up = transform.position - (Vector3) game.arrowPos; // rotate towards archer
-        }
-    }
-
-    private void OnEnable()
-    {
-        if (rigidBody)
-        {
-            rigidBody.simulated = true;
-            bullseyeRigidBody.simulated = true;
+            transform.up = transform.position - (Vector3) _gameplay.arrowPos; // rotate towards archer
         }
     }
 
