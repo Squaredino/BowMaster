@@ -43,7 +43,7 @@ public class ScreenSkins : ScreenItem
         CurrentFaceId = SecurePlayerPrefs.GetInt("currentFaceID");
         CurrentTargetId = SecurePlayerPrefs.GetInt("CurrentTargetId");
         CurrentFaceId = 0;
-        CurrentTargetId = 1;
+        CurrentTargetId = 0;
         for (var i = 0; i < _faceAll.Length; i++)
             SecurePlayerPrefs.SetInt("faceAvailable_" + i, 1);
         

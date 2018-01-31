@@ -3,18 +3,16 @@ using UnityEngine;
 
 public class Arrow : MonoBehaviour
 {
-    public const float particleSizeMin = .5f, particleSizeGrow = .2f;
     public const float fadeOutDuration = 0.1f;
 
     public float despawnTimer;
     public int maxParticleLevel;
-    public float maxTrailLength;
 
     private int particleLevel;
     private bool isOutOfBounds;
     private Gameplay _gameplay;
-    private GameObject arrowHead, sprite;
-    private SpriteRenderer _spriteRenderer;
+    private GameObject arrowHead;
+    [SerializeField] private SpriteRenderer _spriteRenderer;
     private Rigidbody2D rigidBody, arrowHeadRigidBody;
     private ParticleSystem particlesLite, particlesHeavy;
     private ParticleSystem particlesNormalHit, particlesBullseyeHit;
@@ -23,8 +21,6 @@ public class Arrow : MonoBehaviour
     {
         _gameplay = GameObject.Find("Game").GetComponent<Gameplay>();
         arrowHead = transform.Find("Arrowhead").gameObject;
-        sprite = transform.Find("Sprite").gameObject;
-        _spriteRenderer = sprite.GetComponent<SpriteRenderer>();
         rigidBody = gameObject.GetComponent<Rigidbody2D>();
         arrowHeadRigidBody = arrowHead.GetComponent<Rigidbody2D>();
         particlesLite = transform.Find("TrailLite").gameObject.GetComponent<ParticleSystem>();
@@ -161,6 +157,6 @@ public class Arrow : MonoBehaviour
         particlesLite.Clear();
         particlesHeavy.Clear();
         isOutOfBounds = false;
-        sprite.transform.DOScale(Vector3.zero, fadeOutDuration).OnComplete(() => gameObject.SetActive(false));
+        transform.DOScale(Vector3.zero, fadeOutDuration).OnComplete(() => gameObject.SetActive(false));
     }
 }

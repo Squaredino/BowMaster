@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using GameAnalyticsSDK;
 using TMPro;
 
 public class Gameplay : MonoBehaviour
@@ -16,8 +17,8 @@ public class Gameplay : MonoBehaviour
     public const int positionsStoreCount = 10;
 
     [SerializeField] private PointsBallonManager _pointsBalloonManager;
-    public GameObject arrowPrefab, targetPrefab, crossPrefab;
-    public Vector2 arrowPos, fireworksPos;
+    public GameObject arrowPrefab, crossPrefab;
+    public Vector2 arrowPos;
     public float minSwipeTime, maxSwipeTime;
     public float minForce, maxForce, forceMultiplier;
     public float arrowRespawnInterval, targetRespawnInterval;
@@ -91,11 +92,10 @@ public class Gameplay : MonoBehaviour
         if (gameStarted)
         {
             scoreText.text = score.ToString();
-        }
-
-        if (timerBar.IsTimerOver() && !isArrowFlying)
-        {
-            GameReset();
+            if (timerBar.IsTimerOver() && !isArrowFlying)
+            {
+                GameReset();
+            }
         }
     }
 
@@ -292,9 +292,11 @@ public class Gameplay : MonoBehaviour
         }
         
         ++_gameplayCounter;
-        if (_hint.active) _hint.SetActive(false);
+        if (_hint.activeSelf) _hint.SetActive(false);
 
         gameStarted = true;
+        
+//        GameAnalytics.NewProgressionEvent(GAProgressionStatus.Start, "Archer");
     }
 
     private void CheckHighScore()
@@ -316,6 +318,8 @@ public class Gameplay : MonoBehaviour
 
     private void GameReset()
     {
+//        GameAnalytics.NewProgressionEvent(GAProgressionStatus.Complete, "Archer", score);
+        
         PlayerPrefs.SetInt("LastScore", score);
         CheckHighScore();
 

@@ -106,6 +106,7 @@ GameObject:
   - component: {fileID: 4353282880592750}
   - component: {fileID: 212263113227815386}
   - component: {fileID: 114632003625041418}
+  - component: {fileID: 114446378510545232}
   m_Layer: 0
   m_Name: SpriteDown
   m_TagString: Untagged
@@ -138,6 +139,7 @@ GameObject:
   - component: {fileID: 4342663793212700}
   - component: {fileID: 212036193230514654}
   - component: {fileID: 114143186568521498}
+  - component: {fileID: 114319443591118766}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Untagged
@@ -378,6 +380,30 @@ MonoBehaviour:
   faceArcher: 1
   hitColorNormal: {r: 1, g: 0.78431374, b: 0.78431374, a: 1}
   hitColorBullseye: {r: 1, g: 0.5882353, b: 0.5882353, a: 1}
+--- !u!114 &114319443591118766
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1972375769607414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2015844bea07494e9f34c1326a83926, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _postfix: Up
+--- !u!114 &114446378510545232
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1751734845297358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2015844bea07494e9f34c1326a83926, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _postfix: Down
 --- !u!114 &114632003625041418
 MonoBehaviour:
   m_ObjectHideFlags: 1
