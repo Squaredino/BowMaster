@@ -4,12 +4,12 @@ using UnityEngine;
 public class TargetSkin : MonoBehaviour
 {
 	private SpriteRenderer _spriteRenderer;
-	[SerializeField] private String _postfix = "Up";
+	[SerializeField] private String _postfix = "up";
 	
 	void Start ()
 	{
 		_spriteRenderer = GetComponent<SpriteRenderer>();
-//		LoadSkin(ScreenSkins.CurrentTargetId);
+		LoadSkin(ScreenSkins.CurrentTargetId);
 	}
 	
 	private void OnEnable()
@@ -31,6 +31,5 @@ public class TargetSkin : MonoBehaviour
 	{
 		if (_spriteRenderer.sprite) Resources.UnloadAsset(_spriteRenderer.sprite);
 		_spriteRenderer.sprite = Resources.Load<Sprite>("Gfx/Targets/target_" + (objId + 1) + "_" + _postfix);
-		Debug.Log("LoadSkin " + "Gfx/Targets/target_" + (objId + 1) + "_" + _postfix + " sprite " + _spriteRenderer.sprite);
 	}
 }

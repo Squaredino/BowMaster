@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Pool : MonoBehaviour
 {
-    private const int INITIAL_SIZE = 5;
-    private const int GROW_SIZE = 5;
+    private const int INITIAL_SIZE = 2;
+    private const int GROW_SIZE = 2;
 
     private static Dictionary<GameObject, Pool> pools = new Dictionary<GameObject, Pool>();
 

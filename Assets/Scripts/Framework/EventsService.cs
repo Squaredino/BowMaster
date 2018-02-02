@@ -4,18 +4,19 @@
 
 // Завершение игры
 public struct OnGameOver{}
-
 public struct OnStartGame{}
 
 public struct OnShowMenu{}
-
 public struct OnHideMenu{}
 
 public struct OnScreenCoinsHide{}
 
-public struct OnShowMenuButtons{}
-
-public struct OnHideMenuButtons{}
+public struct OnScreenSkinsShow{}
+public struct OnScreenSkinsHide{}
+public struct OnBtnArrowsShow{}
+public struct OnBtnArrowsHide{}
+public struct OnBtnTargetsShow{}
+public struct OnBtnTargetsHide{}
 
 public struct OnRateScreenShow{}
 
@@ -271,9 +272,6 @@ public struct OnGifSaved{}
 
 // Закончилась анимация Вручения подарка
 public struct OnGifShared{}
-
-// Спрятать все Tube
-public struct OnHideTubes{}
 
 //--------------------------------------------------------
 //							IAPs

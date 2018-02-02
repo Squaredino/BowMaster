@@ -31596,7 +31596,7 @@ SpriteRenderer:
   m_SortingLayerID: 2060037909
   m_SortingLayer: 4
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: fb9cefe4694d24c2da0b43715990f701, type: 3}
+  m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -31604,7 +31604,7 @@ SpriteRenderer:
   m_Size: {x: 0.345, y: 1.28}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
 --- !u!255 &255045008790709492
 FixedJoint2D:

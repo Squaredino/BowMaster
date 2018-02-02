@@ -27,7 +27,7 @@ public class Arrow : MonoBehaviour
         particlesHeavy = transform.Find("TrailHeavy").gameObject.GetComponent<ParticleSystem>();
         particlesNormalHit = transform.Find("Particles/NormalHit").gameObject.GetComponent<ParticleSystem>();
         particlesBullseyeHit = transform.Find("Particles/BullseyeHit").gameObject.GetComponent<ParticleSystem>();
-//        LoadSkin(ScreenSkins.CurrentFaceId);
+        LoadSkin(ScreenSkins.CurrentFaceId);
     }
 
     private void OnEnable()
@@ -47,7 +47,7 @@ public class Arrow : MonoBehaviour
 
     private void LoadSkin(int objId)
     {
-        if (_spriteRenderer.sprite) Resources.UnloadAsset(_spriteRenderer.sprite);
+//        if (_spriteRenderer.sprite) Resources.UnloadAsset(_spriteRenderer.sprite);
         _spriteRenderer.sprite = Resources.Load<Sprite>("Gfx/Arrows/arrow_" + (objId + 1));
     }
 
