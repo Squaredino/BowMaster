@@ -1,26 +1,24 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class BtnChangeImage : MonoBehaviour
+public class BtnChangeImageVibro : MonoBehaviour
 {
     [SerializeField] private Sprite _spriteOn;
     [SerializeField] private Sprite _spriteOff;
-    [SerializeField] private bool _isOn;
     private Image _image;
 
     private void Start()
     {
         _image = GetComponent<Image>();
-        if (!_isOn)
+        if (!GameSettings.IsVibro)
         {
             _image.sprite = _spriteOff;
         }
     }
 
-    public void ChangeState()
+    public void CooseSprite()
     {
-        _isOn = !_isOn;
-        if (_isOn)
+        if (GameSettings.IsVibro)
         {
             _image.sprite = _spriteOn;
         }

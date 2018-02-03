@@ -8,7 +8,7 @@ public class ScreenSkinsTargetsBtn : ScreenSkinsBtn {
 
 	private void Start()
 	{
-		SecurePlayerPrefs.SetInt("targetsAvailable_" + _id, 1);
+//		SecurePlayerPrefs.SetInt("targetsAvailable_" + _id, 1);
 		if (_id == 0) SetLock(false); else
 		if (SecurePlayerPrefs.GetInt("targetsAvailable_" + _id) != 1)
 		{
@@ -21,6 +21,12 @@ public class ScreenSkinsTargetsBtn : ScreenSkinsBtn {
 	{
 		GlobalEvents<OnBtnTargetsShow>.Happened += OnBtnTargetsShow;
 		GlobalEvents<OnBtnTargetsHide>.Happened += OnBtnTargetsHide;
+		GlobalEvents<OnOpenSkinTarget>.Happened += OnOpenSkinTarget;
+	}
+
+	private void OnOpenSkinTarget(OnOpenSkinTarget obj)
+	{
+		if (obj.Id == _id) OpenSkin();
 	}
 
 	private void OnBtnTargetsShow(OnBtnTargetsShow obj)

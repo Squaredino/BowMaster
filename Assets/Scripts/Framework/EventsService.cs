@@ -3,8 +3,15 @@
 //--------------------------------------------------------
 
 // Завершение игры
-public struct OnGameOver{}
-public struct OnStartGame{}
+public struct OnGameOver
+{
+    public int score, targetHits;
+}
+
+public struct OnStartGame
+{
+    public int totalGames;
+}
 
 public struct OnShowMenu{}
 public struct OnHideMenu{}
@@ -17,6 +24,22 @@ public struct OnBtnArrowsShow{}
 public struct OnBtnArrowsHide{}
 public struct OnBtnTargetsShow{}
 public struct OnBtnTargetsHide{}
+
+
+// gameplay events
+public struct OnTargetHit
+{
+    public int score;
+    public int totalScore;
+    public int bullseyeStreak;
+    public int targetHits;
+    public float timerLeft;
+    public bool isTargetMoving;
+}
+
+
+
+
 
 public struct OnRateScreenShow{}
 
@@ -176,6 +199,17 @@ public struct OnGiftSkin
 
 // Изменяем Скин
 public struct OnChangeSkin
+{
+    public int Id;
+}
+
+public struct OnOpenSkinArrow
+{
+    public int Id;
+}
+
+
+public struct OnOpenSkinTarget
 {
     public int Id;
 }

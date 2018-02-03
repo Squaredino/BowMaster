@@ -8,6 +8,8 @@ public class TimerBar : MonoBehaviour
     public Color limitColor;
     public float portionLimitColor;
 
+    public float TimeLeft { get { return currentTime; } }
+
     private float allTime = 10f;
     private float currentTime = 10f;
     private bool isActive;

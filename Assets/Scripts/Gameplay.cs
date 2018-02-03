@@ -67,13 +67,13 @@ public class Gameplay : MonoBehaviour
 
         cross = Instantiate(crossPrefab).GetComponent<Cross>();
         cross.gameObject.SetActive(false);
-        
+
         background.color = bgDefaultColor;
 
         forceCoef = (maxForce - minForce) / (maxSwipeTime - minSwipeTime);
 
         timerBar.ShowTimer();
-       
+
         var highscore = PlayerPrefs.GetInt("Highscore");
         scoreText.text = highscore.ToString();
         if (highscore <= 0) crown.DOFade(0f, 0f);
@@ -226,12 +226,12 @@ public class Gameplay : MonoBehaviour
 
         if (isBullseye)
         {
-            Camera.main.DOShakePosition(cameraShakeDuration, cameraShakeStrength, (int) cameraShakeVibratio);
+            Camera.main.DOShakePosition(cameraShakeDuration, cameraShakeStrength, (int)cameraShakeVibratio);
             if (bullseyeStreak >= 3)
             {
                 Handheld.Vibrate();
             }
-        
+
             background.DOKill();
             background.DOColor(bullseyeStreak > 2 ? bgBullseyeColor : bgHitColor, bgColorInDuration)
                 .OnComplete(() => background.DOColor(bgDefaultColor, bgColorOutDuration));
@@ -246,6 +246,16 @@ public class Gameplay : MonoBehaviour
         {
             StartGame();
         }
+
+        GlobalEvents<OnTargetHit>.Call(new OnTargetHit
+        {
+            score = score,
+            totalScore = PlayerPrefs.GetInt("TotalScore", 0) + score,
+            bullseyeStreak = bullseyeStreak,
+            targetHits = targetHits,
+            timerLeft = timerBar.TimeLeft,
+            isTargetMoving = targetSpawner.spawnStrategy == SpawnerStrategy.SimpleMoving || targetSpawner.spawnStrategy == SpawnerStrategy.SimpleMovingVertical
+        });
     }
 
     public void TargetMiss(Vector3 position)
@@ -290,13 +300,15 @@ public class Gameplay : MonoBehaviour
             highscoreText.transform.DOScale(Vector3.zero, highscoreDuration)
                 .OnComplete(() => highscoreText.gameObject.SetActive(false));
         }
-        
+
         ++_gameplayCounter;
         if (_hint.activeSelf) _hint.SetActive(false);
 
+        GlobalEvents<OnStartGame>.Call(new OnStartGame { totalGames = PlayerPrefs.GetInt("TotalGamesPlayed", 0) });
+
         gameStarted = true;
-        
-//        GameAnalytics.NewProgressionEvent(GAProgressionStatus.Start, "Archer");
+
+        //        GameAnalytics.NewProgressionEvent(GAProgressionStatus.Start, "Archer");
     }
 
     private void CheckHighScore()
@@ -318,9 +330,11 @@ public class Gameplay : MonoBehaviour
 
     private void GameReset()
     {
-//        GameAnalytics.NewProgressionEvent(GAProgressionStatus.Complete, "Archer", score);
-        
+        //        GameAnalytics.NewProgressionEvent(GAProgressionStatus.Complete, "Archer", score);
+
         PlayerPrefs.SetInt("LastScore", score);
+        PlayerPrefs.SetInt("TotalScore", PlayerPrefs.GetInt("TotalScore", 0) + score);
+
         CheckHighScore();
 
         score = 0;
@@ -328,7 +342,7 @@ public class Gameplay : MonoBehaviour
         targetHits = 0;
         gameStarted = false;
         isArrowFlying = false;
-    
+
         SetArrowParticles();
         crown.DOKill();
         crown.DOFade(1f, crownFadeInDuration);
@@ -366,5 +380,9 @@ public class Gameplay : MonoBehaviour
         {
             _hint.SetActive(true);
         }
+
+        PlayerPrefs.SetInt("TotalGamesPlayed", PlayerPrefs.GetInt("TotalGamesPlayed", 0) + 1);
+
+        PlayerPrefs.Save();
     }
 }

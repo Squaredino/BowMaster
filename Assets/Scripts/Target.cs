@@ -5,6 +5,7 @@ public class Target : MonoBehaviour
 {
     public const float fadeOutDuration = 0.15f, jumpDuration = 0.1f;
     public const float jumpPowerNormal = 0.05f, jumpPowerBullseye = 0.1f;
+
     [SerializeField] private GameObject _visual;
     [SerializeField] private SpriteRenderer[] sprites;
     public float despawnTimer;
@@ -12,7 +13,6 @@ public class Target : MonoBehaviour
     public Color hitColorNormal, hitColorBullseye;
 
     private Gameplay _gameplay;
-    
     private Rigidbody2D rigidBody, bullseyeRigidBody;
     private ParticleSystem particlesHitLite, particlesHitHeavy;
     private Movement movement;

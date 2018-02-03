@@ -8,7 +8,7 @@ public class ScreenSkinsArrowsBtn : ScreenSkinsBtn {
 
 	private void Start()
 	{
-		SecurePlayerPrefs.SetInt("faceAvailable_" + _id, 1);
+//		SecurePlayerPrefs.SetInt("faceAvailable_" + _id, 1);
 		if (_id == 0) SetLock(false); else
 		if (SecurePlayerPrefs.GetInt("faceAvailable_" + _id) != 1)
 		{
@@ -21,6 +21,12 @@ public class ScreenSkinsArrowsBtn : ScreenSkinsBtn {
 	{
 		GlobalEvents<OnBtnArrowsShow>.Happened += OnShowBtnArrows;
 		GlobalEvents<OnBtnArrowsHide>.Happened += OnBtnArrowsHide;
+		GlobalEvents<OnOpenSkinArrow>.Happened += OnOpenSkinArrow;
+	}
+
+	private void OnOpenSkinArrow(OnOpenSkinArrow obj)
+	{
+		if (obj.Id == _id) OpenSkin();
 	}
 
 	private void OnShowBtnArrows(OnBtnArrowsShow obj)
