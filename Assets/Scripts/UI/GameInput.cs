@@ -27,11 +27,11 @@ public class GameInput : MonoBehaviour
 	
 	public void PointerUp()
 	{
-		GameEvents.Send(OnPointerDown);
+		GameEvents.Send(OnPointerUp);
 	}
 	
 	public void PointerMove()
 	{
-		GameEvents.Send(OnPointerDown);
+		GameEvents.Send(OnPointerMove);
 	}
 }

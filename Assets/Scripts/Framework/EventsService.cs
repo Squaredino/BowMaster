@@ -10,7 +10,10 @@ public struct OnStartGame
     public int totalGames;
 }
 
-public struct OnLoadGame { }
+public struct OnLoadGame
+{
+    public int daysInRow;
+}
 
 public struct OnShowMenu{}
 public struct OnHideMenu{}

@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using GameAnalyticsSDK;
 using TMPro;
+using Random = UnityEngine.Random;
 
 public class Gameplay : MonoBehaviour
 {
@@ -65,7 +67,17 @@ public class Gameplay : MonoBehaviour
 
         touchPositions = new Queue<Vector2>();
 
-        GlobalEvents<OnLoadGame>.Call(new OnLoadGame());
+        var daysInRow = PlayerPrefs.GetInt("PlayedDaysInRow", 0);
+        var lastLogin = PlayerPrefs.GetInt("LastLoginTime", 0);
+        var ts = TimeSpan.FromTicks(DateTime.Now.Ticks).TotalHours;
+        var hoursSinceLastLogin = ts - lastLogin;
+        if (hoursSinceLastLogin >= 24 && hoursSinceLastLogin < 48)
+        {
+            daysInRow++;
+            PlayerPrefs.SetInt("PlayedDaysInRow", daysInRow);
+        }
+
+        GlobalEvents<OnLoadGame>.Call(new OnLoadGame { daysInRow = daysInRow });
 
         GlobalEvents<OnChangeSkin>.Happened += OnChangeArrowSkin;
         GlobalEvents<OnChangeTargetSkin>.Happened += OnChangeTargetSkin;
@@ -78,8 +90,8 @@ public class Gameplay : MonoBehaviour
         forceCoef = (maxForce - minForce) / (maxSwipeTime - minSwipeTime);
 
         timerBar.ShowTimer();
-PlayerPrefs.SetInt("Highscore", 0);
         var highscore = PlayerPrefs.GetInt("Highscore");
+        
         scoreText.text = highscore.ToString();
         if (highscore <= 0)
         {
@@ -89,14 +101,16 @@ PlayerPrefs.SetInt("Highscore", 0);
 
         _gameplayCounter = 0;
         RespawnArrow();
+        _hint.SetActive(false);
+        Invoke("ShowHintHand", 2f);
     }
 
     void Update()
     {
-        if (arrow != null)
-        {
-            HandleInput();
-        }
+//        if (arrow != null)
+//        {
+//            HandleInput();
+//        }
 
         if (gameStarted)
         {
@@ -108,42 +122,42 @@ PlayerPrefs.SetInt("Highscore", 0);
         }
     }
 
-    private void HandleInput()
-    {
-#if !UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
-        if (Input.touchCount > 0)
-        {
-            Touch touch = Input.GetTouch(0);
-            if (touch.phase == TouchPhase.Began)
-            {
-                InputStart(Camera.main.ScreenToWorldPoint(touch.position));
-            }
-            if (touch.phase == TouchPhase.Moved)
-            {
-                InputMove(Camera.main.ScreenToWorldPoint(touch.position));
-            }
-            if (touch.phase == TouchPhase.Ended)
-            {
-                InputEnd(Camera.main.ScreenToWorldPoint(touch.position));
-            }
-        }
-#else
-        if (Input.GetMouseButtonDown(0))
-        {
-            InputStart();
-        }
-
-        if (Input.GetMouseButton(0))
-        {
-            InputMove();
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            InputEnd();
-        }
-#endif
-    }
+//    private void HandleInput()
+//    {
+//#if !UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
+//        if (Input.touchCount > 0)
+//        {
+//            Touch touch = Input.GetTouch(0);
+//            if (touch.phase == TouchPhase.Began)
+//            {
+//                InputStart(Camera.main.ScreenToWorldPoint(touch.position));
+//            }
+//            if (touch.phase == TouchPhase.Moved)
+//            {
+//                InputMove(Camera.main.ScreenToWorldPoint(touch.position));
+//            }
+//            if (touch.phase == TouchPhase.Ended)
+//            {
+//                InputEnd(Camera.main.ScreenToWorldPoint(touch.position));
+//            }
+//        }
+//#else
+//        if (Input.GetMouseButtonDown(0))
+//        {
+//            InputStart();
+//        }
+//
+//        if (Input.GetMouseButton(0))
+//        {
+//            InputMove();
+//        }
+//
+//        if (Input.GetMouseButtonUp(0))
+//        {
+//            InputEnd();
+//        }
+//#endif
+//    }
 
     private void OnEnable()
     {
@@ -154,43 +168,52 @@ PlayerPrefs.SetInt("Highscore", 0);
 
     private void InputStart()
     {
-        lastTouch = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        swipeTime = 0f;
+        if (arrow != null)
+        {
+            lastTouch = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            swipeTime = 0f;
+        }
     }
 
     private void InputMove()
     {
-        Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        if (position.y > lastTouch.y + 0.07f)
+        if (arrow != null)
         {
-            touchPositions.Enqueue((Vector2)position - lastTouch);
-            if (touchPositions.Count > positionsStoreCount)
+            Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            if (position.y > lastTouch.y + 0.07f)
             {
-                touchPositions.Dequeue();
+                touchPositions.Enqueue((Vector2) position - lastTouch);
+                if (touchPositions.Count > positionsStoreCount)
+                {
+                    touchPositions.Dequeue();
+                }
             }
-        }
 
-        swipeTime += Time.deltaTime;
-        lastTouch = position;
+            swipeTime += Time.deltaTime;
+            lastTouch = position;
+        }
     }
 
     private void InputEnd()
     {
-        InputMove();
-
-        var swipe = Vector2.zero;
-        foreach (var pos in touchPositions)
+        if (arrow != null)
         {
-            swipe += pos;
+            InputMove();
+
+            var swipe = Vector2.zero;
+            foreach (var pos in touchPositions)
+            {
+                swipe += pos;
+            }
+
+            touchPositions.Clear();
+            if (swipe.y <= 0.5f) return;
+
+            arrow.transform.rotation = Quaternion.FromToRotation(Vector2.up, swipe);
+            swipeTime = Mathf.Min(Mathf.Max(swipeTime, minSwipeTime), maxSwipeTime);
+            var force = Mathf.Min(Mathf.Max(forceCoef * (maxSwipeTime - swipeTime), minForce), maxForce);
+            ShootArrow(swipe, force * forceMultiplier);
         }
-
-        touchPositions.Clear();
-        if (swipe.y <= 0.5f) return;
-
-        arrow.transform.rotation = Quaternion.FromToRotation(Vector2.up, swipe);
-        swipeTime = Mathf.Min(Mathf.Max(swipeTime, minSwipeTime), maxSwipeTime);
-        var force = Mathf.Min(Mathf.Max(forceCoef * (maxSwipeTime - swipeTime), minForce), maxForce);
-        ShootArrow(swipe, force * forceMultiplier);
     }
 
     private void ShootArrow(Vector2 direction, float force)
@@ -325,12 +348,19 @@ PlayerPrefs.SetInt("Highscore", 0);
         }
 
         ++_gameplayCounter;
+        CancelInvoke("ShowHintHand");
         if (_hint.activeSelf) _hint.SetActive(false);
+        
 
         gameStarted = true;
 
         GameAnalytics.NewProgressionEvent(GAProgressionStatus.Start, "Archer");
         GlobalEvents<OnStartGame>.Call(new OnStartGame { totalGames = PlayerPrefs.GetInt("TotalGamesPlayed", 0) });
+    }
+
+    private void ShowHintHand()
+    {
+        _hint.SetActive(true);
     }
 
     private void CheckHighScore()
@@ -400,7 +430,7 @@ PlayerPrefs.SetInt("Highscore", 0);
 
         if (_gameplayCounter <= 3)
         {
-            _hint.SetActive(true);
+            Invoke("ShowHintHand", 2f);
         }
 
         PlayerPrefs.SetInt("TotalGamesPlayed", PlayerPrefs.GetInt("TotalGamesPlayed", 0) + 1);

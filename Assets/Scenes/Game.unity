@@ -6998,7 +6998,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abfe8a55644d440f5ae0578a56a87120, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _sign: {fileID: 0}
+  _sign: {fileID: 1803840791}
 --- !u!114 &924906048
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7731,7 +7731,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.000009651223}
+  m_AnchoredPosition: {x: 0, y: 0.00001445493}
   m_SizeDelta: {x: 0, y: -0.0037230435}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1149464558
@@ -12676,7 +12676,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -63.939453}
+  m_AnchoredPosition: {x: 0, y: -63.9375}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &1529618569
@@ -15172,7 +15172,7 @@ MonoBehaviour:
           m_CallState: 2
       m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
         Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  - eventID: 13
+  - eventID: 5
     callback:
       m_PersistentCalls:
         m_Calls:
