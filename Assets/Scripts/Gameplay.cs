@@ -78,10 +78,14 @@ public class Gameplay : MonoBehaviour
         forceCoef = (maxForce - minForce) / (maxSwipeTime - minSwipeTime);
 
         timerBar.ShowTimer();
-
+PlayerPrefs.SetInt("Highscore", 0);
         var highscore = PlayerPrefs.GetInt("Highscore");
         scoreText.text = highscore.ToString();
-        if (highscore <= 0) crown.DOFade(0f, 0f);
+        if (highscore <= 0)
+        {
+            crown.DOFade(0f, 0f);
+            scoreText.gameObject.SetActive(false);
+        }
 
         _gameplayCounter = 0;
         RespawnArrow();
@@ -304,6 +308,12 @@ public class Gameplay : MonoBehaviour
 
     private void StartGame()
     {
+        if (!scoreText.gameObject.activeSelf)
+        {
+            scoreText.gameObject.SetActive(true);
+            scoreText.DOFade(0f, 0f);
+            scoreText.DOFade(1f, 0.5f);
+        }
         crown.DOFade(0f, crownFadeOutDuration);
         timerBar.ContinueTimer();
         fireworks.Stop();
