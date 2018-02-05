@@ -66,15 +66,12 @@ public class ScreenSkins : MonoBehaviour
     
     private void Show()
     {
-        GlobalEvents<OnGameInputEnable>.Call(new OnGameInputEnable{Flag = false});
         _staff.SetActive(true);
         transform.DOLocalMoveX(0f, 0.2f);
     }
     
     private void Hide()
     {
-        GlobalEvents<OnGameInputEnable>.Call(new OnGameInputEnable{Flag = true});
-
         transform.DOLocalMoveX(-_rt.GetWidth(), 0.2f).OnComplete(() =>
         {
             _staff.SetActive(false);

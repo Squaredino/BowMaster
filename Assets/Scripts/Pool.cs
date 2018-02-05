@@ -12,7 +12,7 @@ public class Pool : MonoBehaviour
     private GameObject prefab;
     private List<GameObject> objects = new List<GameObject>();
     private Queue<GameObject> availableObjects = new Queue<GameObject>();
-
+    
     public static GameObject Get(GameObject prefab)
     {
         if (!pools.ContainsKey(prefab))
@@ -76,8 +76,13 @@ public class Pool : MonoBehaviour
         }
     }
 
-    public static List<GameObject> GetActiveObjects(GameObject prefab)
+    public static List<GameObject> ActiveObjects(GameObject prefab)
     {
         return pools[prefab].objects.Where(x => x.activeSelf).ToList();
+    }
+
+    public static List<GameObject> Objects(GameObject prefab)
+    {
+        return pools[prefab].objects;
     }
 }

@@ -36,6 +36,7 @@ public class ScreenSkinsTargetsBtnSponsor : ScreenSkinsTargetsBtn
 		{
 			Application.OpenURL("http://www.squaredino.com");
 			OpenSkin();
+			Select();
 		}
 	}
 }

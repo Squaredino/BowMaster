@@ -7,7 +7,7 @@ public class Spawner : MonoBehaviour
 {
     public GameObject prefab;
     public Rect bounds, scoreBounds;
-    public float spawnInterval = 0f;
+    public float spawnInterval;
     public SpawnerStrategy.SpawnStrategy spawnStrategy = SpawnerStrategy.Simple;
     public Vector3 scale;
 
@@ -67,7 +67,7 @@ public class Spawner : MonoBehaviour
 
     public List<GameObject> SpawnedObjects()
     {
-        return Pool.GetActiveObjects(prefab).ToList();
+        return Pool.ActiveObjects(prefab).ToList();
     }
 
     public GameObject GetObject()

@@ -35,6 +35,7 @@ public class ScreenSkinsArrowsBtnTwitter : ScreenSkinsArrowsBtn
 		{
 			Application.OpenURL("http://twitter.com/Soulghai");
 			OpenSkin();
+			Select();
 		}
 	}
 }

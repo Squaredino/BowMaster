@@ -18,9 +18,15 @@ public class ScreenSkinsBtn : MonoBehaviour
 		}
 	}
 	
-	// Выбираем скин, который хотим установить
+	// Кликнули на иконку
 	public virtual void Click()
 	{
 		Debug.Log("Click " + _id);
+	}
+
+	// Выбираем скин, который хотим установить
+	public virtual void Select()
+	{
+		Debug.Log("Select " + _id);
 	}
 }

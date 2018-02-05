@@ -3,15 +3,14 @@
 //--------------------------------------------------------
 
 // Завершение игры
-public struct OnGameOver
-{
-    public int score, targetHits;
-}
+public struct OnGameOver{}
 
 public struct OnStartGame
 {
     public int totalGames;
 }
+
+public struct OnLoadGame { }
 
 public struct OnShowMenu{}
 public struct OnHideMenu{}

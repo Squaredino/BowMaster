@@ -30,22 +30,7 @@ public class Arrow : MonoBehaviour
         LoadSkin(ScreenSkins.CurrentFaceId);
     }
 
-    private void OnEnable()
-    {
-        GlobalEvents<OnChangeSkin>.Happened += OnChangeSkin;
-    }
-    
-    private void OnDisable()
-    {
-        GlobalEvents<OnChangeSkin>.Happened -= OnChangeSkin;
-    }
-
-    private void OnChangeSkin(OnChangeSkin obj)
-    {
-        LoadSkin(obj.Id);
-    }
-
-    private void LoadSkin(int objId)
+    public void LoadSkin(int objId)
     {
 //        if (_spriteRenderer.sprite) Resources.UnloadAsset(_spriteRenderer.sprite);
         _spriteRenderer.sprite = Resources.Load<Sprite>("Gfx/Arrows/arrow_" + (objId + 1));

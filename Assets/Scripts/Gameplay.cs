@@ -17,7 +17,7 @@ public class Gameplay : MonoBehaviour
     public const int positionsStoreCount = 10;
 
     [SerializeField] private PointsBallonManager _pointsBalloonManager;
-    public GameObject arrowPrefab, crossPrefab;
+    public GameObject arrowPrefab, targetPrefab, crossPrefab;
     public Vector2 arrowPos;
     public float minSwipeTime, maxSwipeTime;
     public float minForce, maxForce, forceMultiplier;
@@ -64,6 +64,11 @@ public class Gameplay : MonoBehaviour
         targetSpawner.Spawn();
 
         touchPositions = new Queue<Vector2>();
+
+        GlobalEvents<OnLoadGame>.Call(new OnLoadGame());
+
+        GlobalEvents<OnChangeSkin>.Happened += OnChangeArrowSkin;
+        GlobalEvents<OnChangeTargetSkin>.Happened += OnChangeTargetSkin;
 
         cross = Instantiate(crossPrefab).GetComponent<Cross>();
         cross.gameObject.SetActive(false);
@@ -121,29 +126,37 @@ public class Gameplay : MonoBehaviour
 #else
         if (Input.GetMouseButtonDown(0))
         {
-            InputStart(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+            InputStart();
         }
 
         if (Input.GetMouseButton(0))
         {
-            InputMove(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+            InputMove();
         }
 
         if (Input.GetMouseButtonUp(0))
         {
-            InputEnd(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+            InputEnd();
         }
 #endif
     }
 
-    private void InputStart(Vector3 position)
+    private void OnEnable()
     {
-        lastTouch = position;
+        GameInput.OnPointerDown += InputStart;
+        GameInput.OnPointerUp += InputEnd;
+        GameInput.OnPointerMove += InputMove;
+    }
+
+    private void InputStart()
+    {
+        lastTouch = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         swipeTime = 0f;
     }
 
-    private void InputMove(Vector3 position)
+    private void InputMove()
     {
+        Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         if (position.y > lastTouch.y + 0.07f)
         {
             touchPositions.Enqueue((Vector2)position - lastTouch);
@@ -157,9 +170,9 @@ public class Gameplay : MonoBehaviour
         lastTouch = position;
     }
 
-    private void InputEnd(Vector3 position)
+    private void InputEnd()
     {
-        InputMove(position);
+        InputMove();
 
         var swipe = Vector2.zero;
         foreach (var pos in touchPositions)
@@ -216,6 +229,16 @@ public class Gameplay : MonoBehaviour
         score += 1 + bullseyeStreak;
         _pointsBalloonManager.Add(bullseyeStreak + 1, Camera.main.WorldToScreenPoint(position));
 
+        GlobalEvents<OnTargetHit>.Call(new OnTargetHit
+        {
+            score = score,
+            totalScore = PlayerPrefs.GetInt("TotalScore", 0) + score,
+            bullseyeStreak = bullseyeStreak,
+            targetHits = targetHits,
+            timerLeft = timerBar.TimeLeft,
+            isTargetMoving = targetSpawner.spawnStrategy == SpawnerStrategy.SimpleMoving || targetSpawner.spawnStrategy == SpawnerStrategy.SimpleMovingVertical
+        });
+
         scoreText.transform.localScale = Vector3.one;
         scoreText.transform.DOPunchScale(Vector3.one * Mathf.Min(minScorePunch + bullseyeStreak / 10f, maxScorePunch),
             scorePunchDuration);
@@ -246,16 +269,6 @@ public class Gameplay : MonoBehaviour
         {
             StartGame();
         }
-
-        GlobalEvents<OnTargetHit>.Call(new OnTargetHit
-        {
-            score = score,
-            totalScore = PlayerPrefs.GetInt("TotalScore", 0) + score,
-            bullseyeStreak = bullseyeStreak,
-            targetHits = targetHits,
-            timerLeft = timerBar.TimeLeft,
-            isTargetMoving = targetSpawner.spawnStrategy == SpawnerStrategy.SimpleMoving || targetSpawner.spawnStrategy == SpawnerStrategy.SimpleMovingVertical
-        });
     }
 
     public void TargetMiss(Vector3 position)
@@ -304,11 +317,10 @@ public class Gameplay : MonoBehaviour
         ++_gameplayCounter;
         if (_hint.activeSelf) _hint.SetActive(false);
 
-        GlobalEvents<OnStartGame>.Call(new OnStartGame { totalGames = PlayerPrefs.GetInt("TotalGamesPlayed", 0) });
-
         gameStarted = true;
 
-        //        GameAnalytics.NewProgressionEvent(GAProgressionStatus.Start, "Archer");
+        GameAnalytics.NewProgressionEvent(GAProgressionStatus.Start, "Archer");
+        GlobalEvents<OnStartGame>.Call(new OnStartGame { totalGames = PlayerPrefs.GetInt("TotalGamesPlayed", 0) });
     }
 
     private void CheckHighScore()
@@ -330,7 +342,7 @@ public class Gameplay : MonoBehaviour
 
     private void GameReset()
     {
-        //        GameAnalytics.NewProgressionEvent(GAProgressionStatus.Complete, "Archer", score);
+        GameAnalytics.NewProgressionEvent(GAProgressionStatus.Complete, "Archer", score);
 
         PlayerPrefs.SetInt("LastScore", score);
         PlayerPrefs.SetInt("TotalScore", PlayerPrefs.GetInt("TotalScore", 0) + score);
@@ -384,5 +396,23 @@ public class Gameplay : MonoBehaviour
         PlayerPrefs.SetInt("TotalGamesPlayed", PlayerPrefs.GetInt("TotalGamesPlayed", 0) + 1);
 
         PlayerPrefs.Save();
+        GlobalEvents<OnGameOver>.Call(new OnGameOver());
+    }
+
+    private void OnChangeArrowSkin(OnChangeSkin obj)
+    {
+        foreach (var arrowObj in Pool.Objects(arrowPrefab))
+        {
+            arrowObj.GetComponent<Arrow>().LoadSkin(obj.Id);
+        }
+    }
+
+    private void OnChangeTargetSkin(OnChangeTargetSkin obj)
+    {
+        foreach (var targetObj in Pool.Objects(targetPrefab))
+        {
+            targetObj.transform.Find("VIsual/Sprite").GetComponent<TargetSkin>().LoadSkin(obj.Id);
+            targetObj.transform.Find("VIsual/SpriteDown").GetComponent<TargetSkin>().LoadSkin(obj.Id);
+        }
     }
 }

@@ -34,6 +34,7 @@ public class ScreenSkinsArrowsBtnInstagram : ScreenSkinsArrowsBtn
 		{
 			Application.OpenURL("https://www.instagram.com/squaredino/");
 			OpenSkin();
+			Select();
 		}
 	}
 }

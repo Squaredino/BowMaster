@@ -36,6 +36,7 @@ public class ScreenSkinsTargetsBtnFacebook : ScreenSkinsTargetsBtn
 		{
 			Application.OpenURL("https://www.facebook.com/Squaredino/");
 			OpenSkin();
+			Select();
 		}
 	}
 }

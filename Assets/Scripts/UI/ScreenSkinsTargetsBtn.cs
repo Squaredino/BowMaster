@@ -46,6 +46,12 @@ public class ScreenSkinsTargetsBtn : ScreenSkinsBtn {
 		Analytics.CustomEvent("SkinsSkinClick",
 			new Dictionary<string, object> {{"sessions", PrefsManager.GameplayCounter},{"id", _id}});
 		
+		Select();
+	}
+	
+	public override void Select()
+	{
+		base.Select();
 		if (SecurePlayerPrefs.GetInt("targetsAvailable_" + _id) == 1 || _id == 0)
 		{
 			ScreenSkins.CurrentTargetId = _id;	
@@ -59,12 +65,9 @@ public class ScreenSkinsTargetsBtn : ScreenSkinsBtn {
 	
 	protected void OpenSkin()
 	{
-		ScreenSkins.CurrentTargetId = _id;
-		SecurePlayerPrefs.SetInt("CurrentTargetId", _id);
 		SecurePlayerPrefs.SetInt("targetsAvailable_" + _id, 1);
 		SetLock(false);
 		++PrefsManager.QuestCharactersCounter;
 		SecurePlayerPrefs.SetInt("QUEST_CHARACTERS_Counter", PrefsManager.QuestCharactersCounter);
-		GlobalEvents<OnChangeTargetSkin>.Call(new OnChangeTargetSkin{Id = _id});
 	}
 }
