@@ -40,9 +40,6 @@ public struct OnTargetHit
 }
 
 
-
-
-
 public struct OnRateScreenShow{}
 
 // Эффекты экрана
@@ -332,6 +329,21 @@ public struct AchievementProgress
 {
     public string Id;
     public int Progress;
+}
+
+
+//--------------------------------------------------------
+//							QUESTS
+//--------------------------------------------------------
+public struct OnGetQuest
+{
+    public int Type;
+    public int Id;
+}
+
+public struct OnSendQuest
+{
+    public Quest QuestItem;
 }
 
 //--------------------------------------------------------

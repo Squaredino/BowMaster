@@ -6,7 +6,7 @@ public class TargetSkin : MonoBehaviour
 	private SpriteRenderer _spriteRenderer;
 	[SerializeField] private String _postfix = "up";
 	
-	void Start ()
+	void Awake ()
 	{
 		_spriteRenderer = GetComponent<SpriteRenderer>();
 		LoadSkin(ScreenSkins.CurrentTargetId);
@@ -14,7 +14,7 @@ public class TargetSkin : MonoBehaviour
 
 	public void LoadSkin(int objId)
 	{
-		if (_spriteRenderer.sprite) Resources.UnloadAsset(_spriteRenderer.sprite);
+//		if (_spriteRenderer.sprite) Resources.UnloadAsset(_spriteRenderer.sprite);
 		_spriteRenderer.sprite = Resources.Load<Sprite>("Gfx/Targets/target_" + (objId + 1) + "_" + _postfix);
 	}
 }

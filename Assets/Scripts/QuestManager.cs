@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class QuestManager : MonoBehaviour
 {
-    void Start()
+    void Awake()
     {
         GlobalEvents<OnTargetHit>.Happened += HitBullseye1;
         GlobalEvents<OnTargetHit>.Happened += HitBullseye2;
@@ -27,6 +27,17 @@ public class QuestManager : MonoBehaviour
         GlobalEvents<OnLoadGame>.Happened += PlayForDays1;
         GlobalEvents<OnLoadGame>.Happened += PlayForDays2;
         GlobalEvents<OnLoadGame>.Happened += PlayForDays3;
+        
+        GlobalEvents<OnGetQuest>.Happened += OnGetQuest;
+    }
+
+    private void OnGetQuest(OnGetQuest obj)
+    {
+        Quest quest;
+        if (obj.Type == 0) quest = Quest.GetByID(SkinType.Arrow, obj.Id);
+        else quest = Quest.GetByID(SkinType.Target, obj.Id);
+        if (quest != null)
+            GlobalEvents<OnSendQuest>.Call(new OnSendQuest{QuestItem = quest});
     }
 
     private void CompleteQuest(Quest quest)
@@ -46,6 +57,10 @@ public class QuestManager : MonoBehaviour
         {
             CompleteQuest(quest);
         }
+        else
+        {
+            quest.progress = obj.bullseyeStreak;
+        }
     }
 
     private void HitBullseye2(OnTargetHit obj)
@@ -55,6 +70,10 @@ public class QuestManager : MonoBehaviour
         if (obj.bullseyeStreak >= quest.total)
         {
             CompleteQuest(quest);
+        }
+        else
+        {
+            quest.progress = obj.bullseyeStreak;
         }
     }
 
@@ -76,6 +95,10 @@ public class QuestManager : MonoBehaviour
         {
             CompleteQuest(quest);
         }
+        else
+        {
+            quest.progress = obj.score;
+        }
     }
 
     private void Score2(OnTargetHit obj)
@@ -85,6 +108,10 @@ public class QuestManager : MonoBehaviour
         if (obj.score >= quest.total)
         {
             CompleteQuest(quest);
+        }
+        else
+        {
+            quest.progress = obj.score;
         }
     }
 
@@ -96,6 +123,10 @@ public class QuestManager : MonoBehaviour
         {
             CompleteQuest(quest);
         }
+        else
+        {
+            quest.progress = obj.totalScore;
+        }
     }
 
     private void TotalScore2(OnTargetHit obj)
@@ -105,6 +136,10 @@ public class QuestManager : MonoBehaviour
         if (obj.totalScore >= quest.total)
         {
             CompleteQuest(quest);
+        }
+        else
+        {
+            quest.progress = obj.totalScore;
         }
     }
 
@@ -116,6 +151,10 @@ public class QuestManager : MonoBehaviour
         {
             CompleteQuest(quest);
         }
+        else
+        {
+            quest.progress = obj.totalGames;
+        }
     }
 
     private void PlayGames2(OnStartGame obj)
@@ -126,16 +165,24 @@ public class QuestManager : MonoBehaviour
         {
             CompleteQuest(quest);
         }
+        else
+        {
+            quest.progress = obj.totalGames;
+        }
     }
 
     private void PlayGames3(OnStartGame obj)
     {
-        var quest = Quest.playGames3;
-        if (quest.IsCompleted) return;
-        if (obj.totalGames >= quest.total)
-        {
-            CompleteQuest(quest);
-        }
+//        var quest = Quest.playGames3;
+//        if (quest.IsCompleted) return;
+//        if (obj.totalGames >= quest.total)
+//        {
+//            CompleteQuest(quest);
+//        }
+//        else
+//        {
+//            quest.progress = obj.totalGames;
+//        }
     }
 
     private void ScoreInHits1(OnTargetHit obj)
@@ -150,12 +197,12 @@ public class QuestManager : MonoBehaviour
 
     private void HitAfterTimerEnds1(OnTargetHit obj)
     {
-        var quest = Quest.hitAfterTimerEnds1;
-        if (quest.IsCompleted) return;
-        if (obj.timerLeft <= 0f)
-        {
-            CompleteQuest(quest);
-        }
+//        var quest = Quest.hitAfterTimerEnds1;
+//        if (quest.IsCompleted) return;
+//        if (obj.timerLeft <= 0f)
+//        {
+//            CompleteQuest(quest);
+//        }
     }
 
     private void PlayForDays1(OnLoadGame obj)
@@ -165,6 +212,10 @@ public class QuestManager : MonoBehaviour
         if (obj.daysInRow >= quest.total)
         {
             CompleteQuest(quest);
+        }
+        else
+        {
+            quest.progress = obj.daysInRow;
         }
     }
 
@@ -176,6 +227,10 @@ public class QuestManager : MonoBehaviour
         {
             CompleteQuest(quest);
         }
+        else
+        {
+            quest.progress = obj.daysInRow;
+        }
     }
 
     private void PlayForDays3(OnLoadGame obj)
@@ -185,6 +240,10 @@ public class QuestManager : MonoBehaviour
         if (obj.daysInRow >= quest.total)
         {
             CompleteQuest(quest);
+        }
+        else
+        {
+            quest.progress = obj.daysInRow;
         }
     }
 }

@@ -8,7 +8,6 @@ using UnityEngine.Analytics;
 
 public class ScreenSkins : MonoBehaviour
 {
-    [SerializeField] private GameObject[] _skinBtns;
     [SerializeField] private GameObject _staff;
     
     public const int CHARACTER_REWARDED_1 = 23; 

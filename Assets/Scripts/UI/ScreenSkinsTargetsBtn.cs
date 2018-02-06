@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using DG.Tweening;
 using PrefsEditor;
 using UnityEngine;
 using UnityEngine.Analytics;
 
 public class ScreenSkinsTargetsBtn : ScreenSkinsBtn {
+	public static event Action <int> OnShowQuestDialog;
 
 	private void Start()
 	{
@@ -60,6 +62,9 @@ public class ScreenSkinsTargetsBtn : ScreenSkinsBtn {
 			GlobalEvents<OnChangeTargetSkin>.Call(new OnChangeTargetSkin{Id = _id});
 //			MasterAudio.PlaySoundAndForget("GUI_Grab");
 			GlobalEvents<OnScreenSkinsHide>.Call(new OnScreenSkinsHide());
+		} else
+		{
+			GameEvents.Send(OnShowQuestDialog, _id+1);
 		}
 	}
 	

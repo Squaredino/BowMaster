@@ -69,13 +69,14 @@ public class Gameplay : MonoBehaviour
 
         var daysInRow = PlayerPrefs.GetInt("PlayedDaysInRow", 0);
         var lastLogin = PlayerPrefs.GetInt("LastLoginTime", 0);
-        var ts = TimeSpan.FromTicks(DateTime.Now.Ticks).TotalHours;
+        var ts = (int)TimeSpan.FromTicks(DateTime.Now.Ticks).TotalHours;
         var hoursSinceLastLogin = ts - lastLogin;
         if (hoursSinceLastLogin >= 24 && hoursSinceLastLogin < 48)
         {
             daysInRow++;
             PlayerPrefs.SetInt("PlayedDaysInRow", daysInRow);
         }
+        PlayerPrefs.SetInt("LastLoginTime", ts);
 
         GlobalEvents<OnLoadGame>.Call(new OnLoadGame { daysInRow = daysInRow });
 
@@ -451,8 +452,11 @@ public class Gameplay : MonoBehaviour
     {
         foreach (var targetObj in Pool.Objects(targetPrefab))
         {
-            targetObj.transform.Find("VIsual/Sprite").GetComponent<TargetSkin>().LoadSkin(obj.Id);
-            targetObj.transform.Find("VIsual/SpriteDown").GetComponent<TargetSkin>().LoadSkin(obj.Id);
+            TargetSkin[] arr = targetObj.GetComponentsInChildren<TargetSkin>();
+            foreach (TargetSkin script in arr)
+            {
+                script.LoadSkin(obj.Id);
+            }
         }
     }
 }
