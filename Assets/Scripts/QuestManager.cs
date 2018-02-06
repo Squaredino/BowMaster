@@ -59,7 +59,8 @@ public class QuestManager : MonoBehaviour
         }
         else
         {
-            quest.progress = obj.bullseyeStreak;
+            if (quest.progress < obj.bullseyeStreak)
+                quest.progress = obj.bullseyeStreak;
         }
     }
 
@@ -73,7 +74,8 @@ public class QuestManager : MonoBehaviour
         }
         else
         {
-            quest.progress = obj.bullseyeStreak;
+            if (quest.progress < obj.bullseyeStreak)
+                quest.progress = obj.bullseyeStreak;
         }
     }
 
@@ -97,7 +99,8 @@ public class QuestManager : MonoBehaviour
         }
         else
         {
-            quest.progress = obj.score;
+            if (quest.progress < obj.score)
+                quest.progress = obj.score;
         }
     }
 
@@ -111,7 +114,8 @@ public class QuestManager : MonoBehaviour
         }
         else
         {
-            quest.progress = obj.score;
+            if (quest.progress < obj.score)
+                quest.progress = obj.score;
         }
     }
 
@@ -125,7 +129,8 @@ public class QuestManager : MonoBehaviour
         }
         else
         {
-            quest.progress = obj.totalScore;
+            if (quest.progress < obj.totalScore)
+                quest.progress = obj.totalScore;
         }
     }
 
@@ -139,7 +144,8 @@ public class QuestManager : MonoBehaviour
         }
         else
         {
-            quest.progress = obj.totalScore;
+            if(quest.progress < obj.totalScore)
+                quest.progress = obj.totalScore;
         }
     }
 
@@ -153,7 +159,8 @@ public class QuestManager : MonoBehaviour
         }
         else
         {
-            quest.progress = obj.totalGames;
+            if (quest.progress < obj.totalGames)
+                quest.progress = obj.totalGames;
         }
     }
 
@@ -167,7 +174,8 @@ public class QuestManager : MonoBehaviour
         }
         else
         {
-            quest.progress = obj.totalGames;
+            if (quest.progress < obj.totalGames)
+                quest.progress = obj.totalGames;
         }
     }
 
@@ -181,7 +189,8 @@ public class QuestManager : MonoBehaviour
 //        }
 //        else
 //        {
-//            quest.progress = obj.totalGames;
+//            if (quest.progress < obj.totalGames)
+//                quest.progress = obj.totalGames;
 //        }
     }
 
@@ -215,7 +224,8 @@ public class QuestManager : MonoBehaviour
         }
         else
         {
-            quest.progress = obj.daysInRow;
+            if (quest.progress < obj.daysInRow)
+                quest.progress = obj.daysInRow;
         }
     }
 
@@ -229,7 +239,8 @@ public class QuestManager : MonoBehaviour
         }
         else
         {
-            quest.progress = obj.daysInRow;
+            if (quest.progress < obj.daysInRow)
+                quest.progress = obj.daysInRow;
         }
     }
 
@@ -243,7 +254,8 @@ public class QuestManager : MonoBehaviour
         }
         else
         {
-            quest.progress = obj.daysInRow;
+            if (quest.progress < obj.daysInRow)
+                quest.progress = obj.daysInRow;
         }
     }
 }

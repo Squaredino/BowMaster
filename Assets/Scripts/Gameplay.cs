@@ -67,16 +67,24 @@ public class Gameplay : MonoBehaviour
 
         touchPositions = new Queue<Vector2>();
 
-        var daysInRow = PlayerPrefs.GetInt("PlayedDaysInRow", 0);
+        var daysInRow = PlayerPrefs.GetInt("PlayedDaysInRow", 1);
         var lastLogin = PlayerPrefs.GetInt("LastLoginTime", 0);
-        var ts = (int)TimeSpan.FromTicks(DateTime.Now.Ticks).TotalHours;
-        var hoursSinceLastLogin = ts - lastLogin;
-        if (hoursSinceLastLogin >= 24 && hoursSinceLastLogin < 48)
+        var now = (int)TimeSpan.FromTicks(DateTime.Now.Ticks).TotalHours;
+        if (lastLogin == 0)
         {
-            daysInRow++;
+            lastLogin = now;
+            PlayerPrefs.SetInt("LastLoginTime", now);
+        }
+        var hoursSinceLastLogin = now - lastLogin;
+        if (hoursSinceLastLogin >= 24)
+        {
+            if (hoursSinceLastLogin < 48)
+                daysInRow++;
+            else
+                daysInRow = 1;
+            PlayerPrefs.SetInt("LastLoginTime", now);
             PlayerPrefs.SetInt("PlayedDaysInRow", daysInRow);
         }
-        PlayerPrefs.SetInt("LastLoginTime", ts);
 
         GlobalEvents<OnLoadGame>.Call(new OnLoadGame { daysInRow = daysInRow });
 
