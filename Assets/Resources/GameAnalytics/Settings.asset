@@ -24,14 +24,19 @@ MonoBehaviour:
   UserMessagesSubmitted: 0
   UserMessagesFailed: 0
   CustomArea: 
-  gameKey: []
-  secretKey: []
-  Build: []
-  SelectedPlatformStudio: []
-  SelectedPlatformGame: []
-  SelectedPlatformGameID: 
-  SelectedStudio: 
-  SelectedGame: 
+  gameKey:
+  - 24973f12299f847f68bbef00a537238b
+  secretKey:
+  - fd4d9d7cf6fd884ca487cdee6c7fb33c48dd0d7b
+  Build:
+  - 0.1
+  SelectedPlatformStudio:
+  - Voodoo
+  SelectedPlatformGame:
+  - Bow Hit - iOS (Zakhar Gadzhiev)
+  SelectedPlatformGameID: 17b60000
+  SelectedStudio: 02000000
+  SelectedGame: 02000000
   NewVersion: 
   Changes: 
   SignUpOpen: 0
@@ -55,7 +60,7 @@ MonoBehaviour:
   ResourceItemTypes: []
   ResourceCurrencies: []
   LastCreatedGamePlatform: 0
-  Platforms: 
+  Platforms: 08000000
   CurrentInspectorState: 1
   ClosedHints: 
   DisplayHints: 0
@@ -83,7 +88,7 @@ MonoBehaviour:
   IncludeGooglePlay: 1
   FpsCriticalThreshold: 20
   FpsCirticalSubmitInterval: 1
-  PlatformFoldOut: 
+  PlatformFoldOut: 01
   CustomDimensions01FoldOut: 0
   CustomDimensions02FoldOut: 0
   CustomDimensions03FoldOut: 0

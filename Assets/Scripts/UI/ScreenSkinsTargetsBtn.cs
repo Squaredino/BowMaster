@@ -23,12 +23,13 @@ public class ScreenSkinsTargetsBtn : ScreenSkinsBtn {
 	{
 		GlobalEvents<OnBtnTargetsShow>.Happened += OnBtnTargetsShow;
 		GlobalEvents<OnBtnTargetsHide>.Happened += OnBtnTargetsHide;
-		GlobalEvents<OnOpenSkinTarget>.Happened += OnOpenSkinTarget;
+		GlobalEvents<OnOpenSkin>.Happened += OnOpenSkin;
 	}
 
-	private void OnOpenSkinTarget(OnOpenSkinTarget obj)
+	private void OnOpenSkin(OnOpenSkin obj)
 	{
-		if (obj.Id == _id) OpenSkin();
+		if (obj.QuestItem.skinType == SkinType.Target)
+			if (obj.QuestItem.skinId == _id) OpenSkin();
 	}
 
 	private void OnBtnTargetsShow(OnBtnTargetsShow obj)
@@ -64,7 +65,7 @@ public class ScreenSkinsTargetsBtn : ScreenSkinsBtn {
 			GlobalEvents<OnScreenSkinsHide>.Call(new OnScreenSkinsHide());
 		} else
 		{
-			GameEvents.Send(OnShowQuestDialog, _id+1);
+			GameEvents.Send(OnShowQuestDialog, _id);
 		}
 	}
 	

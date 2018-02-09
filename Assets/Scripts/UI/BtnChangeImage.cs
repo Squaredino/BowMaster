@@ -17,9 +17,9 @@ public class BtnChangeImage : MonoBehaviour
         }
     }
 
-    public void ChangeState()
+    public void ChangeState(bool _flag)
     {
-        _isOn = !_isOn;
+        _isOn = _flag;
         if (_isOn)
         {
             _image.sprite = _spriteOn;

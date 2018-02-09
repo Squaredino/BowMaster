@@ -12,8 +12,7 @@ public class ScreenMenuBtnSkins : MonoBehaviour
 
 	private void OnEnable()
 	{
-		GlobalEvents<OnOpenSkinArrow>.Happened += OnOpenSkinArrow;
-		GlobalEvents<OnOpenSkinTarget>.Happened += OnOpenSkinTarget;
+		GlobalEvents<OnOpenSkin>.Happened += OnOpenSkin;
 		GlobalEvents<OnScreenSkinsHide>.Happened += OnScreenSkinsHide;
 	}
 
@@ -22,14 +21,9 @@ public class ScreenMenuBtnSkins : MonoBehaviour
 		_sign.SetActive(false);
 	}
 
-	private void OnOpenSkinArrow(OnOpenSkinArrow obj)
+	private void OnOpenSkin(OnOpenSkin obj)
 	{
-		if (obj.Id > 2) ShowSign();
-	}
-
-	private void OnOpenSkinTarget(OnOpenSkinTarget obj)
-	{
-		if (obj.Id > 2) ShowSign();
+		if (obj.QuestItem.skinId > 2) ShowSign();
 	}
 
 	private void ShowSign()

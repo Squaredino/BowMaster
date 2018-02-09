@@ -14,15 +14,6 @@ public class ScreenSkins : MonoBehaviour
     
     public static int CurrentFaceId;
     public static int CurrentTargetId;
-    private const int FacesGeneralMin = 0;
-    private const int FacesGeneralMax = 5;
-    private const int FacesSocialStartId = FacesGeneralMax+1;
-    private const int FacesPaybleStartId = FacesSocialStartId + 4;
-    
-    private const int IapSkin1 = FacesPaybleStartId;
-    private const int IapSkin2 = FacesPaybleStartId + 1;
-    private const int IapSkin3 = FacesPaybleStartId + 1;
-    private const int IapSkin4 = FacesPaybleStartId + 1;
 
     private RectTransform _rt;
     private bool _isSkinsAllGeneralOpened;
@@ -75,6 +66,7 @@ public class ScreenSkins : MonoBehaviour
         {
             _staff.SetActive(false);
         });
+        GlobalEvents<OnGameInputEnable>.Call(new OnGameInputEnable {Flag = true});
     }
     
 //    // Выбираем скин, который хотим установить

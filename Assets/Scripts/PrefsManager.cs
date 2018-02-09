@@ -17,8 +17,6 @@ public class PrefsManager : MonoBehaviour
     public static int QuestCharactersCounter;
     public static int QuestBombsCounter;
     public static int QuestMissCounter;
-
-    public static int RateCounter;
     
     private void Awake()
     {
@@ -32,11 +30,11 @@ public class PrefsManager : MonoBehaviour
         IsFirstBuy = SecurePlayerPrefs.GetBool("IsFirstBuy");
         GameBestScore = SecurePlayerPrefs.GetInt("BestScore");
 //      gameBestScore = 0;
-        RateCounter = PlayerPrefs.GetInt("rateCounter", 0);
-        if (RateCounter != 0 && PlayerPrefs.GetInt("RateForVersion", -1) != GameVersion)
+        
+        if (PlayerPrefs.GetInt("GameVersion", -1) < GameVersion)
         {
-            RateCounter = 0;
-            PlayerPrefs.SetInt("rateCounter", 0);
+            PlayerPrefs.SetInt("GameVersion", GameVersion);
+            PlayerPrefs.SetInt("RateCounter", 0);
         }
 
         QuestGameplayCounter = PlayerPrefs.GetInt("QUEST_GAMEPLAY_Counter", 0);

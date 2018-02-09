@@ -31,7 +31,7 @@ public class Quest
         description = "Make a perfect hit 3 times in a row",
         total = 3,
         skinType = SkinType.Arrow,
-        skinId = 4
+        skinId = 3
     };
 
     public static Quest bullseyeHit2 = new Quest
@@ -40,7 +40,7 @@ public class Quest
         description = "Make a perfect hit 10 times in a row",
         total = 10,
         skinType = SkinType.Arrow,
-        skinId = 5
+        skinId = 4
     };
 
     public static Quest bullseyeHit3 = new Quest
@@ -49,7 +49,7 @@ public class Quest
         description = "Make a perfect hit of a moving target",
         total = 1,
         skinType = SkinType.Arrow,
-        skinId = 6
+        skinId = 5
     };
 
     public static Quest score1 = new Quest
@@ -58,7 +58,7 @@ public class Quest
         description = "Score 100 points in a single game",
         total = 100,
         skinType = SkinType.Arrow,
-        skinId = 7
+        skinId = 6
     };
 
     public static Quest score2 = new Quest
@@ -67,7 +67,7 @@ public class Quest
         description = "Score 250 points in a single game",
         total = 250,
         skinType = SkinType.Arrow,
-        skinId = 8
+        skinId = 7
     };
 
     public static Quest totalScore1 = new Quest
@@ -85,7 +85,7 @@ public class Quest
         description = "Score a total of 10000 points",
         total = 10000,
         skinType = SkinType.Arrow,
-        skinId = 9
+        skinId = 8
     };
 
     public static Quest playGames1 = new Quest
@@ -94,7 +94,7 @@ public class Quest
         description = "Play the game 10 times",
         total = 10,
         skinType = SkinType.Arrow,
-        skinId = 10
+        skinId = 9
     };
 
     public static Quest playGames2 = new Quest
@@ -103,7 +103,7 @@ public class Quest
         description = "Play the game 100 times",
         total = 100,
         skinType = SkinType.Target,
-        skinId = 4
+        skinId = 3
     };
 
     public static Quest playGames3 = new Quest
@@ -121,7 +121,7 @@ public class Quest
         description = "Score 100 points with 30 or less target hits",
         total = 1,
         skinType = SkinType.Target,
-        skinId = 5
+        skinId = 4
     };
 
     public static Quest hitAfterTimerEnds1 = new Quest
@@ -139,7 +139,7 @@ public class Quest
         description = "Play the game for 2 days in a row",
         total = 2,
         skinType = SkinType.Target,
-        skinId = 6
+        skinId = 5
     };
 
     public static Quest playForDays2 = new Quest
@@ -148,7 +148,7 @@ public class Quest
         description = "Play the game for 3 days in a row",
         total = 3,
         skinType = SkinType.Target,
-        skinId = 7
+        skinId = 6
     };
 
     public static Quest playForDays3 = new Quest
@@ -157,7 +157,7 @@ public class Quest
         description = "Play the game for 7 days in a row",
         total = 7,
         skinType = SkinType.Target,
-        skinId = 8
+        skinId = 7
     };
 
     private static List<Quest> list = new List<Quest>

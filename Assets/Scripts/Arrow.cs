@@ -33,7 +33,7 @@ public class Arrow : MonoBehaviour
     public void LoadSkin(int objId)
     {
 //        if (_spriteRenderer.sprite) Resources.UnloadAsset(_spriteRenderer.sprite);
-        _spriteRenderer.sprite = Resources.Load<Sprite>("Gfx/Arrows/arrow_" + (objId + 1));
+        _spriteRenderer.sprite = Resources.Load<Sprite>("Gfx/Arrows/arrow_" + objId);
     }
 
     void Update()

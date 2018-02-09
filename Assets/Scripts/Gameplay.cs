@@ -11,9 +11,7 @@ public class Gameplay : MonoBehaviour
 {
     public const float gameAspect = 9f / 16f;
     public const float minScorePunch = .5f, maxScorePunch = 1.5f, scorePunchDuration = 0.3f;
-    public const float bgColorInDuration = 0.05f, bgColorOutDuration = 0.8f;
     public const float highscoreScale = 1.6f, highscoreDuration = 0.25f;
-    public const float cameraShakeDuration = 0.2f, cameraShakeStrength = 0.1f, cameraShakeVibratio = 30f;
     public const float crownFadeInDuration = 0.2f, crownFadeOutDuration = 0.5f;
     public const float minTargetScale = 0.6f;
     public const int positionsStoreCount = 10;
@@ -29,10 +27,9 @@ public class Gameplay : MonoBehaviour
     [SerializeField] private GameObject _hint;
     private int _gameplayCounter;
     public int score, bullseyeStreak, targetHits;
-    public Image crown, background;
+    public Image crown;
     public TimerBar timerBar;
     public float timerMaxTime, timerMinTime, timerReductionPerHit;
-    public Color bgDefaultColor, bgHitColor, bgBullseyeColor;
     public float targetAreaPadLeft, targetAreaPadTop, targetAreaPadRight, targetAreaPadBottom;
     public Spawner targetSpawner;
     public ParticleSystem fireworks;
@@ -46,24 +43,11 @@ public class Gameplay : MonoBehaviour
     private Cross cross;
     private Vector2 lastTouch;
 
-    void Start()
+    void Awake()
     {
         var cameraHeight = Camera.main.orthographicSize;
         var cameraWidth = cameraHeight * Mathf.Min(gameAspect, Camera.main.aspect);
         gameBounds = new Rect(-cameraWidth, -cameraHeight, cameraWidth * 2, cameraHeight * 2);
-
-        targetSpawner.bounds = new Rect(
-            gameBounds.x + targetAreaPadLeft,
-            gameBounds.y + targetAreaPadBottom,
-            gameBounds.width - targetAreaPadLeft - targetAreaPadRight,
-            gameBounds.height - targetAreaPadTop - targetAreaPadBottom);
-        targetSpawner.scoreBounds = new Rect(
-            scoreText.transform.position.x - 1.7f,
-            scoreText.transform.position.y - 1.2f,
-            3.4f,
-            2.4f);
-        targetSpawner.spawnStrategy = SpawnerStrategy.First;
-        targetSpawner.Spawn();
 
         touchPositions = new Queue<Vector2>();
 
@@ -86,21 +70,37 @@ public class Gameplay : MonoBehaviour
             PlayerPrefs.SetInt("PlayedDaysInRow", daysInRow);
         }
 
-        GlobalEvents<OnLoadGame>.Call(new OnLoadGame { daysInRow = daysInRow });
-
         GlobalEvents<OnChangeSkin>.Happened += OnChangeArrowSkin;
         GlobalEvents<OnChangeTargetSkin>.Happened += OnChangeTargetSkin;
 
         cross = Instantiate(crossPrefab).GetComponent<Cross>();
         cross.gameObject.SetActive(false);
 
-        background.color = bgDefaultColor;
-
         forceCoef = (maxForce - minForce) / (maxSwipeTime - minSwipeTime);
 
+        _gameplayCounter = 0;
+
+        GlobalEvents<OnGameAwake>.Call(new OnGameAwake { daysInRow = daysInRow });
+    }
+
+    void Start()
+    {
+        targetSpawner.bounds = new Rect(
+            gameBounds.x + targetAreaPadLeft,
+            gameBounds.y + targetAreaPadBottom,
+            gameBounds.width - targetAreaPadLeft - targetAreaPadRight,
+            gameBounds.height - targetAreaPadTop - targetAreaPadBottom);
+        targetSpawner.scoreBounds = new Rect(
+            scoreText.transform.position.x - 1.7f,
+            scoreText.transform.position.y - 1.2f,
+            3.4f,
+            2.4f);
+        targetSpawner.spawnStrategy = SpawnerStrategy.First;
+        targetSpawner.Spawn();
+
         timerBar.ShowTimer();
+
         var highscore = PlayerPrefs.GetInt("Highscore");
-        
         scoreText.text = highscore.ToString();
         if (highscore <= 0)
         {
@@ -108,10 +108,12 @@ public class Gameplay : MonoBehaviour
             scoreText.gameObject.SetActive(false);
         }
 
-        _gameplayCounter = 0;
         RespawnArrow();
+
         _hint.SetActive(false);
         Invoke("ShowHintHand", 2f);
+
+        GlobalEvents<OnGameLoaded>.Call(new OnGameLoaded());
     }
 
     void Update()
@@ -285,15 +287,11 @@ public class Gameplay : MonoBehaviour
 
         if (isBullseye)
         {
-            Camera.main.DOShakePosition(cameraShakeDuration, cameraShakeStrength, (int)cameraShakeVibratio);
-            if (bullseyeStreak >= 3)
-            {
-                Handheld.Vibrate();
-            }
-
-            background.DOKill();
-            background.DOColor(bullseyeStreak > 2 ? bgBullseyeColor : bgHitColor, bgColorInDuration)
-                .OnComplete(() => background.DOColor(bgDefaultColor, bgColorOutDuration));
+            GlobalEvents<OnIventPerfect>.Call(new OnIventPerfect());
+        }
+        else
+        {
+            GlobalEvents<OnIventSimple>.Call(new OnIventSimple());
         }
 
         SetSpawnerStrategy();
@@ -386,6 +384,7 @@ public class Gameplay : MonoBehaviour
                 .SetEase(Ease.InOutQuad);
 
             PlayerPrefs.SetInt("Highscore", PlayerPrefs.GetInt("LastScore"));
+            GlobalEvents<OnScreenRateShow>.Call(new OnScreenRateShow {BtnClick = false});
         }
     }
 
@@ -407,10 +406,6 @@ public class Gameplay : MonoBehaviour
         SetArrowParticles();
         crown.DOKill();
         crown.DOFade(1f, crownFadeInDuration);
-        Camera.main.DOShakePosition(cameraShakeDuration, 0.2f, (int)cameraShakeVibratio);
-        Handheld.Vibrate();
-        background.DOColor(bgBullseyeColor, 0.5f).SetEase(Ease.OutQuart)
-            .OnComplete(() => background.DOColor(bgDefaultColor, 0.5f).SetEase(Ease.InQuart));
 
         StopAllCoroutines();
 

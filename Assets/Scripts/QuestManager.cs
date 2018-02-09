@@ -24,18 +24,16 @@ public class QuestManager : MonoBehaviour
 
         //GlobalEvents<OnTargetHit>.Happened += HitAfterTimerEnds1;
 
-        GlobalEvents<OnLoadGame>.Happened += PlayForDays1;
-        GlobalEvents<OnLoadGame>.Happened += PlayForDays2;
-        GlobalEvents<OnLoadGame>.Happened += PlayForDays3;
+        GlobalEvents<OnGameAwake>.Happened += PlayForDays1;
+        GlobalEvents<OnGameAwake>.Happened += PlayForDays2;
+        GlobalEvents<OnGameAwake>.Happened += PlayForDays3;
         
         GlobalEvents<OnGetQuest>.Happened += OnGetQuest;
     }
 
     private void OnGetQuest(OnGetQuest obj)
     {
-        Quest quest;
-        if (obj.Type == 0) quest = Quest.GetByID(SkinType.Arrow, obj.Id);
-        else quest = Quest.GetByID(SkinType.Target, obj.Id);
+        Quest quest = Quest.GetByID(obj.SkinType, obj.Id);
         if (quest != null)
             GlobalEvents<OnSendQuest>.Call(new OnSendQuest{QuestItem = quest});
     }
@@ -43,10 +41,8 @@ public class QuestManager : MonoBehaviour
     private void CompleteQuest(Quest quest)
     {
         quest.progress = quest.total;
-        if (quest.skinType == SkinType.Arrow)
-            GlobalEvents<OnOpenSkinArrow>.Call(new OnOpenSkinArrow { Id = quest.skinId });
-        else
-            GlobalEvents<OnOpenSkinTarget>.Call(new OnOpenSkinTarget { Id = quest.skinId });
+        GlobalEvents<OnQuestCompleted>.Call(new OnQuestCompleted { QuestItem = quest });
+        GlobalEvents<OnOpenSkin>.Call(new OnOpenSkin { QuestItem = quest });
     }
 
     private void HitBullseye1(OnTargetHit obj)
@@ -214,7 +210,7 @@ public class QuestManager : MonoBehaviour
 //        }
     }
 
-    private void PlayForDays1(OnLoadGame obj)
+    private void PlayForDays1(OnGameAwake obj)
     {
         var quest = Quest.playForDays1;
         if (quest.IsCompleted) return;
@@ -229,7 +225,7 @@ public class QuestManager : MonoBehaviour
         }
     }
 
-    private void PlayForDays2(OnLoadGame obj)
+    private void PlayForDays2(OnGameAwake obj)
     {
         var quest = Quest.playForDays2;
         if (quest.IsCompleted) return;
@@ -244,7 +240,7 @@ public class QuestManager : MonoBehaviour
         }
     }
 
-    private void PlayForDays3(OnLoadGame obj)
+    private void PlayForDays3(OnGameAwake obj)
     {
         var quest = Quest.playForDays3;
         if (quest.IsCompleted) return;

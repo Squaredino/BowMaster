@@ -9,6 +9,16 @@ public class GameSettings : MonoBehaviour {
 		IsVibro = SecurePlayerPrefs.GetBool("GameSettings.Vibro", true);
 	}
 
+	private void OnEnable()
+	{
+		GlobalEvents<OnVibrate>.Happened += OnVibrate;
+	}
+
+	private void OnVibrate(OnVibrate obj)
+	{
+		if (IsVibro) Handheld.Vibrate();
+	}
+
 	public void ClickVibro()
 	{
 		IsVibro = !IsVibro;

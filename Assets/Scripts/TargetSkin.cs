@@ -15,6 +15,6 @@ public class TargetSkin : MonoBehaviour
 	public void LoadSkin(int objId)
 	{
 //		if (_spriteRenderer.sprite) Resources.UnloadAsset(_spriteRenderer.sprite);
-		_spriteRenderer.sprite = Resources.Load<Sprite>("Gfx/Targets/target_" + (objId + 1) + "_" + _postfix);
+		_spriteRenderer.sprite = Resources.Load<Sprite>("Gfx/Targets/target_" + objId + "_" + _postfix);
 	}
 }

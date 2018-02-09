@@ -2,18 +2,20 @@
 // Menu
 //--------------------------------------------------------
 
-// Завершение игры
-public struct OnGameOver{}
-
 public struct OnStartGame
 {
     public int totalGames;
 }
+// Завершение игры
+public struct OnGameOver{}
+public struct OnIventSimple{}
+public struct OnIventPerfect{}
 
-public struct OnLoadGame
+public struct OnGameAwake
 {
     public int daysInRow;
 }
+public struct OnGameLoaded { }
 
 public struct OnShowMenu{}
 public struct OnHideMenu{}
@@ -22,10 +24,18 @@ public struct OnScreenCoinsHide{}
 
 public struct OnScreenSkinsShow{}
 public struct OnScreenSkinsHide{}
+
+public struct OnScreenRateShow
+{
+    public bool BtnClick;
+}
 public struct OnBtnArrowsShow{}
 public struct OnBtnArrowsHide{}
 public struct OnBtnTargetsShow{}
 public struct OnBtnTargetsHide{}
+
+
+public struct OnVibrate{}
 
 
 // gameplay events
@@ -40,7 +50,7 @@ public struct OnTargetHit
 }
 
 
-public struct OnRateScreenShow{}
+public struct OnRate{}
 
 // Эффекты экрана
 public struct OnCameraShake
@@ -202,15 +212,9 @@ public struct OnChangeSkin
     public int Id;
 }
 
-public struct OnOpenSkinArrow
+public struct OnOpenSkin
 {
-    public int Id;
-}
-
-
-public struct OnOpenSkinTarget
-{
-    public int Id;
+    public Quest QuestItem;
 }
 
 // Изменяем Скин Цели
@@ -337,11 +341,21 @@ public struct AchievementProgress
 //--------------------------------------------------------
 public struct OnGetQuest
 {
-    public int Type;
+    public SkinType SkinType;
     public int Id;
 }
 
 public struct OnSendQuest
+{
+    public Quest QuestItem;
+}
+
+public struct OnQuestCompleted
+{
+    public Quest QuestItem;
+}
+
+public struct OnQuestShowUnlockedDialog
 {
     public Quest QuestItem;
 }

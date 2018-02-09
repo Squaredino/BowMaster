@@ -26,4 +26,30 @@ public static class Utils
         }
         return vector;
     }
+    
+    public static bool VersionGraterThan(float version)
+    {
+        var str = SystemInfo.operatingSystem;
+        string tmp = String.Empty;
+        bool point = false;
+        for (int i = 0; i < str.Length; i++)
+        {
+            if (Char.IsDigit(str[i]))
+            {
+                tmp += str[i];
+                continue;
+            }
+            if (str[i] == '.')
+            {
+                if (!point)
+                {
+                    tmp += str[i];
+                    point = true;
+                }
+                else break;
+            }
+        }
+        if (Convert.ToSingle(tmp) >= version) return true;
+        return false;
+    }
 }
