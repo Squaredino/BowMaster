@@ -16,7 +16,7 @@ public class BtnChangeImageVibro : MonoBehaviour
         }
     }
 
-    public void CooseSprite()
+    public void ChooseSprite()
     {
         if (GameSettings.IsVibro)
         {
