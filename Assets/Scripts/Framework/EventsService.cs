@@ -27,7 +27,7 @@ public struct OnScreenSkinsHide{}
 
 public struct OnScreenRateShow
 {
-    public bool BtnClick;
+    public bool IsBtnClick;
 }
 public struct OnBtnArrowsShow{}
 public struct OnBtnArrowsHide{}

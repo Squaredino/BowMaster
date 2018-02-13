@@ -14,10 +14,7 @@ public class Rate : MonoBehaviour
 
     private void OnRate(OnRate obj)
     {
-        if (PlayerPrefs.GetInt("RateForVersion", -1) == PrefsManager.GameVersion) return;
-        int count = PlayerPrefs.GetInt("RateCounter", 0);
-        if (count == 3 || count == 10 || count == 25) RateClick();
-        PlayerPrefs.SetInt("RateCounter", ++count);
+        RateClick();
     }
 
     public void RateClick()

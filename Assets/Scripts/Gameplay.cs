@@ -384,7 +384,7 @@ public class Gameplay : MonoBehaviour
                 .SetEase(Ease.InOutQuad);
 
             PlayerPrefs.SetInt("Highscore", PlayerPrefs.GetInt("LastScore"));
-            GlobalEvents<OnScreenRateShow>.Call(new OnScreenRateShow {BtnClick = false});
+            GlobalEvents<OnScreenRateShow>.Call(new OnScreenRateShow {IsBtnClick = false});
         }
     }
 
