@@ -170,7 +170,6 @@ MonoBehaviour:
   scoreText: {fileID: 1540328196}
   highscoreText: {fileID: 62064565}
   _hint: {fileID: 2127081461}
-  score: 0
   bullseyeStreak: 0
   targetHits: 0
   crown: {fileID: 945388529}
@@ -800,7 +799,7 @@ Prefab:
     - target: {fileID: 224223567929527412, guid: adbffc2ae2684413abb5dbab879f74bc,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000040941526
+      value: 0.0000038834723
       objectReference: {fileID: 0}
     - target: {fileID: 223184197200017984, guid: adbffc2ae2684413abb5dbab879f74bc,
         type: 2}
@@ -835,6 +834,14 @@ Prefab:
         type: 2}
       propertyPath: m_RootOrder
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1536631990748304, guid: adbffc2ae2684413abb5dbab879f74bc, type: 2}
+      propertyPath: m_Name
+      value: ProgressBar
+      objectReference: {fileID: 0}
+    - target: {fileID: 1754273049770912, guid: adbffc2ae2684413abb5dbab879f74bc, type: 2}
+      propertyPath: m_Name
+      value: ProgressBarBackground
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: adbffc2ae2684413abb5dbab879f74bc, type: 2}

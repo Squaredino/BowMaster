@@ -26,7 +26,8 @@ public class Gameplay : MonoBehaviour
     [SerializeField] private TextMeshProUGUI scoreText, highscoreText;
     [SerializeField] private GameObject _hint;
     private int _gameplayCounter;
-    public int score, bullseyeStreak, targetHits;
+    public int bullseyeStreak, targetHits;
+    private int score;
     public Image crown;
     public TimerBar timerBar;
     public float timerMaxTime, timerMinTime, timerReductionPerHit;
@@ -121,7 +122,6 @@ public class Gameplay : MonoBehaviour
     {
         if (gameStarted && !gamePaused)
         {
-            scoreText.text = score.ToString();
             if (timerBar.IsTimerOver() && !isArrowFlying)
             {
                 GameOver();
@@ -237,7 +237,9 @@ public class Gameplay : MonoBehaviour
         targetHits++;
         bullseyeStreak = isBullseye ? bullseyeStreak + 1 : 0;
         score += 1 + bullseyeStreak;
+
         _pointsBalloonManager.Add(bullseyeStreak + 1, Camera.main.WorldToScreenPoint(position));
+        scoreText.text = score.ToString();
 
         GlobalEvents<OnTargetHit>.Call(new OnTargetHit
         {
@@ -342,12 +344,20 @@ public class Gameplay : MonoBehaviour
     {
         gamePaused = true;
         timerBar.PauseTimer();
+        foreach (var target in targetSpawner.SpawnedObjects())
+        {
+            target.GetComponent<Movement>().TogglePause();
+        }
     }
 
     private void ResumeGame()
     {
         gamePaused = false;
         timerBar.ContinueTimer();
+        foreach (var target in targetSpawner.SpawnedObjects())
+        {
+            target.GetComponent<Movement>().TogglePause();
+        }
     }
 
     private void ShowHintHand()
@@ -411,6 +421,8 @@ public class Gameplay : MonoBehaviour
         {
             Invoke("ShowHintHand", 2f);
         }
+
+        gamePaused = false;
 
         PlayerPrefs.SetInt("TotalGamesPlayed", PlayerPrefs.GetInt("TotalGamesPlayed", 0) + 1);
 

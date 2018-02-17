@@ -25,6 +25,11 @@ public class Movement : MonoBehaviour
         sequence.Kill();
     }
 
+    public void TogglePause()
+    {
+        sequence.TogglePause();
+    }
+
     public void Stop()
     {
         sequence.Kill();

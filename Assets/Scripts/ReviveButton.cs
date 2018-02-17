@@ -26,13 +26,13 @@ public class ReviveButton : MonoBehaviour
 	
 	void Update ()
 	{
-		if (timer > 0.0)
+		if (timer > 0.0f)
 		{
-//			timer -= Time.deltaTime;
+			timer -= Time.deltaTime;
 //			_timerLavel.GetComponent<Text>().text = Convert.ToInt32(Math.Ceiling(timer)).ToString();
 			_backgroundImage.GetComponent<Image>().fillAmount = timer / _reviveTime;
 
-			if (timer <= 0.0)
+			if (timer <= 0.0f)
 			{
 				GameEvents.Send(OnReviveTimeEnded);
 				Destroy(gameObject);
