@@ -22,6 +22,8 @@ public struct OnHideMenu{}
 
 public struct OnScreenCoinsHide{}
 
+public struct OnScreenReviveShow{}
+
 public struct OnScreenSkinsShow{}
 public struct OnScreenSkinsHide{}
 

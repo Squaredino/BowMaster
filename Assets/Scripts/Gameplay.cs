@@ -37,11 +37,12 @@ public class Gameplay : MonoBehaviour
     private GameObject arrow;
     private float swipeTime;
     private Queue<Vector2> touchPositions;
-    private bool gameStarted;
+    private bool gameStarted, gamePaused;
     private bool isArrowFlying;
     private float forceCoef;
     private Cross cross;
     private Vector2 lastTouch;
+    private bool _isReviveShowed;
 
     void Awake()
     {
@@ -118,68 +119,39 @@ public class Gameplay : MonoBehaviour
 
     void Update()
     {
-//        if (arrow != null)
-//        {
-//            HandleInput();
-//        }
-
-        if (gameStarted)
+        if (gameStarted && !gamePaused)
         {
             scoreText.text = score.ToString();
             if (timerBar.IsTimerOver() && !isArrowFlying)
             {
-                GameReset();
+                GameOver();
             }
         }
     }
-
-//    private void HandleInput()
-//    {
-//#if !UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
-//        if (Input.touchCount > 0)
-//        {
-//            Touch touch = Input.GetTouch(0);
-//            if (touch.phase == TouchPhase.Began)
-//            {
-//                InputStart(Camera.main.ScreenToWorldPoint(touch.position));
-//            }
-//            if (touch.phase == TouchPhase.Moved)
-//            {
-//                InputMove(Camera.main.ScreenToWorldPoint(touch.position));
-//            }
-//            if (touch.phase == TouchPhase.Ended)
-//            {
-//                InputEnd(Camera.main.ScreenToWorldPoint(touch.position));
-//            }
-//        }
-//#else
-//        if (Input.GetMouseButtonDown(0))
-//        {
-//            InputStart();
-//        }
-//
-//        if (Input.GetMouseButton(0))
-//        {
-//            InputMove();
-//        }
-//
-//        if (Input.GetMouseButtonUp(0))
-//        {
-//            InputEnd();
-//        }
-//#endif
-//    }
 
     private void OnEnable()
     {
         GameInput.OnPointerDown += InputStart;
         GameInput.OnPointerUp += InputEnd;
         GameInput.OnPointerMove += InputMove;
+        ReviveButton.OnReviveTimeEnded += OnReviveTimeEnd;
+        ReviveButton.OnClickRevive += OnClickRevive;
+    }
+    
+    private void OnClickRevive()
+    {
+        ResumeGame();
+        timerBar.AddTime(1f);
+    }
+
+    private void OnReviveTimeEnd()
+    {
+        GameOver();
     }
 
     private void InputStart()
     {
-        if (arrow != null)
+        if (!gamePaused && arrow != null)
         {
             lastTouch = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             swipeTime = 0f;
@@ -188,7 +160,7 @@ public class Gameplay : MonoBehaviour
 
     private void InputMove()
     {
-        if (arrow != null)
+        if (!gamePaused && arrow != null)
         {
             Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             if (position.y > lastTouch.y + 0.07f)
@@ -207,7 +179,7 @@ public class Gameplay : MonoBehaviour
 
     private void InputEnd()
     {
-        if (arrow != null)
+        if (!gamePaused && arrow != null)
         {
             InputMove();
 
@@ -307,7 +279,7 @@ public class Gameplay : MonoBehaviour
 
     public void TargetMiss(Vector3 position)
     {
-        if (gameStarted) GameReset();
+        if (gameStarted) GameOver();
         cross.Show(position);
     }
 
@@ -360,9 +332,22 @@ public class Gameplay : MonoBehaviour
         
 
         gameStarted = true;
+        _isReviveShowed = false;
 
         GameAnalytics.NewProgressionEvent(GAProgressionStatus.Start, "Archer");
         GlobalEvents<OnStartGame>.Call(new OnStartGame { totalGames = PlayerPrefs.GetInt("TotalGamesPlayed", 0) });
+    }
+
+    private void PauseGame()
+    {
+        gamePaused = true;
+        timerBar.PauseTimer();
+    }
+
+    private void ResumeGame()
+    {
+        gamePaused = false;
+        timerBar.ContinueTimer();
     }
 
     private void ShowHintHand()
@@ -370,26 +355,16 @@ public class Gameplay : MonoBehaviour
         _hint.SetActive(true);
     }
 
-    private void CheckHighScore()
+    private void GameOver()
     {
-        if (PlayerPrefs.GetInt("LastScore") > PlayerPrefs.GetInt("Highscore"))
+        if (!_isReviveShowed)
         {
-            fireworks.Play();
-
-            highscoreText.transform.localScale = Vector3.zero;
-            highscoreText.gameObject.SetActive(true);
-            highscoreText.transform.DOScale(Vector3.one, highscoreDuration);
-
-            scoreText.transform.DOScale(highscoreScale, highscoreDuration).SetLoops(6, LoopType.Yoyo)
-                .SetEase(Ease.InOutQuad);
-
-            PlayerPrefs.SetInt("Highscore", PlayerPrefs.GetInt("LastScore"));
-            GlobalEvents<OnScreenRateShow>.Call(new OnScreenRateShow {IsBtnClick = false});
+            _isReviveShowed = true;
+            GlobalEvents<OnScreenReviveShow>.Call(new OnScreenReviveShow());
+            PauseGame();
+            return;
         }
-    }
 
-    private void GameReset()
-    {
         GameAnalytics.NewProgressionEvent(GAProgressionStatus.Complete, "Archer", score);
 
         PlayerPrefs.SetInt("LastScore", score);
@@ -441,6 +416,24 @@ public class Gameplay : MonoBehaviour
 
         PlayerPrefs.Save();
         GlobalEvents<OnGameOver>.Call(new OnGameOver());
+    }
+
+    private void CheckHighScore()
+    {
+        if (PlayerPrefs.GetInt("LastScore") > PlayerPrefs.GetInt("Highscore"))
+        {
+            fireworks.Play();
+
+            highscoreText.transform.localScale = Vector3.zero;
+            highscoreText.gameObject.SetActive(true);
+            highscoreText.transform.DOScale(Vector3.one, highscoreDuration);
+
+            scoreText.transform.DOScale(highscoreScale, highscoreDuration).SetLoops(6, LoopType.Yoyo)
+                .SetEase(Ease.InOutQuad);
+
+            PlayerPrefs.SetInt("Highscore", PlayerPrefs.GetInt("LastScore"));
+            GlobalEvents<OnScreenRateShow>.Call(new OnScreenRateShow { IsBtnClick = false });
+        }
     }
 
     private void OnChangeArrowSkin(OnChangeSkin obj)

@@ -26,13 +26,21 @@ public class ScreenMenu : MonoBehaviour
 
 	private void OnStartGame(OnStartGame obj)
 	{
-		_btnSkins.transform.DOMoveX(_btnSkins.transform.position.x - _leftBtnPlace, 0.3f);
-		_btnVibro.transform.DOMoveX(_btnVibro.transform.position.x + _rightBtnPlace, 0.3f);
+		_btnSkins.transform.DOMoveX(_btnSkins.transform.position.x - _leftBtnPlace, 0.3f).OnComplete(() =>
+		{
+			_btnSkins.SetActive(false);
+		});
+		_btnVibro.transform.DOMoveX(_btnVibro.transform.position.x + _rightBtnPlace, 0.3f).OnComplete(() =>
+		{
+			_btnVibro.SetActive(false);
+		});
 	}
 	
 	private void OnGameOver(OnGameOver obj)
 	{
+		_btnSkins.SetActive(true);
 		_btnSkins.transform.DOMoveX(_BtnSkinInitPlace, 0.3f);
+		_btnVibro.SetActive(true);
 		_btnVibro.transform.DOMoveX(_BtnVibroInitPlace, 0.3f);
 	}
 }
