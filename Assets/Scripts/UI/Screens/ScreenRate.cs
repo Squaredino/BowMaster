@@ -31,7 +31,7 @@ public class ScreenRate : MonoBehaviour {
 	public void Show()
 	{
 #if UNITY_IOS
-		if (Utils.VersionGraterThan(10.3f) && PlayerPrefs.GetInt("RateNativeCounter") < 3)
+		if (MyUtils.VersionGraterThan(10.3f) && PlayerPrefs.GetInt("RateNativeCounter") < 3)
 		{
 			PlayerPrefs.SetInt("RateNativeCounter", PlayerPrefs.GetInt("RateNativeCounter") + 1);
 			iOSReviewRequest.Request();

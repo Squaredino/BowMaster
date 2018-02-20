@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AppodealAds.Unity.Api;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -120,12 +121,9 @@ public class Gameplay : MonoBehaviour
 
     void Update()
     {
-        if (gameStarted && !gamePaused)
+        if (gameStarted && !gamePaused && timerBar.IsTimerOver() && !isArrowFlying)
         {
-            if (timerBar.IsTimerOver() && !isArrowFlying)
-            {
-                GameOver();
-            }
+            GameOver();
         }
     }
 
@@ -135,10 +133,22 @@ public class Gameplay : MonoBehaviour
         GameInput.OnPointerUp += InputEnd;
         GameInput.OnPointerMove += InputMove;
         ReviveButton.OnReviveTimeEnded += OnReviveTimeEnd;
-        ReviveButton.OnClickRevive += OnClickRevive;
+        ReviveButton.OnRevive += OnRevive;
+        GlobalEvents<OnAdsVideoClosed>.Happened += OnAdsVideoClosed;
+        GlobalEvents<OnAdsRewardedClosed>.Happened += OnAdsRewardedClosed;
     }
-    
-    private void OnClickRevive()
+
+    private void OnAdsRewardedClosed(OnAdsRewardedClosed obj)
+    {
+        OnRevive();
+    }
+
+    private void OnAdsVideoClosed(OnAdsVideoClosed obj)
+    {
+        OnRevive();
+    }
+
+    private void OnRevive()
     {
         ResumeGame();
         timerBar.AddTime(1f);
@@ -165,7 +175,7 @@ public class Gameplay : MonoBehaviour
             Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             if (position.y > lastTouch.y + 0.07f)
             {
-                touchPositions.Enqueue((Vector2) position - lastTouch);
+                touchPositions.Enqueue((Vector2)position - lastTouch);
                 if (touchPositions.Count > positionsStoreCount)
                 {
                     touchPositions.Dequeue();
@@ -209,7 +219,7 @@ public class Gameplay : MonoBehaviour
         isArrowFlying = true;
         arrow = null;
 
-        StartCoroutine(Utils.DelayedAction(RespawnArrow, arrowRespawnInterval));
+        StartCoroutine(MyUtils.DelayedAction(RespawnArrow, arrowRespawnInterval));
     }
 
     private void SetArrowParticles()
@@ -269,7 +279,7 @@ public class Gameplay : MonoBehaviour
         }
 
         SetSpawnerStrategy();
-        StartCoroutine(Utils.DelayedAction(targetSpawner.Spawn, targetRespawnInterval));
+        StartCoroutine(MyUtils.DelayedAction(targetSpawner.Spawn, targetRespawnInterval));
 
         isArrowFlying = false;
 
@@ -329,9 +339,13 @@ public class Gameplay : MonoBehaviour
         }
 
         ++_gameplayCounter;
+        if (_gameplayCounter == 2)
+        {
+            GlobalEvents<OnAdsBannerShow>.Call(new OnAdsBannerShow());
+        }
         CancelInvoke("ShowHintHand");
         if (_hint.activeSelf) _hint.SetActive(false);
-        
+
 
         gameStarted = true;
         _isReviveShowed = false;
@@ -353,7 +367,6 @@ public class Gameplay : MonoBehaviour
     private void ResumeGame()
     {
         gamePaused = false;
-        timerBar.ContinueTimer();
         foreach (var target in targetSpawner.SpawnedObjects())
         {
             target.GetComponent<Movement>().TogglePause();
@@ -370,9 +383,18 @@ public class Gameplay : MonoBehaviour
         if (!_isReviveShowed)
         {
             _isReviveShowed = true;
-            GlobalEvents<OnScreenReviveShow>.Call(new OnScreenReviveShow());
-            PauseGame();
-            return;
+            if (score > 10)
+            {
+                GlobalEvents<OnScreenReviveShow>.Call(new OnScreenReviveShow());
+                PauseGame();
+                return;
+            }
+
+            if (_gameplayCounter > 1 && _gameplayCounter % 3 == 0)
+            {
+                GlobalEvents<OnAdsVideoShow>.Call(new OnAdsVideoShow());
+                PauseGame();
+            }
         }
 
         GameAnalytics.NewProgressionEvent(GAProgressionStatus.Complete, "Archer", score);
@@ -408,7 +430,7 @@ public class Gameplay : MonoBehaviour
         }
 
         timerBar.PauseTimer();
-        StartCoroutine(Utils.DelayedAction(timerBar.ResetTimer, 0.3f));
+        StartCoroutine(MyUtils.DelayedAction(timerBar.ResetTimer, 0.3f));
 
         if (arrow == null)
         {

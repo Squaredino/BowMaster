@@ -270,8 +270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21545b80e33f44c45b53b5c58a600970, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _reviveTime: 5
-  _timerLavel: {fileID: 1103358377432716}
+  _reviveTime: 3
   _backgroundImage: {fileID: 1939188052767684}
 --- !u!114 &114279834111875564
 MonoBehaviour:

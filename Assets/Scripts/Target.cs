@@ -17,7 +17,7 @@ public class Target : MonoBehaviour
     private ParticleSystem particlesHitLite, particlesHitHeavy;
     private Movement movement;
 
-    void Start()
+    void Awake()
     {
         _gameplay = GameObject.Find("Game").GetComponent<Gameplay>();
         rigidBody = GetComponent<Rigidbody2D>();
@@ -50,7 +50,7 @@ public class Target : MonoBehaviour
         PlayHitAnimations(isBullseye);
         PlayHitParticles(isBullseye);
         Stop();
-        StartCoroutine(Utils.DelayedAction(Despawn, despawnTimer));
+        StartCoroutine(MyUtils.DelayedAction(Despawn, despawnTimer));
     }
 
     private void PlayHitAnimations(bool isBullseye)

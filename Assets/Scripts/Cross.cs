@@ -28,7 +28,7 @@ public class Cross : MonoBehaviour
         gameObject.SetActive(true);
         transform.localScale = Vector3.zero;
         transform.DOScale(Vector3.one, fadeInDuration).SetEase(Ease.OutElastic);
-        StartCoroutine(Utils.DelayedAction(Hide, displayDuration));
+        StartCoroutine(MyUtils.DelayedAction(Hide, displayDuration));
     }
 
     public void Hide()

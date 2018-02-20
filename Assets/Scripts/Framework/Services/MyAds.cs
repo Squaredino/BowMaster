@@ -13,7 +13,6 @@ public class MyAds : MonoBehaviour
     private DateTime _videoDate;
     private bool _isVideoWaitTimer;
     private bool _isFirstTimeVideo;
-    public static int noAds;
 
     private void Awake()
     {
@@ -43,7 +42,7 @@ public class MyAds : MonoBehaviour
 
     private void OnAdsRewardedBuySkin(OnAdsRewardedBuySkin obj)
     {
-        GlobalEvents<OnShowRewarded>.Call(new OnShowRewarded());
+        GlobalEvents<OnAdsRewardedShow>.Call(new OnAdsRewardedShow());
         
         //Temp
         GlobalEvents<OnBuySkinByRewarded>.Call(new OnBuySkinByRewarded{Id = obj.Id});
@@ -65,7 +64,7 @@ public class MyAds : MonoBehaviour
 
             if (!_isVideoWaitTimer)
             {
-                GlobalEvents<OnShowVideoAds>.Call(new OnShowVideoAds());
+                GlobalEvents<OnAdsVideoShow>.Call(new OnAdsVideoShow());
                 Debug.Log("GlobalEvents<OnShowVideoAds>");
             }
 //            _isVideoAdCalcNext = false;
@@ -82,12 +81,13 @@ public class MyAds : MonoBehaviour
         StartWaitingVideo();
     }
     
+    // Запускаем таймер ожидание следующей Ревардед рекламы
     private void OnAdsRewardedShowing(OnAdsRewardedShowing e)
     {
         _rewardDate = UnbiasedTime.Instance.Now();
         _rewardDate = _rewardDate.AddMinutes(2);
         _isRewardedWaitTimer = true;
-        GlobalEvents<OnRewardedWaitTimer>.Call(new OnRewardedWaitTimer {IsWait = true}); 
+        GlobalEvents<OnAdsRewardedWaitTimer>.Call(new OnAdsRewardedWaitTimer {IsWait = true}); 
 
         //Обнуляем Video таймер и коунтер
         StartWaitingVideo();
@@ -115,7 +115,7 @@ public class MyAds : MonoBehaviour
             if (difference.TotalSeconds <= 0f)
             {
                 _isRewardedWaitTimer = false;
-                GlobalEvents<OnRewardedWaitTimer>.Call(new OnRewardedWaitTimer {IsWait = false}); 
+                GlobalEvents<OnAdsRewardedWaitTimer>.Call(new OnAdsRewardedWaitTimer {IsWait = false}); 
             }
         }
         

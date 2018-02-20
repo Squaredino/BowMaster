@@ -78,7 +78,6 @@ public class TimerBar : MonoBehaviour
     public void AddTime(float percent)
     {
         currentTime = Mathf.Min(currentTime + percent * allTime, allTime);
-        isActive = true;
     }
 
     public bool IsTimerOver()

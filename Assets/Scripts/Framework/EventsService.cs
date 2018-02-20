@@ -96,22 +96,28 @@ public struct OnGameInputEnable
 //--------------------------------------------------------
 // ADS
 //--------------------------------------------------------
+// Отключить рекламу
+public struct OnAdsDisable {}
 
 // Показываем Video рекламу, если доступна
 public struct OnAdsVideoTryShow {}
 // Запрос на показ рекламы 
-public struct OnShowVideoAds {}
+public struct OnAdsVideoShow {}
+public struct OnAdsVideoClosed {}
 // Начался показ Video рекламы
 public struct OnAdsVideoShowing {}
-// Отключить рекламу
-public struct OnAdsDisable {}
 
 // Rewarded реклама зарузилась
-public struct OnRewardedLoaded { public bool IsAvailable; }
+public struct OnAdsRewardedLoaded { public bool IsAvailable; }
 // Rewarded реклама готова к показу (Время ожидания завершилось)
-public struct OnRewardedWaitTimer { public bool IsWait; }
+public struct OnAdsRewardedWaitTimer { public bool IsWait; }
 // Запрос на показ видео рекламы
-public struct OnShowRewarded {}
+public struct OnAdsRewardedShow {}
+
+public struct OnAdsRewardedClosed
+{
+    public bool IsReward;
+}
 // Начался показ Rewarded рекламы
 public struct OnAdsRewardedShowing {}
 // Дать награду игроку
@@ -119,6 +125,8 @@ public struct OnGiveReward
 {
     public bool IsAvailable;
 }
+
+public struct OnAdsBannerShow {}
 
 // Можно дарить подарок
 public struct OnGiftAvailable

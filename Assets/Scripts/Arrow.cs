@@ -17,7 +17,7 @@ public class Arrow : MonoBehaviour
     private ParticleSystem particlesLite, particlesHeavy;
     private ParticleSystem particlesNormalHit, particlesBullseyeHit;
 
-    void Start()
+    void Awake()
     {
         _gameplay = GameObject.Find("Game").GetComponent<Gameplay>();
         arrowHead = transform.Find("Arrowhead").gameObject;
@@ -95,7 +95,7 @@ public class Arrow : MonoBehaviour
     {
         PlayHitParticles(isBullseye);
         Stop();
-        StartCoroutine(Utils.DelayedAction(Despawn, despawnTimer));
+        StartCoroutine(MyUtils.DelayedAction(Despawn, despawnTimer));
     }
 
     public void SetParticleLevel(int level)

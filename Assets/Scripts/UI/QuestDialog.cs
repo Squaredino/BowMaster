@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using System.Runtime.Serialization.Formatters;
+using DG.Tweening;
 using PrefsEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,6 +8,8 @@ public class QuestDialog : MonoBehaviour
 {
 	[SerializeField] private Image _background;
 	[SerializeField] private Transform _window;
+	[SerializeField] private GameObject _btnEquip;
+	[SerializeField] private GameObject _btnTry;
 	
 	[SerializeField] private Image _icon;
 	[SerializeField] private Text _LockText;
@@ -57,11 +60,15 @@ public class QuestDialog : MonoBehaviour
 		{
 			_LockText.text = "UNLOCKED!";
 			_LockText.color = new Color(1f, 0.8f, 0.1f);
+			_btnEquip.SetActive(true);
+			_btnTry.SetActive(false);
 		}
 		else
 		{
 			_LockText.text = "UNLOCK WITH";
 			_LockText.color = Color.white;
+			_btnEquip.SetActive(false);
+			_btnTry.SetActive(true);
 		}
 
 		if (_quest.skinType == SkinType.Arrow)
@@ -104,16 +111,35 @@ public class QuestDialog : MonoBehaviour
 		_window.DOScaleX(0f, 0.2f);
 	}
 	
-	public void Equip()
+	public void BtnEquip()
 	{
-		ScreenSkins.CurrentFaceId = _quest.skinId;	
-		SecurePlayerPrefs.SetInt("currentFaceID", ScreenSkins.CurrentFaceId);
-		GlobalEvents<OnChangeSkin>.Call(new OnChangeSkin{Id = ScreenSkins.CurrentFaceId});
+		if (_quest.skinType == SkinType.Arrow)
+		{
+			ScreenSkins.CurrentFaceId = _quest.skinId;	
+			SecurePlayerPrefs.SetInt("currentFaceID", ScreenSkins.CurrentFaceId);
+			GlobalEvents<OnChangeSkin>.Call(new OnChangeSkin {Id = ScreenSkins.CurrentFaceId});
+		}
+		else
+		{
+			ScreenSkins.CurrentTargetId = _quest.skinId;
+			SecurePlayerPrefs.SetInt("currentFaceID", ScreenSkins.CurrentTargetId);
+			GlobalEvents<OnChangeTargetSkin>.Call(new OnChangeTargetSkin {Id = ScreenSkins.CurrentTargetId});
+		}
+
 		Close();
 	}
-
-	public void BtnClick()
+	
+	public void BtnTryClick()
 	{
-		if (_isCurrentQuestUnlocked) Equip(); else Close();
+		if (_quest.skinType == SkinType.Arrow)
+		{
+			GlobalEvents<OnChangeSkin>.Call(new OnChangeSkin{Id = _quest.skinId});
+		}
+		else
+		{
+			GlobalEvents<OnChangeTargetSkin>.Call(new OnChangeTargetSkin {Id = _quest.skinId});
+		}
+		Close();
+		GlobalEvents<OnScreenSkinsHide>.Call(new OnScreenSkinsHide());
 	}
 }
